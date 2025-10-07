@@ -1,29 +1,19 @@
 {
-    "targets": {
-        "swap": {}
-    },
+    "targets": [
+        "swap"
+    ],
     "passes": [
         {
-            "vertex_shader": "minecraft:post/blit",
-            "fragment_shader": "modjam:post/blackhole",
-            "inputs": [
-                {
-                    "sampler_name": "In",
-                    "target": "minecraft:main"
-                }
-            ],
-            "output": "swap",
+            "name": "modjam:blackhole",
+            "intarget": "minecraft:main",
+            "outtarget": "swap",
+            "uniforms": [
+            ]
         },
         {
-            "vertex_shader": "minecraft:post/blit",
-            "fragment_shader": "minecraft:post/blit",
-            "inputs": [
-                {
-                    "sampler_name": "In",
-                    "target": "swap"
-                }
-            ],
-            "output": "minecraft:main"
+            "name": "blit",
+            "intarget": "swap",
+            "outtarget": "minecraft:main"
         }
     ]
 }
