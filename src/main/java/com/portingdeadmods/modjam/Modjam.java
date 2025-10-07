@@ -15,7 +15,7 @@ import org.slf4j.Logger;
 @Mod(Modjam.MODID)
 public class Modjam {
     public static final String MODID = "modjam";
-    private static final Logger LOGGER = LogUtils.getLogger();
+    public static final Logger LOGGER = LogUtils.getLogger();
 
     public Modjam(IEventBus modEventBus, ModContainer modContainer) {
         modEventBus.addListener(this::commonSetup);
