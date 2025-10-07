@@ -19,9 +19,10 @@ public class GameRendererMixin {
     void tryProcessBlackHoleShader(DeltaTracker deltaTracker, boolean renderLevel, CallbackInfo ci)
     {
         GL45.glPushDebugGroup(GL45.GL_DEBUG_SOURCE_APPLICATION, 1, "blackhole");
-        //bad
-        MJShaders.BLACK_HOLE_CHAIN.resize(Minecraft.getInstance().getWindow().getWidth(), Minecraft.getInstance().getWindow().getHeight());
+        //read ber queue?
+        MJShaders.BLACK_HOLE_CHAIN.resize(Minecraft.getInstance().getWindow().getWidth(), Minecraft.getInstance().getWindow().getHeight()); // bad
         MJShaders.BLACK_HOLE_CHAIN.process(Minecraft.getInstance().getTimer().getGameTimeDeltaTicks());
+        //flush ber queue?
         GL45.glPopDebugGroup();
     }
 
