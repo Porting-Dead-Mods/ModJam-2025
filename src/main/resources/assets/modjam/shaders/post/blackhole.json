@@ -8,10 +8,12 @@
             "intarget": "minecraft:main",
             "outtarget": "swap",
             "auxtargets":
-            {
-                "name": "DepthSampler",
-                "id": "minecraft:main:depth"
-            },
+            [
+                {
+                    "name": "DepthSampler",
+                    "id": "minecraft:main:depth"
+                }
+            ],
             "uniforms": [
             ]
         },
