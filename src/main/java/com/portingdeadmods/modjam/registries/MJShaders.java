@@ -60,7 +60,7 @@ public class MJShaders {
 //        }));
 
         try {
-            BLACK_HOLE_CHAIN = new PostChain(Minecraft.getInstance().getTextureManager(), shadersEvent.getResourceProvider(), Minecraft.getInstance().getMainRenderTarget(), ResourceLocation.fromNamespaceAndPath(Modjam.MODID, "blackhole.json"));
+            BLACK_HOLE_CHAIN = new PostChain(Minecraft.getInstance().getTextureManager(), shadersEvent.getResourceProvider(), Minecraft.getInstance().getMainRenderTarget(), ResourceLocation.fromNamespaceAndPath(Modjam.MODID, "shaders/post/blackhole.json"));
         } catch (Exception e) {
             e.printStackTrace();
             Modjam.LOGGER.error(e.getMessage());
