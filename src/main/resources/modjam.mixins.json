@@ -6,7 +6,8 @@
   "mixins": [
   ],
   "client": [
-    "GameRendererMixin"
+    "LevelRendererMixin",
+    "PostChainMixin"
   ],
   "injectors": {
     "defaultRequire": 1

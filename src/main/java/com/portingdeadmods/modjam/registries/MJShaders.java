@@ -34,20 +34,17 @@ public class MJShaders {
 //            });
 
     public static final RenderType PROJECTOR_SHARD = RenderType.create("modjam:projector_rendertype", DefaultVertexFormat.POSITION_TEX_COLOR,
-                VertexFormat.Mode.QUADS, 80, false, false, RenderType.CompositeState.builder()
+            VertexFormat.Mode.QUADS, 80, false, false, RenderType.CompositeState.builder()
                     .setShaderState(PROJECTOR_SHADER_SHARD)
                     .createCompositeState(false));
 
-    public static class ProjecterShaderUniforms
-    {
+    public static class ProjecterShaderUniforms {
 
     }
 
-    public static void registerShaders(RegisterShadersEvent shadersEvent)
-    {
+    public static void registerShaders(RegisterShadersEvent shadersEvent) {
         shadersEvent.registerShader(compileShader(shadersEvent, ResourceLocation.fromNamespaceAndPath(Modjam.MODID, "projector"), DefaultVertexFormat.POSITION_TEX_COLOR), (shaderInstance -> {
-            if (shaderInstance != null)
-            {
+            if (shaderInstance != null) {
                 PROJECTOR_SHADER = shaderInstance;
             }
         }));
@@ -67,12 +64,11 @@ public class MJShaders {
         }
     }
 
-    private static ShaderInstance compileShader(RegisterShadersEvent event, ResourceLocation location, VertexFormat vertexFormat)
-    {
+    private static ShaderInstance compileShader(RegisterShadersEvent event, ResourceLocation location, VertexFormat vertexFormat) {
         try {
             return new ShaderInstance(event.getResourceProvider(), location, vertexFormat);
         } catch (ChainedJsonException jsonException) {
-            Modjam.LOGGER.error(jsonException.getLocalizedMessage() );
+            Modjam.LOGGER.error(jsonException.getLocalizedMessage());
             return null;
         } catch (IOException e) {
             throw new RuntimeException(e);

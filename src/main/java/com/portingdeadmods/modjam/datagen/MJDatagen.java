@@ -13,18 +13,18 @@ import java.util.concurrent.CompletableFuture;
 
 @EventBusSubscriber(modid = Modjam.MODID, bus = EventBusSubscriber.Bus.MOD)
 public class MJDatagen {
-    
+
     @SubscribeEvent
     public static void gatherData(GatherDataEvent event) {
         DataGenerator generator = event.getGenerator();
         PackOutput output = generator.getPackOutput();
         ExistingFileHelper existingFileHelper = event.getExistingFileHelper();
         CompletableFuture<HolderLookup.Provider> lookupProvider = event.getLookupProvider();
-        
+
         generator.addProvider(event.includeClient(), new MJItemModelProvider(output, existingFileHelper));
         generator.addProvider(event.includeClient(), new MJBlockStateProvider(output, existingFileHelper));
         generator.addProvider(event.includeClient(), new MJLangProvider(output));
-        
+
         generator.addProvider(event.includeServer(), new MJRecipeProvider(output, lookupProvider));
         MJBlockTagsProvider blockTagsProvider = new MJBlockTagsProvider(output, lookupProvider, existingFileHelper);
         generator.addProvider(event.includeServer(), blockTagsProvider);

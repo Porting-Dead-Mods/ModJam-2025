@@ -9,13 +9,13 @@ import net.minecraft.data.recipes.RecipeProvider;
 import java.util.concurrent.CompletableFuture;
 
 public class MJRecipeProvider extends RecipeProvider {
-    
+
     public MJRecipeProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> registries) {
         super(output, registries);
     }
-    
+
     @Override
     protected void buildRecipes(RecipeOutput recipeOutput) {
-        
+
     }
 }
