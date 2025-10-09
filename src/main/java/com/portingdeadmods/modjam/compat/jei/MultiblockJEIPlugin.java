@@ -24,14 +24,15 @@ import net.minecraft.world.item.crafting.ShapelessRecipe;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Supplier;
 
 @JeiPlugin
 public class MultiblockJEIPlugin implements IModPlugin {
     
-    private static final List<Multiblock> MULTIBLOCKS = new ArrayList<>();
+    private static final List<Supplier<Multiblock>> MULTIBLOCKS = new ArrayList<>();
     
-    public static void registerMultiblock(Multiblock multiblock) {
-        MULTIBLOCKS.add(multiblock);
+    public static void registerMultiblock(Supplier<? extends Multiblock> multiblock) {
+        MULTIBLOCKS.add((Supplier<Multiblock>) multiblock);
     }
     
     @Override
@@ -46,33 +47,33 @@ public class MultiblockJEIPlugin implements IModPlugin {
 
     @Override
     public void registerRecipes(IRecipeRegistration registration) {
-        registration.addRecipes(MultiblockJEICategory.RECIPE_TYPE, MULTIBLOCKS);
-        
-        ItemStack dustStack = new ItemStack(MJItems.TANTALUM_DUST.get());
-        dustStack.set(DataComponents.CUSTOM_NAME, Component.translatable("modjam.jei.grinding_output").withStyle(ChatFormatting.RESET));
+        registration.addRecipes(MultiblockJEICategory.RECIPE_TYPE, MULTIBLOCKS.stream().map(Supplier::get).toList());
 
-        ItemStack oreStack = new ItemStack(Items.COBBLESTONE);
-        oreStack.set(DataComponents.CUSTOM_NAME, Component.translatable("modjam.jei.grinding_input").withStyle(ChatFormatting.RESET));
-
-        registration.addRecipes(RecipeTypes.CRAFTING, Collections.singletonList(new RecipeHolder<>(
-                ResourceLocation.fromNamespaceAndPath(Modjam.MODID, "grinding_example"),
-                new ShapelessRecipe(
-                        "grinding",
-                        CraftingBookCategory.MISC,
-                        dustStack,
-                        NonNullList.of(Ingredient.EMPTY, 
-                                Ingredient.of(MJItems.PESTLE.get()), 
-                                Ingredient.of(oreStack),
-                                Ingredient.of(MJItems.MORTAR.get()))
-                )
-        )));
+//        ItemStack dustStack = new ItemStack(MJItems.TANTALUM_DUST.get());
+//        dustStack.set(DataComponents.CUSTOM_NAME, Component.translatable("modjam.jei.grinding_output").withStyle(ChatFormatting.RESET));
+//
+//        ItemStack oreStack = new ItemStack(Items.COBBLESTONE);
+//        oreStack.set(DataComponents.CUSTOM_NAME, Component.translatable("modjam.jei.grinding_input").withStyle(ChatFormatting.RESET));
+//
+//        registration.addRecipes(RecipeTypes.CRAFTING, Collections.singletonList(new RecipeHolder<>(
+//                ResourceLocation.fromNamespaceAndPath(Modjam.MODID, "grinding_example"),
+//                new ShapelessRecipe(
+//                        "grinding",
+//                        CraftingBookCategory.MISC,
+//                        dustStack,
+//                        NonNullList.of(Ingredient.EMPTY,
+//                                Ingredient.of(MJItems.PESTLE.get()),
+//                                Ingredient.of(oreStack),
+//                                Ingredient.of(MJItems.MORTAR.get()))
+//                )
+//        )));
     }
 
     @Override
     public void registerRecipeCatalysts(IRecipeCatalystRegistration registration) {
-        for (Multiblock multiblock : MULTIBLOCKS) {
+        for (Supplier<Multiblock> multiblock : MULTIBLOCKS) {
             registration.addRecipeCatalyst(
-                new ItemStack(multiblock.getUnformedController()),
+                new ItemStack(multiblock.get().getUnformedController()),
                 MultiblockJEICategory.RECIPE_TYPE
             );
         }

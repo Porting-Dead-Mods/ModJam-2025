@@ -1,20 +1,19 @@
 package com.portingdeadmods.modjam.registries;
 
 import com.portingdeadmods.modjam.Modjam;
-import com.portingdeadmods.modjam.blockentity.TestMultiblockEntity;
+import com.portingdeadmods.modjam.content.blockentity.PlanetSimulatorBlockEntity;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
-public class MJBlockEntities {
+public final class MJBlockEntities {
     public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES =
             DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, Modjam.MODID);
 
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<TestMultiblockEntity>> TEST_MULTIBLOCK_ENTITY =
-            BLOCK_ENTITIES.register("test_multiblock_entity", () -> BlockEntityType.Builder.of(
-                    TestMultiblockEntity::new,
-                    MJBlocks.TEST_MULTIBLOCK_CONTROLLER.get(),
-                    MJBlocks.TEST_MULTIBLOCK_CONTROLLER_FORMED.get()
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<PlanetSimulatorBlockEntity>> PLANET_SIMULATOR =
+            BLOCK_ENTITIES.register("planet_simulator", () -> BlockEntityType.Builder.of(
+                    PlanetSimulatorBlockEntity::new,
+                    MJBlocks.PLANET_SIMULATOR_CONTROLLER.get()
             ).build(null));
 }

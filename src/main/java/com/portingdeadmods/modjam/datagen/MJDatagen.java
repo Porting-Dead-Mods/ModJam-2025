@@ -11,7 +11,7 @@ import net.neoforged.neoforge.data.event.GatherDataEvent;
 
 import java.util.concurrent.CompletableFuture;
 
-@EventBusSubscriber(modid = Modjam.MODID, bus = EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid = Modjam.MODID)
 public class MJDatagen {
 
     @SubscribeEvent

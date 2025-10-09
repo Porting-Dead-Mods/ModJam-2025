@@ -16,12 +16,11 @@ public class MJItemModelProvider extends ItemModelProvider {
     protected void registerModels() {
         basicItem(MJItems.TANTALUM_INGOT.get());
         basicItem(MJItems.TANTALUM_NUGGET.get());
-        basicItem(MJItems.TANTALUM_DUST.get());
         basicItem(MJItems.TANTALUM_SHEET.get());
-        basicItem(MJItems.TANTALUM_SEMI_PRESSED_SHEET.get());
         basicItem(MJItems.RAW_TANTALUM.get());
         basicItem(MJItems.PESTLE.get());
         basicItem(MJItems.MORTAR.get());
         basicItem(MJItems.HAMMER.get());
     }
+    
 }

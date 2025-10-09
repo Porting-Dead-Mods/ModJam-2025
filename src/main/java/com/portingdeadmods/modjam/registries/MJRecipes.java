@@ -1,7 +1,7 @@
 package com.portingdeadmods.modjam.registries;
 
 import com.portingdeadmods.modjam.Modjam;
-import com.portingdeadmods.modjam.recipe.GrindingRecipe;
+import com.portingdeadmods.modjam.content.recipe.GrindingRecipe;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.SimpleCraftingRecipeSerializer;

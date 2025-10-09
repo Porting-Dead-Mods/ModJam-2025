@@ -9,7 +9,7 @@ import net.neoforged.neoforge.event.server.ServerStartingEvent;
 import net.neoforged.neoforge.event.server.ServerStoppingEvent;
 import net.neoforged.neoforge.event.tick.ServerTickEvent;
 
-@EventBusSubscriber(modid = Modjam.MODID, bus = EventBusSubscriber.Bus.GAME)
+@EventBusSubscriber(modid = Modjam.MODID)
 public class ServerEvents {
 
     @SubscribeEvent

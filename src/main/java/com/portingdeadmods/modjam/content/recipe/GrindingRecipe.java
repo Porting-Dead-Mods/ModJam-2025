@@ -1,4 +1,4 @@
-package com.portingdeadmods.modjam.recipe;
+package com.portingdeadmods.modjam.content.recipe;
 
 import com.portingdeadmods.modjam.registries.MJItems;
 import com.portingdeadmods.modjam.registries.MJRecipes;

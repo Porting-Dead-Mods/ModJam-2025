@@ -23,8 +23,8 @@ public class MJRecipeProvider extends RecipeProvider {
     protected void buildRecipes(RecipeOutput recipeOutput) {
         List<ItemLike> TANTALUM_SMELTABLES = List.of(
                 MJItems.RAW_TANTALUM.get(),
-                MJItems.TANTALUM_ORE.get(),
-                MJItems.DEEPSLATE_TANTALUM_ORE.get()
+                MJBlocks.TANTALUM_ORE.get(),
+                MJBlocks.DEEPSLATE_TANTALUM_ORE.get()
         );
         
         oreSmelting(recipeOutput, TANTALUM_SMELTABLES, RecipeCategory.MISC, MJItems.TANTALUM_INGOT.get(), 0.7f, 200, "tantalum_ingot");
