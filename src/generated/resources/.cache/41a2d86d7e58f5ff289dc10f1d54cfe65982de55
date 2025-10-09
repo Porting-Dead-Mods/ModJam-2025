@@ -1,0 +1,4 @@
+// 1.21.1	2025-10-09T08:54:44.2804718	Tags for minecraft:block mod id modjam
+a7c1f88ff7956f2804fc10590d48e90cdaa15810 data/c/tags/block/storage_blocks.json
+a7c1f88ff7956f2804fc10590d48e90cdaa15810 data/minecraft/tags/block/mineable/pickaxe.json
+a7c1f88ff7956f2804fc10590d48e90cdaa15810 data/minecraft/tags/block/needs_iron_tool.json

@@ -1,6 +1,7 @@
 package com.portingdeadmods.modjam.datagen;
 
 import com.portingdeadmods.modjam.Modjam;
+import com.portingdeadmods.modjam.registries.MJItems;
 import net.minecraft.data.PackOutput;
 import net.neoforged.neoforge.client.model.generators.ItemModelProvider;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
@@ -13,6 +14,10 @@ public class MJItemModelProvider extends ItemModelProvider {
 
     @Override
     protected void registerModels() {
-
+        basicItem(MJItems.TANTALUM_INGOT.get());
+        basicItem(MJItems.TANTALUM_NUGGET.get());
+        basicItem(MJItems.TANTALUM_DUST.get());
+        basicItem(MJItems.TANTALUM_SHEET.get());
+        basicItem(MJItems.TANTALUM_SEMI_PRESSED_SHEET.get());
     }
 }

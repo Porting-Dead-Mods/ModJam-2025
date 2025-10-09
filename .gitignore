@@ -6,6 +6,8 @@
 *.iws
 
 .claude
+portingdeadlibs
+CompactCrafting
 
 # IntelliJ
 out/
