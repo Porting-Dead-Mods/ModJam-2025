@@ -1,9 +1,7 @@
 package com.portingdeadmods.modjam.registries;
 
 import com.portingdeadmods.modjam.Modjam;
-import com.portingdeadmods.modjam.content.block.PlanetSimulatorBusBlock;
 import com.portingdeadmods.modjam.content.block.PlanetSimulatorControllerBlock;
-import com.portingdeadmods.modjam.content.block.PlanetSimulatorPartBlock;
 import com.portingdeadmods.portingdeadlibs.api.utils.PDLDeferredRegisterBlocks;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
@@ -16,7 +14,6 @@ public final class MJBlocks {
     public static final BlockBehaviour.Properties TANTALUM_PROPERTIES = BlockBehaviour.Properties.of().strength(5.0f, 6.0f).requiresCorrectToolForDrops().sound(SoundType.METAL);
     
     public static final DeferredBlock<PlanetSimulatorControllerBlock> PLANET_SIMULATOR_CONTROLLER = BLOCKS.registerBlockWithItem("planet_simulator_controller", PlanetSimulatorControllerBlock::new, TANTALUM_PROPERTIES);
-
     public static final DeferredBlock<PlanetSimulatorBusBlock> PLANET_SIMULATOR_BUS = BLOCKS.registerBlockWithItem("planet_simulator_bus", PlanetSimulatorBusBlock::new, TANTALUM_PROPERTIES);
 
     public static final DeferredBlock<PlanetSimulatorPartBlock> PLANET_SIMULATOR_PART = BLOCKS.registerBlockWithItem("planet_simulator_part", PlanetSimulatorPartBlock::new, TANTALUM_PROPERTIES);
@@ -30,5 +27,7 @@ public final class MJBlocks {
 
     public static final DeferredBlock<Block> DEEPSLATE_TANTALUM_ORE = BLOCKS.registerWithItem("deepslate_tantalum_ore",
             () -> new Block(BlockBehaviour.Properties.of().strength(4.5f, 3.0f).requiresCorrectToolForDrops().sound(SoundType.DEEPSLATE)));
+
+    public static final DeferredBlock<CompressorBlock> COMPRESSOR = BLOCKS.registerBlockWithItem("compressor", CompressorBlock::new, TANTALUM_PROPERTIES);
 
 }

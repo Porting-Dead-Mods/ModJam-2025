@@ -1,6 +1,7 @@
 package com.portingdeadmods.modjam.registries;
 
 import com.portingdeadmods.modjam.Modjam;
+import com.portingdeadmods.modjam.content.recipe.CompressingRecipe;
 import com.portingdeadmods.modjam.content.recipe.GrindingRecipe;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.crafting.RecipeSerializer;
@@ -14,4 +15,7 @@ public class MJRecipes {
 
     public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<GrindingRecipe>> GRINDING =
             RECIPE_SERIALIZERS.register("grinding", () -> new SimpleCraftingRecipeSerializer<>(GrindingRecipe::new));
+
+    public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<CompressingRecipe>> COMPRESSING =
+            RECIPE_SERIALIZERS.register("compressing", () -> CompressingRecipe.Serializer.INSTANCE);
 }

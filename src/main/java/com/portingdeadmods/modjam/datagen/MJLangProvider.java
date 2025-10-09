@@ -19,6 +19,7 @@ public class MJLangProvider extends LanguageProvider {
         add("block.modjam.tantalum_storage_block", "Block of Tantalum");
         add("block.modjam.tantalum_ore", "Tantalum Ore");
         add("block.modjam.deepslate_tantalum_ore", "Deepslate Tantalum Ore");
+        add("block.modjam.compressor", "Compressor");
         
         add("item.modjam.raw_tantalum", "Raw Tantalum");
         add("item.modjam.tantalum_ingot", "Tantalum Ingot");
@@ -39,5 +40,12 @@ public class MJLangProvider extends LanguageProvider {
         add("modjam.jei.single_layer_mode", "Show Single Layer");
         add("modjam.jei.layer_up", "Layer Up");
         add("modjam.jei.layer_down", "Layer Down");
+        
+        add("container.modjam.compressor", "Compressor");
+        add("jei.modjam.category.compressing", "Compressing");
+        
+        add("redstone_signal_type.portingdeadlibs.ignored", "Ignored");
+        add("redstone_signal_type.portingdeadlibs.low_signal", "Low Signal");
+        add("redstone_signal_type.portingdeadlibs.high_signal", "High Signal");
     }
 }
