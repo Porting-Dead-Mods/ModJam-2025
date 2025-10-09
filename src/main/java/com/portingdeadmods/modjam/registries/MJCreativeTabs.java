@@ -17,12 +17,18 @@ public class MJCreativeTabs {
                     .title(Component.translatable("itemGroup." + Modjam.MODID))
                     .icon(() -> new ItemStack(MJItems.TANTALUM_INGOT.get()))
                     .displayItems((parameters, output) -> {
+                        output.accept(MJItems.TANTALUM_ORE.get());
+                        output.accept(MJItems.DEEPSLATE_TANTALUM_ORE.get());
+                        output.accept(MJItems.RAW_TANTALUM.get());
                         output.accept(MJItems.TANTALUM_STORAGE_BLOCK.get());
                         output.accept(MJItems.TANTALUM_INGOT.get());
                         output.accept(MJItems.TANTALUM_NUGGET.get());
                         output.accept(MJItems.TANTALUM_DUST.get());
                         output.accept(MJItems.TANTALUM_SHEET.get());
                         output.accept(MJItems.TANTALUM_SEMI_PRESSED_SHEET.get());
+                        output.accept(MJItems.PESTLE.get());
+                        output.accept(MJItems.MORTAR.get());
+                        output.accept(MJItems.HAMMER.get());
                         output.accept(MJItems.TEST_MULTIBLOCK_CONTROLLER.get());
                     })
                     .build()

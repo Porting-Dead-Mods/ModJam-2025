@@ -19,5 +19,9 @@ public class MJItemModelProvider extends ItemModelProvider {
         basicItem(MJItems.TANTALUM_DUST.get());
         basicItem(MJItems.TANTALUM_SHEET.get());
         basicItem(MJItems.TANTALUM_SEMI_PRESSED_SHEET.get());
+        basicItem(MJItems.RAW_TANTALUM.get());
+        basicItem(MJItems.PESTLE.get());
+        basicItem(MJItems.MORTAR.get());
+        basicItem(MJItems.HAMMER.get());
     }
 }

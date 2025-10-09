@@ -1,5 +1,7 @@
 {
   "values": [
-    "modjam:tantalum_storage_block"
+    "modjam:tantalum_storage_block",
+    "modjam:tantalum_ore",
+    "modjam:deepslate_tantalum_ore"
   ]
 }

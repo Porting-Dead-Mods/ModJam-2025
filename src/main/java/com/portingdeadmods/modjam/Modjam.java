@@ -27,6 +27,7 @@ public class Modjam {
         MJCreativeTabs.CREATIVE_TABS.register(modEventBus);
         MJDataComponents.DATA_COMPONENTS.register(modEventBus);
         MJDataAttachments.ATTACHMENTS.register(modEventBus);
+        MJRecipes.RECIPE_SERIALIZERS.register(modEventBus);
 
         modEventBus.addListener(MJNetworking::register);
 

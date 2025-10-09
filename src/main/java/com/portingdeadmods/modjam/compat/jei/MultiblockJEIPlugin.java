@@ -1,17 +1,28 @@
 package com.portingdeadmods.modjam.compat.jei;
 
 import com.portingdeadmods.modjam.Modjam;
+import com.portingdeadmods.modjam.registries.MJItems;
 import com.portingdeadmods.portingdeadlibs.api.multiblocks.Multiblock;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
+import mezz.jei.api.constants.RecipeTypes;
 import mezz.jei.api.registration.IRecipeCatalystRegistration;
 import mezz.jei.api.registration.IRecipeCategoryRegistration;
 import mezz.jei.api.registration.IRecipeRegistration;
+import net.minecraft.ChatFormatting;
+import net.minecraft.core.NonNullList;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.CraftingBookCategory;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.world.item.crafting.ShapelessRecipe;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @JeiPlugin
@@ -25,7 +36,7 @@ public class MultiblockJEIPlugin implements IModPlugin {
     
     @Override
     public ResourceLocation getPluginUid() {
-        return ResourceLocation.fromNamespaceAndPath(Modjam.MODID, "multiblock");
+        return ResourceLocation.fromNamespaceAndPath(Modjam.MODID, "jei_plugin");
     }
 
     @Override
@@ -36,6 +47,25 @@ public class MultiblockJEIPlugin implements IModPlugin {
     @Override
     public void registerRecipes(IRecipeRegistration registration) {
         registration.addRecipes(MultiblockJEICategory.RECIPE_TYPE, MULTIBLOCKS);
+        
+        ItemStack dustStack = new ItemStack(MJItems.TANTALUM_DUST.get());
+        dustStack.set(DataComponents.CUSTOM_NAME, Component.translatable("modjam.jei.grinding_output").withStyle(ChatFormatting.RESET));
+
+        ItemStack oreStack = new ItemStack(Items.COBBLESTONE);
+        oreStack.set(DataComponents.CUSTOM_NAME, Component.translatable("modjam.jei.grinding_input").withStyle(ChatFormatting.RESET));
+
+        registration.addRecipes(RecipeTypes.CRAFTING, Collections.singletonList(new RecipeHolder<>(
+                ResourceLocation.fromNamespaceAndPath(Modjam.MODID, "grinding_example"),
+                new ShapelessRecipe(
+                        "grinding",
+                        CraftingBookCategory.MISC,
+                        dustStack,
+                        NonNullList.of(Ingredient.EMPTY, 
+                                Ingredient.of(MJItems.PESTLE.get()), 
+                                Ingredient.of(oreStack),
+                                Ingredient.of(MJItems.MORTAR.get()))
+                )
+        )));
     }
 
     @Override

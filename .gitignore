@@ -9,6 +9,8 @@
 portingdeadlibs
 CompactCrafting
 
+src/generated
+
 # IntelliJ
 out/
 # mpeltonen/sbt-idea plugin

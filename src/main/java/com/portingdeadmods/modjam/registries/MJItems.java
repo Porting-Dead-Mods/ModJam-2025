@@ -32,4 +32,22 @@ public class MJItems {
     
     public static final DeferredItem<Item> TANTALUM_SEMI_PRESSED_SHEET = ITEMS.register("tantalum_semi_pressed_sheet",
             () -> new Item(new Item.Properties()));
+
+    public static final DeferredItem<Item> PESTLE = ITEMS.register("pestle",
+            () -> new Item(new Item.Properties().durability(32)));
+
+    public static final DeferredItem<Item> MORTAR = ITEMS.register("mortar",
+            () -> new Item(new Item.Properties().durability(32)));
+
+    public static final DeferredItem<Item> HAMMER = ITEMS.register("hammer",
+            () -> new Item(new Item.Properties().durability(128)));
+
+    public static final DeferredItem<Item> RAW_TANTALUM = ITEMS.register("raw_tantalum",
+            () -> new Item(new Item.Properties()));
+
+    public static final DeferredItem<BlockItem> TANTALUM_ORE = ITEMS.register("tantalum_ore",
+            () -> new BlockItem(MJBlocks.TANTALUM_ORE.get(), new Item.Properties()));
+
+    public static final DeferredItem<BlockItem> DEEPSLATE_TANTALUM_ORE = ITEMS.register("deepslate_tantalum_ore",
+            () -> new BlockItem(MJBlocks.DEEPSLATE_TANTALUM_ORE.get(), new Item.Properties()));
 }

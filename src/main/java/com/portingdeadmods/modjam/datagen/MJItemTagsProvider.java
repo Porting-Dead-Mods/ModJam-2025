@@ -5,6 +5,7 @@ import com.portingdeadmods.modjam.registries.MJItems;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.ItemTagsProvider;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.common.Tags;
@@ -32,5 +33,31 @@ public class MJItemTagsProvider extends ItemTagsProvider {
         
         tag(Tags.Items.DUSTS)
                 .add(MJItems.TANTALUM_DUST.get());
+        
+        tag(Tags.Items.ORES)
+                .add(MJItems.TANTALUM_ORE.get())
+                .add(MJItems.DEEPSLATE_TANTALUM_ORE.get());
+        
+        tag(Tags.Items.RAW_MATERIALS)
+                .add(MJItems.RAW_TANTALUM.get());
+        
+        tag(ItemTags.create(ResourceLocation.fromNamespaceAndPath("c", "storage_blocks/tantalum")))
+                .add(MJItems.TANTALUM_STORAGE_BLOCK.get());
+        
+        tag(ItemTags.create(ResourceLocation.fromNamespaceAndPath("c", "ores/tantalum")))
+                .add(MJItems.TANTALUM_ORE.get())
+                .add(MJItems.DEEPSLATE_TANTALUM_ORE.get());
+        
+        tag(ItemTags.create(ResourceLocation.fromNamespaceAndPath("c", "ingots/tantalum")))
+                .add(MJItems.TANTALUM_INGOT.get());
+        
+        tag(ItemTags.create(ResourceLocation.fromNamespaceAndPath("c", "nuggets/tantalum")))
+                .add(MJItems.TANTALUM_NUGGET.get());
+        
+        tag(ItemTags.create(ResourceLocation.fromNamespaceAndPath("c", "dusts/tantalum")))
+                .add(MJItems.TANTALUM_DUST.get());
+        
+        tag(ItemTags.create(ResourceLocation.fromNamespaceAndPath("c", "raw_materials/tantalum")))
+                .add(MJItems.RAW_TANTALUM.get());
     }
 }

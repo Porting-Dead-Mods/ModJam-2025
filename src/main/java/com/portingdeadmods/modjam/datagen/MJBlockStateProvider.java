@@ -16,5 +16,9 @@ public class MJBlockStateProvider extends BlockStateProvider {
     protected void registerStatesAndModels() {
         simpleBlockWithItem(MJBlocks.TANTALUM_STORAGE_BLOCK.get(), 
             cubeAll(MJBlocks.TANTALUM_STORAGE_BLOCK.get()));
+        simpleBlockWithItem(MJBlocks.TANTALUM_ORE.get(), 
+            cubeAll(MJBlocks.TANTALUM_ORE.get()));
+        simpleBlockWithItem(MJBlocks.DEEPSLATE_TANTALUM_ORE.get(), 
+            cubeAll(MJBlocks.DEEPSLATE_TANTALUM_ORE.get()));
     }
 }
