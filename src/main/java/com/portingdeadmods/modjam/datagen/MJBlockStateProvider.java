@@ -29,9 +29,16 @@ public class MJBlockStateProvider extends BlockStateProvider {
                 cubeAll(MJBlocks.PLANET_SIMULATOR_CASING.get()));
 
         builder(MJBlocks.PLANET_SIMULATOR_CONTROLLER)
-                .defaultTexture(this.blockTexture(MJBlocks.PLANET_SIMULATOR_CASING.get()))
+                .defaultTexture(blockTexture(MJBlocks.PLANET_SIMULATOR_CASING.get()))
                 .front(this::blockTexture)
                 .horizontalFacing()
+                .create();
+
+        builder(MJBlocks.COMPRESSOR)
+                .defaultTexture(blockTexture(MJBlocks.TANTALUM_STORAGE_BLOCK.get()))
+                .front((provider, suffix) -> blockTexture(MJBlocks.COMPRESSOR.get()), "_front")
+                .horizontalFacing()
+                .active()
                 .create();
 
     }

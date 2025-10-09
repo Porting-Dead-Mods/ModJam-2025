@@ -1,6 +1,7 @@
 package com.portingdeadmods.modjam.registries;
 
 import com.portingdeadmods.modjam.Modjam;
+import com.portingdeadmods.modjam.content.block.CompressorBlock;
 import com.portingdeadmods.modjam.content.block.PlanetSimulatorControllerBlock;
 import com.portingdeadmods.portingdeadlibs.api.utils.PDLDeferredRegisterBlocks;
 import net.minecraft.world.level.block.Block;
@@ -24,4 +25,6 @@ public final class MJBlocks {
 
     public static final DeferredBlock<Block> DEEPSLATE_TANTALUM_ORE = BLOCKS.registerWithItem("deepslate_tantalum_ore",
             () -> new Block(BlockBehaviour.Properties.of().strength(4.5f, 3.0f).requiresCorrectToolForDrops().sound(SoundType.DEEPSLATE)));
+
+    public static final DeferredBlock<CompressorBlock> COMPRESSOR = BLOCKS.registerBlockWithItem("compressor", CompressorBlock::new, TANTALUM_PROPERTIES);
 }

@@ -4,9 +4,11 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackType;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 
+import java.util.Collections;
+
 public class FakeFileHelper extends ExistingFileHelper {
     public FakeFileHelper() {
-        super(java.util.Collections.emptyList(), java.util.Collections.emptySet(), false, null, null);
+        super(Collections.emptyList(), Collections.emptySet(), false, null, null);
     }
 
     @Override

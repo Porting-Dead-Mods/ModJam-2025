@@ -3,6 +3,7 @@ package com.portingdeadmods.modjam;
 import com.mojang.logging.LogUtils;
 import com.portingdeadmods.modjam.networking.MJNetworking;
 import com.portingdeadmods.modjam.registries.*;
+import net.minecraft.resources.ResourceLocation;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
@@ -35,6 +36,10 @@ public final class Modjam {
 
     private void commonSetup(final FMLCommonSetupEvent event) {
         event.enqueueWork(MJMultiblocks::init);
+    }
+
+    public static ResourceLocation rl(String path) {
+        return ResourceLocation.fromNamespaceAndPath(MODID, path);
     }
 
 }
