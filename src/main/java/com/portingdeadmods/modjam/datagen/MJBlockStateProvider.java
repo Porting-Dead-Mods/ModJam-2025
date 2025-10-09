@@ -19,12 +19,12 @@ public class MJBlockStateProvider extends BlockStateProvider {
 
     @Override
     protected void registerStatesAndModels() {
+//        simpleBlockWithItem(MJBlocks.TANTALUM_ORE.get(),
+//            cubeAll(MJBlocks.TANTALUM_ORE.get()));
+//        simpleBlockWithItem(MJBlocks.DEEPSLATE_TANTALUM_ORE.get(),
+//            cubeAll(MJBlocks.DEEPSLATE_TANTALUM_ORE.get()));
         simpleBlockWithItem(MJBlocks.TANTALUM_STORAGE_BLOCK.get(),
-            cubeAll(MJBlocks.TANTALUM_STORAGE_BLOCK.get()));
-        simpleBlockWithItem(MJBlocks.TANTALUM_ORE.get(), 
-            cubeAll(MJBlocks.TANTALUM_ORE.get()));
-        simpleBlockWithItem(MJBlocks.DEEPSLATE_TANTALUM_ORE.get(), 
-            cubeAll(MJBlocks.DEEPSLATE_TANTALUM_ORE.get()));
+                cubeAll(MJBlocks.TANTALUM_STORAGE_BLOCK.get()));
         simpleBlockWithItem(MJBlocks.PLANET_SIMULATOR_CASING.get(),
                 cubeAll(MJBlocks.PLANET_SIMULATOR_CASING.get()));
 
@@ -32,6 +32,11 @@ public class MJBlockStateProvider extends BlockStateProvider {
                 .defaultTexture(this.blockTexture(MJBlocks.PLANET_SIMULATOR_CASING.get()))
                 .front(this::blockTexture)
                 .horizontalFacing()
+                .create();
+
+        builder(MJBlocks.PLANET_SIMULATOR_BUS)
+                .defaultTexture(this.blockTexture(MJBlocks.PLANET_SIMULATOR_CASING.get()))
+                .sides(this::blockTexture)
                 .create();
 
     }

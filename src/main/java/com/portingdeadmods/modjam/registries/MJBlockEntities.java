@@ -2,6 +2,8 @@ package com.portingdeadmods.modjam.registries;
 
 import com.portingdeadmods.modjam.Modjam;
 import com.portingdeadmods.modjam.content.blockentity.PlanetSimulatorBlockEntity;
+import com.portingdeadmods.modjam.content.blockentity.PlanetSimulatorBusBlockEntity;
+import com.portingdeadmods.modjam.content.blockentity.PlanetSimulatorPartBlockEntity;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.neoforged.neoforge.registries.DeferredHolder;
@@ -15,5 +17,15 @@ public final class MJBlockEntities {
             BLOCK_ENTITIES.register("planet_simulator", () -> BlockEntityType.Builder.of(
                     PlanetSimulatorBlockEntity::new,
                     MJBlocks.PLANET_SIMULATOR_CONTROLLER.get()
+            ).build(null));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<PlanetSimulatorPartBlockEntity>> PLANET_SIMULATOR_PART =
+            BLOCK_ENTITIES.register("planet_simulator_part", () -> BlockEntityType.Builder.of(
+                    PlanetSimulatorPartBlockEntity::new,
+                    MJBlocks.PLANET_SIMULATOR_CASING.get()
+            ).build(null));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<PlanetSimulatorBusBlockEntity>> PLANET_SIMULATOR_BUS =
+            BLOCK_ENTITIES.register("planet_simulator_bus", () -> BlockEntityType.Builder.of(
+                    PlanetSimulatorBusBlockEntity::new,
+                    MJBlocks.PLANET_SIMULATOR_BUS.get()
             ).build(null));
 }

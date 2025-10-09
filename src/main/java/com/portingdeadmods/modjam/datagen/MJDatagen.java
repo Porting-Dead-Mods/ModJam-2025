@@ -18,11 +18,11 @@ public class MJDatagen {
     public static void gatherData(GatherDataEvent event) {
         DataGenerator generator = event.getGenerator();
         PackOutput output = generator.getPackOutput();
-        ExistingFileHelper existingFileHelper = new FakeFileHelper();
+        ExistingFileHelper existingFileHelper = event.getExistingFileHelper();
         CompletableFuture<HolderLookup.Provider> lookupProvider = event.getLookupProvider();
 
-        generator.addProvider(event.includeClient(), new MJItemModelProvider(output, existingFileHelper));
         generator.addProvider(event.includeClient(), new MJBlockStateProvider(output, existingFileHelper));
+        generator.addProvider(event.includeClient(), new MJItemModelProvider(output, existingFileHelper));
         generator.addProvider(event.includeClient(), new MJLangProvider(output));
 
         generator.addProvider(event.includeServer(), new MJRecipeProvider(output, lookupProvider));
@@ -30,4 +30,5 @@ public class MJDatagen {
         generator.addProvider(event.includeServer(), blockTagsProvider);
         generator.addProvider(event.includeServer(), new MJItemTagsProvider(output, lookupProvider, blockTagsProvider.contentsGetter(), existingFileHelper));
     }
+
 }

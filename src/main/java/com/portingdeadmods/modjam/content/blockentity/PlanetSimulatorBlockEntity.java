@@ -1,6 +1,7 @@
 package com.portingdeadmods.modjam.content.blockentity;
 
 import com.portingdeadmods.modjam.registries.MJBlockEntities;
+import com.portingdeadmods.modjam.registries.MJMultiblocks;
 import com.portingdeadmods.portingdeadlibs.api.blockentities.ContainerBlockEntity;
 import com.portingdeadmods.portingdeadlibs.api.blockentities.multiblocks.MultiblockEntity;
 import com.portingdeadmods.portingdeadlibs.api.multiblocks.MultiblockData;
@@ -24,6 +25,15 @@ public class PlanetSimulatorBlockEntity extends ContainerBlockEntity implements 
     }
 
     @Override
+    public void commonTick() {
+        super.commonTick();
+
+        if (this.level.getGameTime() % 10 == 0) {
+            MJMultiblocks.PLANET_SIMULATOR.get().form(this.level, this.worldPosition);
+        }
+    }
+
+    @Override
     public <T> Map<Direction, Pair<IOAction, int[]>> getSidedInteractions(BlockCapability<T, @Nullable Direction> blockCapability) {
         return Map.of();
     }
@@ -41,7 +51,9 @@ public class PlanetSimulatorBlockEntity extends ContainerBlockEntity implements 
 
     @Override
     protected void saveData(CompoundTag tag, HolderLookup.Provider registries) {
-        tag.put("multiblock_data", this.saveMBData());
+        if (this.getMultiblockData() != null) {
+            tag.put("multiblock_data", this.saveMBData());
+        }
     }
 
     @Override

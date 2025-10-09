@@ -19,12 +19,12 @@ import org.jetbrains.annotations.Nullable;
 public class PlanetSimulatorMultiblock implements Multiblock {
     @Override
     public Block getUnformedController() {
-        return null;
+        return MJBlocks.PLANET_SIMULATOR_CONTROLLER.get();
     }
 
     @Override
     public Block getFormedController() {
-        return null;
+        return MJBlocks.PLANET_SIMULATOR_CONTROLLER.get();
     }
 
     @Override
@@ -63,7 +63,7 @@ public class PlanetSimulatorMultiblock implements Multiblock {
     @Override
     public MultiblockDefinition getDefinition() {
         MultiblockDefinition def = new MultiblockDefinition();
-        def.put(0, state -> state.is(MJBlocks.PLANET_SIMULATOR_CASING.get()), MJBlocks.PLANET_SIMULATOR_CASING.get());
+        def.put(0, state -> state.is(MJBlocks.PLANET_SIMULATOR_CASING.get()) || state.is(MJBlocks.PLANET_SIMULATOR_BUS), MJBlocks.PLANET_SIMULATOR_CASING.get());
         def.put(1, BlockState::isEmpty, Blocks.AIR);
         def.put(2, MJBlocks.TANTALUM_STORAGE_BLOCK.get());
         def.put(3, this.getUnformedController());
@@ -78,12 +78,11 @@ public class PlanetSimulatorMultiblock implements Multiblock {
     @Override
     public @Nullable BlockState formBlock(Level level, BlockPos blockPos, BlockPos controllerPos, int layerIndex, int layoutIndex, MultiblockData multiblockData, @Nullable Player player) {
         int id = this.getLayout()[layoutIndex].layer()[layerIndex];
-        return switch (id) {
-            case 0 -> Blocks.DIAMOND_BLOCK.defaultBlockState();
-            case 2 -> Blocks.IRON_BLOCK.defaultBlockState();
-            case 4 -> Blocks.EMERALD_BLOCK.defaultBlockState();
-            default -> throw new IllegalStateException("Unexpected value: " + id);
-        };
+        BlockState state = level.getBlockState(blockPos);
+        if (id != 1) {
+            return state.setValue(Multiblock.FORMED, true);
+        }
+        return state;
     }
 
     @Override
