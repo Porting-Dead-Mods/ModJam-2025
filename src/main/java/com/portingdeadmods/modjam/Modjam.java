@@ -37,4 +37,5 @@ public class Modjam {
     private void commonSetup(final FMLCommonSetupEvent event) {
         event.enqueueWork(MJMultiblocks::init);
     }
+
 }
