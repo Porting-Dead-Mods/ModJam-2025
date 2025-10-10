@@ -13,6 +13,7 @@ repositories {
     maven {
         url = "https://cursemaven.com"
     }
+    maven { url 'https://jitpack.io' }
 }
 
 base {
@@ -100,7 +101,8 @@ sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 dependencies {
     implementation "curse.maven:jei-238222:7057366"
-    implementation "curse.maven:porting-dead-libs-1173919:7068709"
+    implementation "com.github.Porting-Dead-Mods:Porting-Dead-Libs:${pdl_version}"
+    implementation "curse.maven:fusion-connected-textures-854949:7058347"
     implementation "curse.maven:jade-324717:6853386"
 }
 

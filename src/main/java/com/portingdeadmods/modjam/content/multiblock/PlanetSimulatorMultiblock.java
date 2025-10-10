@@ -1,5 +1,6 @@
 package com.portingdeadmods.modjam.content.multiblock;
 
+import com.portingdeadmods.modjam.content.block.PlanetSimulatorPartBlock;
 import com.portingdeadmods.modjam.registries.MJBlockEntities;
 import com.portingdeadmods.modjam.registries.MJBlocks;
 import com.portingdeadmods.portingdeadlibs.api.blockentities.multiblocks.MultiblockEntity;
@@ -65,7 +66,7 @@ public class PlanetSimulatorMultiblock implements Multiblock {
         MultiblockDefinition def = new MultiblockDefinition();
         def.put(0, state -> state.is(MJBlocks.PLANET_SIMULATOR_CASING.get()) || state.is(MJBlocks.PLANET_SIMULATOR_BUS), MJBlocks.PLANET_SIMULATOR_CASING.get());
         def.put(1, BlockState::isEmpty, Blocks.AIR);
-        def.put(2, MJBlocks.TANTALUM_STORAGE_BLOCK.get());
+        def.put(2, MJBlocks.PLANET_SIMULATOR_FRAME.get());
         def.put(3, this.getUnformedController());
         return def;
     }
@@ -79,7 +80,12 @@ public class PlanetSimulatorMultiblock implements Multiblock {
     public @Nullable BlockState formBlock(Level level, BlockPos blockPos, BlockPos controllerPos, int layerIndex, int layoutIndex, MultiblockData multiblockData, @Nullable Player player) {
         int id = this.getLayout()[layoutIndex].layer()[layerIndex];
         BlockState state = level.getBlockState(blockPos);
-        if (id != 1) {
+        if (id != 1 && (state.hasProperty(Multiblock.FORMED) || id == 0)) {
+            if ((id == 0 || id == 2) && (state.is(MJBlocks.PLANET_SIMULATOR_CASING) || state.is(MJBlocks.PLANET_SIMULATOR_FRAME))) {
+                return MJBlocks.PLANET_SIMULATOR_PART.get().defaultBlockState()
+                        .setValue(Multiblock.FORMED, true)
+                        .setValue(PlanetSimulatorPartBlock.VARIANT, id == 0 ? PlanetSimulatorPartBlock.Variant.CASING : PlanetSimulatorPartBlock.Variant.FRAME);
+            }
             return state.setValue(Multiblock.FORMED, true);
         }
         return state;

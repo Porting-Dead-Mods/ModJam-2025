@@ -163,7 +163,7 @@ public class MultiblockJEICategory implements IRecipeCategory<Multiblock> {
 
                     if (bi != Items.AIR) {
                         slot.addItemStack(new ItemStack(bi, required));
-                        slot.addTooltipCallback((slots, c) -> c.add(MATERIAL_COMPONENT));
+                        slot.addRichTooltipCallback((slots, c) -> c.add(MATERIAL_COMPONENT));
                         inputOffset.getAndIncrement();
                     }
                 });

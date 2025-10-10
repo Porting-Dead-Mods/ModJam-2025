@@ -2,6 +2,7 @@ package com.portingdeadmods.modjam.datagen;
 
 import com.portingdeadmods.modjam.Modjam;
 import com.portingdeadmods.modjam.content.block.PlanetSimulatorControllerBlock;
+import com.portingdeadmods.modjam.content.block.PlanetSimulatorPartBlock;
 import com.portingdeadmods.modjam.registries.MJBlocks;
 import com.portingdeadmods.portingdeadlibs.api.datagen.ModelBuilder;
 import net.minecraft.data.PackOutput;
@@ -21,12 +22,20 @@ public class MJBlockStateProvider extends BlockStateProvider {
     protected void registerStatesAndModels() {
         simpleBlockWithItem(MJBlocks.TANTALUM_STORAGE_BLOCK.get(),
             cubeAll(MJBlocks.TANTALUM_STORAGE_BLOCK.get()));
-        simpleBlockWithItem(MJBlocks.TANTALUM_ORE.get(), 
-            cubeAll(MJBlocks.TANTALUM_ORE.get()));
-        simpleBlockWithItem(MJBlocks.DEEPSLATE_TANTALUM_ORE.get(), 
-            cubeAll(MJBlocks.DEEPSLATE_TANTALUM_ORE.get()));
+        //simpleBlockWithItem(MJBlocks.TANTALUM_ORE.get(),
+        //    cubeAll(MJBlocks.TANTALUM_ORE.get()));
+        //simpleBlockWithItem(MJBlocks.DEEPSLATE_TANTALUM_ORE.get(),
+        //    cubeAll(MJBlocks.DEEPSLATE_TANTALUM_ORE.get()));
         simpleBlockWithItem(MJBlocks.PLANET_SIMULATOR_CASING.get(),
                 cubeAll(MJBlocks.PLANET_SIMULATOR_CASING.get()));
+        simpleBlockWithItem(MJBlocks.PLANET_SIMULATOR_FRAME.get(),
+                cubeAll(MJBlocks.PLANET_SIMULATOR_FRAME.get()));
+
+        getVariantBuilder(MJBlocks.PLANET_SIMULATOR_PART.get())
+                .partialState().with(PlanetSimulatorPartBlock.VARIANT, PlanetSimulatorPartBlock.Variant.CASING)
+                .modelForState().modelFile(cubeAll(MJBlocks.PLANET_SIMULATOR_CASING.get())).addModel()
+                .partialState().with(PlanetSimulatorPartBlock.VARIANT, PlanetSimulatorPartBlock.Variant.FRAME)
+                .modelForState().modelFile(cubeAll(MJBlocks.PLANET_SIMULATOR_FRAME.get())).addModel();
 
         builder(MJBlocks.PLANET_SIMULATOR_CONTROLLER)
                 .defaultTexture(this.blockTexture(MJBlocks.PLANET_SIMULATOR_CASING.get()))
@@ -39,12 +48,12 @@ public class MJBlockStateProvider extends BlockStateProvider {
                 .sides(this::blockTexture)
                 .create();
 
-        builder(MJBlocks.COMPRESSOR)
-                .defaultTexture(blockTexture(MJBlocks.TANTALUM_STORAGE_BLOCK.get()))
-                .front((provider, suffix) -> blockTexture(MJBlocks.COMPRESSOR.get()), "_front")
-                .horizontalFacing()
-                .active()
-                .create();
+//        builder(MJBlocks.COMPRESSOR)
+//                .defaultTexture(blockTexture(MJBlocks.TANTALUM_STORAGE_BLOCK.get()))
+//                .front((provider, suffix) -> blockTexture(MJBlocks.COMPRESSOR.get()), "_front")
+//                .horizontalFacing()
+//                .active()
+//                .create();
 
     }
 
