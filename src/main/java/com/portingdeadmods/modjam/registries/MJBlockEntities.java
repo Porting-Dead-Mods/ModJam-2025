@@ -1,10 +1,7 @@
 package com.portingdeadmods.modjam.registries;
 
 import com.portingdeadmods.modjam.Modjam;
-import com.portingdeadmods.modjam.content.blockentity.CompressorBlockEntity;
-import com.portingdeadmods.modjam.content.blockentity.PlanetSimulatorBlockEntity;
-import com.portingdeadmods.modjam.content.blockentity.PlanetSimulatorBusBlockEntity;
-import com.portingdeadmods.modjam.content.blockentity.PlanetSimulatorPartBlockEntity;
+import com.portingdeadmods.modjam.content.blockentity.*;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.neoforged.neoforge.registries.DeferredHolder;
@@ -33,5 +30,10 @@ public final class MJBlockEntities {
             BLOCK_ENTITIES.register("compressor", () -> BlockEntityType.Builder.of(
                     CompressorBlockEntity::new,
                     MJBlocks.COMPRESSOR.get()
+            ).build(null));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<CreativePowerBlockEntity>> CREATIVE_POWER =
+            BLOCK_ENTITIES.register("creative_power", () -> BlockEntityType.Builder.of(
+                    CreativePowerBlockEntity::new,
+                    MJBlocks.CREATIVE_POWER.get()
             ).build(null));
 }

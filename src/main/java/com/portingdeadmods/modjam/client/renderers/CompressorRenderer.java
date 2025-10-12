@@ -22,9 +22,17 @@ public class CompressorRenderer extends PDLBERenderer<CompressorBlockEntity> {
 
     @Override
     public void render(CompressorBlockEntity blockEntity, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
+        float progress = 0.0f;
+        int maxProgress = blockEntity.getMaxProgress();
+        if (maxProgress > 0) {
+            progress = ((float) blockEntity.getProgress() + partialTick) / (float) maxProgress;
+            progress = Math.min(progress, 1.0f);
+        }
+        
+        float pylonOffset = progress * 0.75f;
+        
         poseStack.pushPose();
         {
-            //poseStack.mulPose(Axis.YN.rotation());
             poseStack.pushPose();
             {
                 poseStack.translate(0.5, 1.5, 0.5);
@@ -34,7 +42,7 @@ public class CompressorRenderer extends PDLBERenderer<CompressorBlockEntity> {
             poseStack.popPose();
             poseStack.pushPose();
             {
-                poseStack.translate(0.5, 2.5, 0.5);
+                poseStack.translate(0.5, 2.5 - pylonOffset, 0.5);
                 poseStack.mulPose(Axis.XN.rotationDegrees(180));
                 this.pressModel.renderToBuffer(poseStack, CompressorModel.PRESS_MATERIAL.buffer(bufferSource, RenderType::entitySolid), LightTexture.FULL_BRIGHT, packedOverlay);
             }

@@ -64,7 +64,7 @@ public class PlanetSimulatorMultiblock implements Multiblock {
     @Override
     public MultiblockDefinition getDefinition() {
         MultiblockDefinition def = new MultiblockDefinition();
-        def.put(0, state -> state.is(MJBlocks.PLANET_SIMULATOR_CASING.get()) || state.is(MJBlocks.PLANET_SIMULATOR_BUS), MJBlocks.PLANET_SIMULATOR_CASING.get());
+        def.put(0, state -> state.is(MJBlocks.PLANET_SIMULATOR_CASING.get()) || state.is(MJBlocks.PLANET_SIMULATOR_BUS.get()), MJBlocks.PLANET_SIMULATOR_CASING.get());
         def.put(1, BlockState::isEmpty, Blocks.AIR);
         def.put(2, MJBlocks.PLANET_SIMULATOR_FRAME.get());
         def.put(3, this.getUnformedController());

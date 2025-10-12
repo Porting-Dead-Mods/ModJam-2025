@@ -138,7 +138,6 @@ public class MultiblockJEICategory implements IRecipeCategory<Multiblock> {
         MultiblockLayer[] layers = multiblock.getLayout();
         for (MultiblockLayer layer : layers) {
             for (int blockId : layer.layer()) {
-                if (blockId == 0) continue;
                 Block block = multiblock.getDefinition().getDefaultBlock(blockId);
                 if (block != null && block != Blocks.AIR) {
                     blockCounts.merge(block, 1, Integer::sum);
@@ -399,7 +398,6 @@ public class MultiblockJEICategory implements IRecipeCategory<Multiblock> {
 
         for (int i = 0; i < layer.layer().length; i++) {
             int blockId = layer.layer()[i];
-            if (blockId == 0) continue;
 
             int x = i % xWidth;
             int z = i / xWidth;

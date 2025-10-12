@@ -32,4 +32,6 @@ public final class MJBlocks {
 
     public static final DeferredBlock<CompressorBlock> COMPRESSOR = BLOCKS.registerBlockWithItem("compressor", CompressorBlock::new, TANTALUM_PROPERTIES);
 
+    public static final DeferredBlock<CreativePowerBlock> CREATIVE_POWER = BLOCKS.registerBlockWithItem("creative_power", CreativePowerBlock::new, TANTALUM_PROPERTIES);
+
 }

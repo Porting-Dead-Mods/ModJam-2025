@@ -19,11 +19,19 @@ public class MJItemModelProvider extends ItemModelProvider {
         basicItem(MJItems.TANTALUM_NUGGET.get());
         basicItem(MJItems.TANTALUM_SHEET.get());
         basicItem(MJItems.RAW_TANTALUM.get());
+        basicItem(MJItems.PESTLE.get());
+        basicItem(MJItems.MORTAR.get());
+        basicItem(MJItems.HAMMER.get());
+        
+        simpleBlockItem(MJBlocks.TANTALUM_STORAGE_BLOCK.get());
+        simpleBlockItem(MJBlocks.TANTALUM_ORE.get());
+        simpleBlockItem(MJBlocks.DEEPSLATE_TANTALUM_ORE.get());
         simpleBlockItem(MJBlocks.PLANET_SIMULATOR_CONTROLLER.get());
         simpleBlockItem(MJBlocks.PLANET_SIMULATOR_BUS.get());
-        //basicItem(MJItems.PESTLE.get());
-        //basicItem(MJItems.MORTAR.get());
-        //basicItem(MJItems.HAMMER.get());
+        simpleBlockItem(MJBlocks.PLANET_SIMULATOR_CASING.get());
+        simpleBlockItem(MJBlocks.PLANET_SIMULATOR_FRAME.get());
+        simpleBlockItem(MJBlocks.COMPRESSOR.get());
+        simpleBlockItem(MJBlocks.CREATIVE_POWER.get());
     }
 
 }

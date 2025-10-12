@@ -14,19 +14,21 @@ public class MJLangProvider extends LanguageProvider {
     protected void addTranslations() {
         add("itemGroup.modjam", "Mod Jam");
         
-        add("block.modjam.test_multiblock_controller", "Test Multiblock Controller");
-        add("block.modjam.test_multiblock_controller_formed", "Test Multiblock Controller (Formed)");
         add("block.modjam.tantalum_storage_block", "Block of Tantalum");
         add("block.modjam.tantalum_ore", "Tantalum Ore");
         add("block.modjam.deepslate_tantalum_ore", "Deepslate Tantalum Ore");
         add("block.modjam.compressor", "Compressor");
+        add("block.modjam.creative_power", "Creative Power Source");
+        add("block.modjam.planet_simulator_controller", "Planet Simulator Controller");
+        add("block.modjam.planet_simulator_bus", "Planet Simulator Bus");
+        add("block.modjam.planet_simulator_part", "Planet Simulator Part");
+        add("block.modjam.planet_simulator_casing", "Planet Simulator Casing");
+        add("block.modjam.planet_simulator_frame", "Planet Simulator Frame");
         
         add("item.modjam.raw_tantalum", "Raw Tantalum");
         add("item.modjam.tantalum_ingot", "Tantalum Ingot");
         add("item.modjam.tantalum_nugget", "Tantalum Nugget");
-        add("item.modjam.tantalum_dust", "Tantalum Dust");
         add("item.modjam.tantalum_sheet", "Tantalum Sheet");
-        add("item.modjam.tantalum_semi_pressed_sheet", "Semi-Pressed Tantalum Sheet");
         add("item.modjam.pestle", "Pestle");
         add("item.modjam.mortar", "Mortar");
         add("item.modjam.hammer", "Hammer");

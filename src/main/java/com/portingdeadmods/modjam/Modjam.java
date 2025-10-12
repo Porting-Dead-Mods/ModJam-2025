@@ -52,6 +52,8 @@ public final class Modjam {
         event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK, MJBlockEntities.PLANET_SIMULATOR.get(), PlanetSimulatorBlockEntity::getEnergyStorageReadOnly);
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, MJBlockEntities.PLANET_SIMULATOR.get(), PlanetSimulatorBlockEntity::getFluidHandlerReadOnly);
 
+        event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK, MJBlockEntities.CREATIVE_POWER.get(), (be, side) -> be.getEnergyStorage());
+        event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK, MJBlockEntities.COMPRESSOR.get(), (be, side) -> be.getEnergyStorage());
     }
 
     public static ResourceLocation rl(String path) {
