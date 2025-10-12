@@ -11,6 +11,6 @@
   },
   "loader": "fusion:model",
   "textures": {
-    "all": "modjam:block/planet_simulator_casing"
+    "all": "modjam:block/planet_simulator_projector"
   }
 }

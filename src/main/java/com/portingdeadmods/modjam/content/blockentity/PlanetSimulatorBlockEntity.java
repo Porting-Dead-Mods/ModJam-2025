@@ -7,6 +7,7 @@ import com.portingdeadmods.modjam.registries.MJBlockEntities;
 import com.portingdeadmods.modjam.registries.MJMultiblocks;
 import com.portingdeadmods.portingdeadlibs.api.blockentities.ContainerBlockEntity;
 import com.portingdeadmods.portingdeadlibs.api.blockentities.multiblocks.MultiblockEntity;
+import com.portingdeadmods.portingdeadlibs.api.multiblocks.Multiblock;
 import com.portingdeadmods.portingdeadlibs.api.multiblocks.MultiblockData;
 import com.portingdeadmods.portingdeadlibs.api.utils.IOAction;
 import it.unimi.dsi.fastutil.Pair;
@@ -34,9 +35,10 @@ public class PlanetSimulatorBlockEntity extends ContainerBlockEntity implements 
     public void commonTick() {
         super.commonTick();
 
-        if (this.level.getGameTime() % 10 == 0) {
+        if (this.level.getGameTime() % 20 == 0 && this.getBlockState().getValue(Multiblock.FORMED)) {
             MJMultiblocks.PLANET_SIMULATOR.get().form(this.level, this.worldPosition);
         }
+
     }
 
     public ReadOnlyEnergyStorage getEnergyStorageReadOnly(Direction direction) {

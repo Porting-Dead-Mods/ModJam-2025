@@ -18,7 +18,6 @@ public final class MJBlocks {
     public static final DeferredBlock<PlanetSimulatorBusBlock> PLANET_SIMULATOR_BUS = BLOCKS.registerBlockWithItem("planet_simulator_bus", PlanetSimulatorBusBlock::new, TANTALUM_PROPERTIES);
 
     public static final DeferredBlock<PlanetSimulatorPartBlock> PLANET_SIMULATOR_PART = BLOCKS.registerBlock("planet_simulator_part", PlanetSimulatorPartBlock::new, TANTALUM_PROPERTIES);
-
     public static final DeferredBlock<Block> TANTALUM_STORAGE_BLOCK = BLOCKS.registerBlockWithItem("tantalum_storage_block", Block::new, TANTALUM_PROPERTIES);
 
     public static final DeferredBlock<Block> PLANET_SIMULATOR_CASING = BLOCKS.registerBlockWithItem("planet_simulator_casing", Block::new, TANTALUM_PROPERTIES);

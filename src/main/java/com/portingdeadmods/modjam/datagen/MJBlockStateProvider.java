@@ -35,7 +35,9 @@ public class MJBlockStateProvider extends BlockStateProvider {
                 .partialState().with(PlanetSimulatorPartBlock.VARIANT, PlanetSimulatorPartBlock.Variant.CASING)
                 .modelForState().modelFile(cubeAll(MJBlocks.PLANET_SIMULATOR_CASING.get())).addModel()
                 .partialState().with(PlanetSimulatorPartBlock.VARIANT, PlanetSimulatorPartBlock.Variant.FRAME)
-                .modelForState().modelFile(cubeAll(MJBlocks.PLANET_SIMULATOR_FRAME.get())).addModel();
+                .modelForState().modelFile(cubeAll(MJBlocks.PLANET_SIMULATOR_FRAME.get())).addModel()
+                .partialState().with(PlanetSimulatorPartBlock.VARIANT, PlanetSimulatorPartBlock.Variant.PROJECTOR)
+                .modelForState().modelFile(models().getExistingFile(Modjam.rl("block/planet_simulator_projector"))).addModel();
 
         builder(MJBlocks.PLANET_SIMULATOR_CONTROLLER)
                 .defaultTexture(this.blockTexture(MJBlocks.PLANET_SIMULATOR_CASING.get()))

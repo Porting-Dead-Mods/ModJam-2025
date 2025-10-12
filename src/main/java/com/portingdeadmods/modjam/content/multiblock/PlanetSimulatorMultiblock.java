@@ -84,7 +84,11 @@ public class PlanetSimulatorMultiblock implements Multiblock {
             if ((id == 0 || id == 2) && (state.is(MJBlocks.PLANET_SIMULATOR_CASING) || state.is(MJBlocks.PLANET_SIMULATOR_FRAME))) {
                 return MJBlocks.PLANET_SIMULATOR_PART.get().defaultBlockState()
                         .setValue(Multiblock.FORMED, true)
-                        .setValue(PlanetSimulatorPartBlock.VARIANT, id == 0 ? PlanetSimulatorPartBlock.Variant.CASING : PlanetSimulatorPartBlock.Variant.FRAME);
+                        .setValue(PlanetSimulatorPartBlock.VARIANT, switch (id) {
+                            case 0 -> layoutIndex == 2 ? PlanetSimulatorPartBlock.Variant.PROJECTOR : PlanetSimulatorPartBlock.Variant.CASING;
+                            case 2 -> PlanetSimulatorPartBlock.Variant.FRAME;
+                            default -> throw new IllegalStateException("Unexpected value: " + id);
+                        });
             }
             return state.setValue(Multiblock.FORMED, true);
         }
@@ -92,7 +96,18 @@ public class PlanetSimulatorMultiblock implements Multiblock {
     }
 
     @Override
-    public boolean isFormed(Level level, BlockPos blockPos) {
-        return false;
+    public BlockState unformBlock(Level level, BlockPos blockPos, BlockPos controllerPos, int layerIndex, int layoutIndex, MultiblockData multiblockData, @Nullable Player player) {
+        BlockState state = level.getBlockState(blockPos);
+        if ((blockPos.equals(controllerPos) || state.is(MJBlocks.PLANET_SIMULATOR_BUS)) && state.hasProperty(FORMED)) {
+            return state.setValue(FORMED, false);
+        }
+        return Multiblock.super.unformBlock(level, blockPos, controllerPos, layerIndex, layoutIndex, multiblockData, player);
     }
+
+    @Override
+    public boolean isFormed(Level level, BlockPos blockPos) {
+        BlockState state = level.getBlockState(blockPos);
+        return state.hasProperty(Multiblock.FORMED) && state.getValue(Multiblock.FORMED);
+    }
+
 }

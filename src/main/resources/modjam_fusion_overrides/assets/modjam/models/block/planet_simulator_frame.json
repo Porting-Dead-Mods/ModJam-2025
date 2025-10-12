@@ -5,7 +5,7 @@
     "type": "fusion:or",
     "predicates": [
       {
-        "type": "fusion:is_same_block"
+        "type": "fusion:is_same_state"
       }
     ]
   },
