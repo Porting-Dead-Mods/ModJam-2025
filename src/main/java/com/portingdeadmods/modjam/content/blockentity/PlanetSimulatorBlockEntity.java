@@ -3,7 +3,10 @@ package com.portingdeadmods.modjam.content.blockentity;
 import com.portingdeadmods.modjam.capabilities.ReadOnlyEnergyStorage;
 import com.portingdeadmods.modjam.capabilities.ReadOnlyFluidHandler;
 import com.portingdeadmods.modjam.capabilities.ReadOnlyItemHandler;
+import com.portingdeadmods.modjam.content.menus.PlanetSimulatorMenu;
 import com.portingdeadmods.modjam.registries.MJBlockEntities;
+import com.portingdeadmods.modjam.registries.MJDataComponents;
+import com.portingdeadmods.modjam.registries.MJMenus;
 import com.portingdeadmods.modjam.registries.MJMultiblocks;
 import com.portingdeadmods.portingdeadlibs.api.blockentities.ContainerBlockEntity;
 import com.portingdeadmods.portingdeadlibs.api.blockentities.multiblocks.MultiblockEntity;
@@ -15,19 +18,24 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.MenuProvider;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.capabilities.BlockCapability;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 
-public class PlanetSimulatorBlockEntity extends ContainerBlockEntity implements MultiblockEntity {
+public class PlanetSimulatorBlockEntity extends ContainerBlockEntity implements MultiblockEntity, MenuProvider {
     private MultiblockData multiblockData;
 
     public PlanetSimulatorBlockEntity(BlockPos blockPos, BlockState blockState) {
         super(MJBlockEntities.PLANET_SIMULATOR.get(), blockPos, blockState);
         this.addEnergyStorage(10_000_000);
-        this.addItemHandler(9);
+        this.addItemHandler(1, (slot, item) -> item.has(MJDataComponents.PLANET));
         this.addFluidTank(16_000);
     }
 
@@ -83,4 +91,13 @@ public class PlanetSimulatorBlockEntity extends ContainerBlockEntity implements 
         }
     }
 
+    @Override
+    public Component getDisplayName() {
+        return Component.literal("Planet Simulator");
+    }
+
+    @Override
+    public @Nullable AbstractContainerMenu createMenu(int i, Inventory inventory, Player player) {
+        return new PlanetSimulatorMenu(i, inventory, this);
+    }
 }

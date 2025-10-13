@@ -3,6 +3,7 @@ package com.portingdeadmods.modjam.events;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.portingdeadmods.modjam.Modjam;
 import com.portingdeadmods.modjam.client.screens.CompressorScreen;
+import com.portingdeadmods.modjam.client.screens.PlanetSimulatorScreen;
 import com.portingdeadmods.modjam.registries.MJMenus;
 import com.portingdeadmods.modjam.registries.MJShaders;
 import net.minecraft.client.Camera;
@@ -48,6 +49,7 @@ public class ClientEvents {
     @SubscribeEvent
     public static void registerScreens(RegisterMenuScreensEvent event) {
         event.register(MJMenus.COMPRESSOR.get(), CompressorScreen::new);
+        event.register(MJMenus.PLANET_SIMULATOR.get(), PlanetSimulatorScreen::new);
     }
 
     @SubscribeEvent
