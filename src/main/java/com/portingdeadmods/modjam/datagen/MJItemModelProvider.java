@@ -1,13 +1,16 @@
 package com.portingdeadmods.modjam.datagen;
 
 import com.portingdeadmods.modjam.Modjam;
+import com.portingdeadmods.modjam.client.models.item.PlanetCardItemModel;
+import com.portingdeadmods.modjam.content.items.PlanetCardItem;
 import com.portingdeadmods.modjam.registries.MJBlocks;
 import com.portingdeadmods.modjam.registries.MJItems;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
+import net.neoforged.neoforge.client.model.generators.ItemModelBuilder;
 import net.neoforged.neoforge.client.model.generators.ItemModelProvider;
+import net.neoforged.neoforge.client.model.generators.ModelFile;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.neoforged.neoforge.registries.DeferredHolder;
 
@@ -27,7 +30,7 @@ public class MJItemModelProvider extends ItemModelProvider {
         basicItem(MJItems.TANTALUM_NUGGET.get());
         basicItem(MJItems.TANTALUM_SHEET.get());
         basicItem(MJItems.RAW_TANTALUM.get());
-        basicItem(MJItems.PLANET_CARD.get());
+        planetCard(MJItems.PLANET_CARD.get());
 
         Set<Block> noItemModels = MJBlocks.NO_ITEM_MODELS.stream().map(DeferredHolder::get).collect(Collectors.toSet());
 
@@ -38,4 +41,10 @@ public class MJItemModelProvider extends ItemModelProvider {
                 .forEach(this::simpleBlockItem);
     }
 
+    private ItemModelBuilder planetCard(PlanetCardItem item) {
+        String name = BuiltInRegistries.ITEM.getKey(item).getPath();
+        return getBuilder(name)
+                .customLoader(PlanetCardItemModel.LoaderBuilder::new).end()
+                .parent(new ModelFile.UncheckedModelFile("neoforge:item/default"));
+    }
 }
