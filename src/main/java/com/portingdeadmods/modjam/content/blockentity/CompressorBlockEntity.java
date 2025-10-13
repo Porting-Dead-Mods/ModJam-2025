@@ -14,6 +14,8 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -33,6 +35,8 @@ public class CompressorBlockEntity extends ContainerBlockEntity implements MenuP
     private CompressingRecipe currentRecipe;
     private int progress;
     private RedstoneSignalType redstoneSignalType;
+    private long lastStampTick = -1;
+    private final long animationOffset;
 
     public CompressorBlockEntity(BlockPos blockPos, BlockState blockState) {
         super(MJBlockEntities.COMPRESSOR.get(), blockPos, blockState);
@@ -40,6 +44,11 @@ public class CompressorBlockEntity extends ContainerBlockEntity implements MenuP
         addEnergyStorage(MJConfig.COMPRESSOR_CAPACITY.getAsInt());
 
         this.redstoneSignalType = RedstoneSignalType.IGNORED;
+        this.animationOffset = (blockPos.getX() + blockPos.getY() * 7 + blockPos.getZ() * 13) & 0x7F;
+    }
+    
+    public long getAnimationOffset() {
+        return animationOffset;
     }
 
     @Override
@@ -74,6 +83,14 @@ public class CompressorBlockEntity extends ContainerBlockEntity implements MenuP
     @Override
     public void commonTick() {
         if (this.currentRecipe != null && this.getEnergyStorage().getEnergyStored() >= MJConfig.COMPRESSOR_USAGE.getAsInt()) {
+            long currentTick = this.level.getGameTime();
+            long tickInCycle = (currentTick + animationOffset) % 80;
+            
+            if (tickInCycle == 24 && lastStampTick != currentTick) {
+                this.level.playSound(null, this.worldPosition, SoundEvents.ANVIL_LAND, SoundSource.BLOCKS, 0.3f, 1.2f);
+                lastStampTick = currentTick;
+            }
+            
             if (this.progress >= this.currentRecipe.duration()) {
                 ItemStack result = this.currentRecipe.result().copy();
                 this.getItemHandler().extractItem(0, 1, false);

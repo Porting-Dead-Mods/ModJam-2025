@@ -24,14 +24,19 @@ public class CompressorRenderer extends PDLBERenderer<CompressorBlockEntity> {
 
     @Override
     public void render(CompressorBlockEntity blockEntity, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
-        float progress = 0.0f;
-        int maxProgress = blockEntity.getMaxProgress();
-        if (maxProgress > 0) {
-            progress = ((float) blockEntity.getProgress() + partialTick) / (float) maxProgress;
-            progress = Math.min(progress, 1.0f);
+        float pylonOffset = 0.0f;
+        if (blockEntity.getMaxProgress() > 0) {
+            long time = blockEntity.getLevel().getGameTime() + blockEntity.getAnimationOffset();
+            float animationTime = (time + partialTick) % 80;
+            float animationProgress = animationTime / 80.0f;
+            
+            if (animationProgress < 0.6f) {
+                float moveProgress = animationProgress / 0.6f;
+                pylonOffset = (float) (Math.sin(moveProgress * Math.PI) * 0.5f);
+            } else {
+                pylonOffset = 0.0f;
+            }
         }
-        
-        float pylonOffset = progress * 0.75f;
         
         Direction facing = blockEntity.getBlockState().getValue(BlockStateProperties.HORIZONTAL_FACING);
         float rotation = switch (facing) {
