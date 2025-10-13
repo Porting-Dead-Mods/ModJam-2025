@@ -52,14 +52,14 @@ public class CompressorRenderer extends PDLBERenderer<CompressorBlockEntity> {
             {
                 poseStack.translate(0.5, 1.5, 0.5);
                 poseStack.mulPose(Axis.XN.rotationDegrees(180));
-                this.model.renderToBuffer(poseStack, CompressorModel.MATERIAL.buffer(bufferSource, RenderType::entitySolid), LightTexture.FULL_BRIGHT, packedOverlay);
+                this.model.renderToBuffer(poseStack, CompressorModel.MATERIAL.buffer(bufferSource, RenderType::entitySolid), packedLight, packedOverlay);
             }
             poseStack.popPose();
             poseStack.pushPose();
             {
                 poseStack.translate(0.5, 2.5 - pylonOffset, 0.5);
                 poseStack.mulPose(Axis.XN.rotationDegrees(180));
-                this.pressModel.renderToBuffer(poseStack, CompressorModel.PRESS_MATERIAL.buffer(bufferSource, RenderType::entitySolid), LightTexture.FULL_BRIGHT, packedOverlay);
+                this.pressModel.renderToBuffer(poseStack, CompressorModel.PRESS_MATERIAL.buffer(bufferSource, RenderType::entitySolid), packedLight, packedOverlay);
             }
             poseStack.popPose();
         }

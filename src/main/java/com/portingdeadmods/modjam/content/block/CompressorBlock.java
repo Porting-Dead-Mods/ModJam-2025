@@ -2,14 +2,21 @@ package com.portingdeadmods.modjam.content.block;
 
 import com.mojang.serialization.MapCodec;
 import com.portingdeadmods.modjam.registries.MJBlockEntities;
+import com.portingdeadmods.modjam.registries.MJBlocks;
 import com.portingdeadmods.portingdeadlibs.api.blockentities.ContainerBlockEntity;
 import com.portingdeadmods.portingdeadlibs.api.blocks.RotatableContainerBlock;
 import com.portingdeadmods.portingdeadlibs.api.utils.PDLBlockStateProperties;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -20,6 +27,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.stream.Stream;
 
@@ -109,5 +117,39 @@ public class CompressorBlock extends RotatableContainerBlock {
     @Override
     protected MapCodec<? extends BaseEntityBlock> codec() {
         return simpleCodec(CompressorBlock::new);
+    }
+
+    @Nullable
+    @Override
+    public BlockState getStateForPlacement(BlockPlaceContext context) {
+        BlockPos above = context.getClickedPos().above();
+        if (!context.getLevel().getBlockState(above).canBeReplaced(context)) {
+            return null;
+        }
+        return super.getStateForPlacement(context);
+    }
+
+    @Override
+    public void setPlacedBy(Level level, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
+        super.setPlacedBy(level, pos, state, placer, stack);
+        BlockPos above = pos.above();
+        level.setBlock(above, MJBlocks.COMPRESSOR_GHOST.get().defaultBlockState(), 3);
+    }
+
+    @Override
+    public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
+        if (!state.is(newState.getBlock())) {
+            BlockPos above = pos.above();
+            if (level.getBlockState(above).is(MJBlocks.COMPRESSOR_GHOST.get())) {
+                level.setBlock(above, Blocks.AIR.defaultBlockState(), 3);
+            }
+        }
+        super.onRemove(state, level, pos, newState, movedByPiston);
+    }
+
+    @Override
+    public boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
+        BlockPos above = pos.above();
+        return level.getBlockState(above).canBeReplaced();
     }
 }
