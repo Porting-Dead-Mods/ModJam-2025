@@ -9,6 +9,8 @@ import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.core.Direction;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 
 public class CompressorRenderer extends PDLBERenderer<CompressorBlockEntity> {
     private final CompressorModel model;
@@ -31,8 +33,21 @@ public class CompressorRenderer extends PDLBERenderer<CompressorBlockEntity> {
         
         float pylonOffset = progress * 0.75f;
         
+        Direction facing = blockEntity.getBlockState().getValue(BlockStateProperties.HORIZONTAL_FACING);
+        float rotation = switch (facing) {
+            case NORTH -> 180f;
+            case SOUTH -> 0f;
+            case WEST -> 90f;
+            case EAST -> 270f;
+            default -> 0f;
+        };
+        
         poseStack.pushPose();
         {
+            poseStack.translate(0.5, 0, 0.5);
+            poseStack.mulPose(Axis.YP.rotationDegrees(rotation));
+            poseStack.translate(-0.5, 0, -0.5);
+            
             poseStack.pushPose();
             {
                 poseStack.translate(0.5, 1.5, 0.5);
