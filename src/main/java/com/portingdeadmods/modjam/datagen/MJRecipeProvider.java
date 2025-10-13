@@ -42,39 +42,39 @@ public class MJRecipeProvider extends RecipeProvider {
                 .unlockedBy("has_tantalum_ingot", has(MJItems.TANTALUM_INGOT.get()))
                 .save(recipeOutput);
         
-        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, MJItems.HAMMER.get())
-                .pattern("III")
-                .pattern(" S ")
-                .pattern(" S ")
-                .define('I', MJItems.TANTALUM_INGOT.get())
-                .define('S', Items.STICK)
-                .unlockedBy("has_tantalum_ingot", has(MJItems.TANTALUM_INGOT.get()))
-                .save(recipeOutput);
-        
-        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, MJItems.PESTLE.get())
-                .pattern(" S ")
-                .pattern(" S ")
-                .pattern(" S ")
-                .define('S', Items.STICK)
-                .unlockedBy("has_stick", has(Items.STICK))
-                .save(recipeOutput);
-        
-        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, MJItems.MORTAR.get())
-                .pattern("S S")
-                .pattern("S S")
-                .pattern(" S ")
-                .define('S', Items.STONE)
-                .unlockedBy("has_stone", has(Items.STONE))
-                .save(recipeOutput);
-        
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, MJItems.TANTALUM_SHEET.get())
-                .pattern("H")
-                .pattern("I")
-                .pattern("I")
-                .define('H', MJItems.HAMMER.get())
-                .define('I', MJItems.TANTALUM_INGOT.get())
-                .unlockedBy("has_hammer", has(MJItems.HAMMER.get()))
-                .save(recipeOutput);
+//        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, MJItems.HAMMER.get())
+//                .pattern("III")
+//                .pattern(" S ")
+//                .pattern(" S ")
+//                .define('I', MJItems.TANTALUM_INGOT.get())
+//                .define('S', Items.STICK)
+//                .unlockedBy("has_tantalum_ingot", has(MJItems.TANTALUM_INGOT.get()))
+//                .save(recipeOutput);
+//
+//        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, MJItems.PESTLE.get())
+//                .pattern(" S ")
+//                .pattern(" S ")
+//                .pattern(" S ")
+//                .define('S', Items.STICK)
+//                .unlockedBy("has_stick", has(Items.STICK))
+//                .save(recipeOutput);
+//
+//        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, MJItems.MORTAR.get())
+//                .pattern("S S")
+//                .pattern("S S")
+//                .pattern(" S ")
+//                .define('S', Items.STONE)
+//                .unlockedBy("has_stone", has(Items.STONE))
+//                .save(recipeOutput);
+//
+//        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, MJItems.TANTALUM_SHEET.get())
+//                .pattern("H")
+//                .pattern("I")
+//                .pattern("I")
+//                .define('H', MJItems.HAMMER.get())
+//                .define('I', MJItems.TANTALUM_INGOT.get())
+//                .unlockedBy("has_hammer", has(MJItems.HAMMER.get()))
+//                .save(recipeOutput);
     }
     
     protected static void oreSmelting(RecipeOutput recipeOutput, List<ItemLike> ingredients, RecipeCategory category, ItemLike result, float experience, int cookingTime, String group) {

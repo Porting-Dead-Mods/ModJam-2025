@@ -1,6 +1,8 @@
 package com.portingdeadmods.modjam.datagen;
 
 import com.portingdeadmods.modjam.Modjam;
+import com.portingdeadmods.modjam.registries.MJItems;
+import com.portingdeadmods.modjam.registries.MJTranslations;
 import net.minecraft.data.PackOutput;
 import net.neoforged.neoforge.common.data.LanguageProvider;
 
@@ -29,9 +31,7 @@ public class MJLangProvider extends LanguageProvider {
         add("item.modjam.tantalum_ingot", "Tantalum Ingot");
         add("item.modjam.tantalum_nugget", "Tantalum Nugget");
         add("item.modjam.tantalum_sheet", "Tantalum Sheet");
-        add("item.modjam.pestle", "Pestle");
-        add("item.modjam.mortar", "Mortar");
-        add("item.modjam.hammer", "Hammer");
+        addItem(MJItems.PLANET_CARD, "Planet Card");
         
         add("modjam.jei.multiblock.title", "Multiblock Assembly");
         add("modjam.jei.multiblock.component", "Required Component");
@@ -49,5 +49,8 @@ public class MJLangProvider extends LanguageProvider {
         add("redstone_signal_type.portingdeadlibs.ignored", "Ignored");
         add("redstone_signal_type.portingdeadlibs.low_signal", "Low Signal");
         add("redstone_signal_type.portingdeadlibs.high_signal", "High Signal");
+
+        MJTranslations.TRANSLATIONS.getDefaultTranslations().forEach(this::add);
+
     }
 }

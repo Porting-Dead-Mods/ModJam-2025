@@ -32,6 +32,7 @@ public final class Modjam {
         MJDataAttachments.ATTACHMENTS.register(modEventBus);
         MJRecipes.RECIPE_SERIALIZERS.register(modEventBus);
         MJMultiblocks.MULTIBLOCKS.register(modEventBus);
+        MJTranslations.TRANSLATIONS.register(modEventBus);
 
         modEventBus.addListener(MJNetworking::register);
         modEventBus.addListener(this::registerCapabilities);

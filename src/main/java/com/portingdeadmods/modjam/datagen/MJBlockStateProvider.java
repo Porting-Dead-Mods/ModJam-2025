@@ -30,8 +30,8 @@ public class MJBlockStateProvider extends BlockStateProvider {
                 cubeAll(MJBlocks.PLANET_SIMULATOR_CASING.get()));
         simpleBlockWithItem(MJBlocks.PLANET_SIMULATOR_FRAME.get(),
                 cubeAll(MJBlocks.PLANET_SIMULATOR_FRAME.get()));
-        simpleBlockWithItem(MJBlocks.CREATIVE_POWER.get(),
-                cubeAll(MJBlocks.CREATIVE_POWER.get()));
+        //simpleBlockWithItem(MJBlocks.CREATIVE_POWER.get(),
+        //        cubeAll(MJBlocks.CREATIVE_POWER.get()));
 
         getVariantBuilder(MJBlocks.PLANET_SIMULATOR_PART.get())
                 .partialState().with(PlanetSimulatorPartBlock.VARIANT, PlanetSimulatorPartBlock.Variant.CASING)
@@ -50,13 +50,6 @@ public class MJBlockStateProvider extends BlockStateProvider {
         builder(MJBlocks.PLANET_SIMULATOR_BUS)
                 .defaultTexture(this.blockTexture(MJBlocks.PLANET_SIMULATOR_CASING.get()))
                 .sides(this::blockTexture)
-                .create();
-
-        builder(MJBlocks.COMPRESSOR)
-                .defaultTexture(blockTexture(MJBlocks.TANTALUM_STORAGE_BLOCK.get()))
-                .front(this::blockTexture)
-                .horizontalFacing()
-                .active()
                 .create();
 
     }

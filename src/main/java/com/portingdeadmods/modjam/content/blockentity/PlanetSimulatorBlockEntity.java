@@ -35,7 +35,7 @@ public class PlanetSimulatorBlockEntity extends ContainerBlockEntity implements 
     public void commonTick() {
         super.commonTick();
 
-        if (this.level.getGameTime() % 20 == 0 && this.getBlockState().getValue(Multiblock.FORMED)) {
+        if (this.level.getGameTime() % 20 == 0 && !this.getBlockState().getValue(Multiblock.FORMED)) {
             MJMultiblocks.PLANET_SIMULATOR.get().form(this.level, this.worldPosition);
         }
 
