@@ -9,6 +9,8 @@ import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.core.Direction;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 
 public class CompressorRenderer extends PDLBERenderer<CompressorBlockEntity> {
     private final CompressorModel model;
@@ -22,29 +24,47 @@ public class CompressorRenderer extends PDLBERenderer<CompressorBlockEntity> {
 
     @Override
     public void render(CompressorBlockEntity blockEntity, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
-        float progress = 0.0f;
-        int maxProgress = blockEntity.getMaxProgress();
-        if (maxProgress > 0) {
-            progress = ((float) blockEntity.getProgress() + partialTick) / (float) maxProgress;
-            progress = Math.min(progress, 1.0f);
+        float pylonOffset = 0.0f;
+        if (blockEntity.getMaxProgress() > 0) {
+            long time = blockEntity.getLevel().getGameTime() + blockEntity.getAnimationOffset();
+            float animationTime = (time + partialTick) % 80;
+            float animationProgress = animationTime / 80.0f;
+            
+            if (animationProgress < 0.6f) {
+                float moveProgress = animationProgress / 0.6f;
+                pylonOffset = (float) (Math.sin(moveProgress * Math.PI) * 0.5f);
+            } else {
+                pylonOffset = 0.0f;
+            }
         }
         
-        float pylonOffset = progress * 0.75f;
+        Direction facing = blockEntity.getBlockState().getValue(BlockStateProperties.HORIZONTAL_FACING);
+        float rotation = switch (facing) {
+            case NORTH -> 180f;
+            case SOUTH -> 0f;
+            case WEST -> 90f;
+            case EAST -> 270f;
+            default -> 0f;
+        };
         
         poseStack.pushPose();
         {
+            poseStack.translate(0.5, 0, 0.5);
+            poseStack.mulPose(Axis.YP.rotationDegrees(rotation));
+            poseStack.translate(-0.5, 0, -0.5);
+            
             poseStack.pushPose();
             {
                 poseStack.translate(0.5, 1.5, 0.5);
                 poseStack.mulPose(Axis.XN.rotationDegrees(180));
-                this.model.renderToBuffer(poseStack, CompressorModel.MATERIAL.buffer(bufferSource, RenderType::entitySolid), LightTexture.FULL_BRIGHT, packedOverlay);
+                this.model.renderToBuffer(poseStack, CompressorModel.MATERIAL.buffer(bufferSource, RenderType::entitySolid), packedLight, packedOverlay);
             }
             poseStack.popPose();
             poseStack.pushPose();
             {
                 poseStack.translate(0.5, 2.5 - pylonOffset, 0.5);
                 poseStack.mulPose(Axis.XN.rotationDegrees(180));
-                this.pressModel.renderToBuffer(poseStack, CompressorModel.PRESS_MATERIAL.buffer(bufferSource, RenderType::entitySolid), LightTexture.FULL_BRIGHT, packedOverlay);
+                this.pressModel.renderToBuffer(poseStack, CompressorModel.PRESS_MATERIAL.buffer(bufferSource, RenderType::entitySolid), packedLight, packedOverlay);
             }
             poseStack.popPose();
         }
