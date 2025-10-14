@@ -63,13 +63,20 @@ public class ClientEvents {
     @SubscribeEvent
     public static void registerItemColors(RegisterColorHandlersEvent.Item event) {
         event.register((stack, tintIndex) -> {
-            if (tintIndex == 1) {
-                PlanetComponent component = stack.get(MJDataComponents.PLANET);
-                if (component != null && component.planetType().isPresent()) {
-                    return component.planetType().get().tint().orElse(-1);
-                }
+            if (tintIndex != 1) return 0xFFFFFFFF;
+
+            PlanetComponent component = stack.get(MJDataComponents.PLANET);
+            if (component == null || component.planetType().isEmpty()) {
+                return 0xFFFFFFFF;
             }
-            return -1;
-        }, MJItems.PLANET_CARD.get());
+
+            int color = component.planetType().get().tint().orElse(0xFFFFFF);
+            return ensureOpaque(color);
+        }, MJItems.TINTED_PLANET_CARD.get());
     }
+
+    private static int ensureOpaque(int color) {
+        return (color & 0xFF000000) == 0 ? 0xFF000000 | color : color;
+    }
+
 }

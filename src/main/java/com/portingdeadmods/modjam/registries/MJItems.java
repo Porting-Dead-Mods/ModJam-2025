@@ -2,14 +2,11 @@ package com.portingdeadmods.modjam.registries;
 
 import com.portingdeadmods.modjam.Modjam;
 import com.portingdeadmods.modjam.content.items.PlanetCardItem;
+import com.portingdeadmods.modjam.content.items.TintedPlanetCardItem;
 import com.portingdeadmods.modjam.data.PlanetComponent;
-import com.portingdeadmods.portingdeadlibs.api.utils.PDLDeferredRegisterBlocks;
 import com.portingdeadmods.portingdeadlibs.api.utils.PDLDeferredRegisterItems;
-import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
-import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
 import net.neoforged.neoforge.registries.DeferredItem;
-import net.neoforged.neoforge.registries.DeferredRegister;
 
 public final class MJItems {
     public static final PDLDeferredRegisterItems ITEMS = PDLDeferredRegisterItems.createItemsRegister(Modjam.MODID);
@@ -23,6 +20,9 @@ public final class MJItems {
     public static final DeferredItem<Item> TANTALUM_SHEET = ITEMS.registerSimpleItem("tantalum_sheet");
 
     public static final DeferredItem<PlanetCardItem> PLANET_CARD = ITEMS.register("planet_card", () -> new PlanetCardItem(new Item.Properties()
+            .component(MJDataComponents.PLANET, PlanetComponent.EMPTY)));
+
+    public static final DeferredItem<TintedPlanetCardItem> TINTED_PLANET_CARD = ITEMS.register("tinted_planet_card", () -> new TintedPlanetCardItem(new Item.Properties()
             .component(MJDataComponents.PLANET, PlanetComponent.EMPTY)));
 
 }

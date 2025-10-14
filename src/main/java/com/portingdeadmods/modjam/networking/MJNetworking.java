@@ -9,6 +9,7 @@ import com.portingdeadmods.portingdeadlibs.PortingDeadLibsClient;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
@@ -34,7 +35,8 @@ public class MJNetworking {
             MJPlanetCards.clearStacks();
             
             payload.planetTypes().forEach(planetType -> {
-                ItemStack stack = new ItemStack(MJItems.PLANET_CARD.get());
+                Item itemToUse = planetType.tint().isPresent() ? MJItems.TINTED_PLANET_CARD.get() : MJItems.PLANET_CARD.get();
+                ItemStack stack = new ItemStack(itemToUse);
                 stack.set(MJDataComponents.PLANET, new PlanetComponent(Optional.of(planetType), false));
                 MJPlanetCards.addStack(stack);
             });

@@ -6,6 +6,7 @@ import com.portingdeadmods.modjam.networking.MJNetworking;
 import com.portingdeadmods.modjam.networking.SyncPlanetCardsPayload;
 import net.minecraft.core.Holder;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.event.AddReloadListenerEvent;
 
@@ -27,7 +28,8 @@ public final class MJPlanetCards {
             PlanetType planetType = holder.value();
             PLANET_TYPES.add(planetType);
             
-            ItemStack stack = new ItemStack(MJItems.PLANET_CARD.get());
+            Item itemToUse = planetType.tint().isPresent() ? MJItems.TINTED_PLANET_CARD.get() : MJItems.PLANET_CARD.get();
+            ItemStack stack = new ItemStack(itemToUse);
             stack.set(MJDataComponents.PLANET, new PlanetComponent(Optional.of(planetType), false));
             PLANET_CARD_STACKS.add(stack);
         }
@@ -55,5 +57,9 @@ public final class MJPlanetCards {
 
     public static void addStack(ItemStack stack) {
         PLANET_CARD_STACKS.add(stack);
+    }
+
+    public static List<PlanetType> getAllPlanetTypes() {
+        return PLANET_TYPES;
     }
 }

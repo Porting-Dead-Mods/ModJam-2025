@@ -4,7 +4,6 @@ import com.google.common.collect.Maps;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
-import com.mojang.datafixers.util.Pair;
 import com.mojang.math.Transformation;
 import com.portingdeadmods.modjam.Modjam;
 import com.portingdeadmods.modjam.data.PlanetComponent;
@@ -13,6 +12,7 @@ import com.portingdeadmods.modjam.registries.MJDataComponents;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.ItemOverrides;
+import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.*;
 import net.minecraft.core.registries.Registries;
@@ -25,6 +25,7 @@ import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.client.NeoForgeRenderTypes;
 import net.neoforged.neoforge.client.RenderTypeGroup;
 import net.neoforged.neoforge.client.model.CompositeModel;
+import net.neoforged.neoforge.client.model.IModelBuilder;
 import net.neoforged.neoforge.client.model.SimpleModelState;
 import net.neoforged.neoforge.client.model.generators.CustomLoaderBuilder;
 import net.neoforged.neoforge.client.model.generators.ItemModelBuilder;
@@ -43,36 +44,38 @@ public record PlanetCardItemModel(Optional<ResourceKey<Level>> planet, Optional<
 
     @Override
     public BakedModel bake(IGeometryBakingContext context, ModelBaker baker, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelState, ItemOverrides overrides) {
-        Pair<ResourceLocation, Optional<Integer>> resolved = planetType.map(this::resolveFromPlanetType)
+        ResourceLocation overlayLoc = planetType.map(this::resolveTexture)
                 .orElseGet(() -> resolveTextureOrTint(planet.orElse(ResourceKey.create(Registries.DIMENSION, Modjam.rl("empty")))));
-        final ResourceLocation overlayLoc = resolved.getFirst();
-        final TextureAtlasSprite overlaySprite = spriteGetter.apply(new Material(InventoryMenu.BLOCK_ATLAS, overlayLoc));
-        final TextureAtlasSprite baseSprite = spriteGetter.apply(new Material(InventoryMenu.BLOCK_ATLAS, Modjam.rl("item/planet_card/base")));
-        final var itemContext = StandaloneGeometryBakingContext.builder(context).withGui3d(false).withUseBlockLight(false).build(Modjam.rl("planet_card_override"));
-        final var builder = CompositeModel.Baked.builder(itemContext, baseSprite, new CardOverrideHandler(overrides, baker, itemContext), context.getTransforms());
-        final var normalRenderTypes = new RenderTypeGroup(RenderType.translucent(), NeoForgeRenderTypes.ITEM_UNSORTED_TRANSLUCENT.get());
-        addQuads(modelState, baseSprite, builder, normalRenderTypes, new Transformation(new Vector3f(), new Quaternionf(), new Vector3f(1, 1, 1.002f), new Quaternionf()));
-        addQuads(modelState, overlaySprite, builder, normalRenderTypes, new Transformation(new Vector3f(), new Quaternionf(), new Vector3f(1, 1, 1.002f), new Quaternionf()));
+        
+        TextureAtlasSprite overlaySprite = spriteGetter.apply(new Material(InventoryMenu.BLOCK_ATLAS, overlayLoc));
+        TextureAtlasSprite baseSprite = spriteGetter.apply(new Material(InventoryMenu.BLOCK_ATLAS, Modjam.rl("item/planet_card/base")));
+        var itemContext = StandaloneGeometryBakingContext.builder(context).withGui3d(false).withUseBlockLight(false).build(Modjam.rl("planet_card_override"));
+        var builder = CompositeModel.Baked.builder(itemContext, baseSprite, new CardOverrideHandler(overrides, baker, itemContext), context.getTransforms());
+        var renderTypes = new RenderTypeGroup(RenderType.translucent(), NeoForgeRenderTypes.ITEM_UNSORTED_TRANSLUCENT.get());
+        var transformedState = new SimpleModelState(modelState.getRotation().compose(new Transformation(new Vector3f(), new Quaternionf(), new Vector3f(1, 1, 1.002f), new Quaternionf())), modelState.isUvLocked());
+        
+        builder.addLayer(bakeLayer(baseSprite, transformedState, itemContext, context.getTransforms(), renderTypes, overrides, baker));
+        builder.addLayer(bakeLayer(overlaySprite, transformedState, itemContext, context.getTransforms(), renderTypes, overrides, baker));
         builder.setParticle(baseSprite);
         return builder.build();
     }
-
-    private Pair<ResourceLocation, Optional<Integer>> resolveTextureOrTint(ResourceKey<Level> planetKey) {
-        String planetName = planet.map(levelResourceKey -> levelResourceKey.location().getPath()).orElse("empty");
-        String planetOwner = planet.map(levelResourceKey -> levelResourceKey.location().getNamespace()).orElse(Modjam.MODID);
-        ResourceLocation location = ResourceLocation.fromNamespaceAndPath(planetOwner, "item/planet_card/planets/" + planetName);
-        return Pair.of(location, Optional.empty());
-    }
     
-    private Pair<ResourceLocation, Optional<Integer>> resolveFromPlanetType(PlanetType planetType) {
-        return Pair.of(planetType.texture(), planetType.tint());
-    }
-
-    private static void addQuads(ModelState modelState, TextureAtlasSprite sprite, CompositeModel.Baked.Builder builder, RenderTypeGroup normalRenderTypes, @Nullable Transformation transformation) {
-        var transformedState = transformation == null ? modelState : new SimpleModelState(modelState.getRotation().compose(transformation), modelState.isUvLocked());
+    private BakedModel bakeLayer(TextureAtlasSprite sprite, ModelState transformedState, IGeometryBakingContext itemContext, ItemTransforms transforms, RenderTypeGroup renderTypes, ItemOverrides overrides, ModelBaker baker) {
         var unbaked = UnbakedGeometryHelper.createUnbakedItemElements(0, sprite);
         var quads = UnbakedGeometryHelper.bakeElements(unbaked, material -> sprite, transformedState);
-        builder.addQuads(normalRenderTypes, quads);
+        var model = IModelBuilder.of(itemContext.useAmbientOcclusion(), itemContext.useBlockLight(), itemContext.isGui3d(), transforms, new CardOverrideHandler(overrides, baker, itemContext), sprite, renderTypes);
+        quads.forEach(model::addUnculledFace);
+        return model.build();
+    }
+
+    private ResourceLocation resolveTextureOrTint(ResourceKey<Level> planetKey) {
+        String planetName = planet.map(levelResourceKey -> levelResourceKey.location().getPath()).orElse("empty");
+        String planetOwner = planet.map(levelResourceKey -> levelResourceKey.location().getNamespace()).orElse(Modjam.MODID);
+        return ResourceLocation.fromNamespaceAndPath(planetOwner, "item/planet_card/planets/" + planetName);
+    }
+    
+    private ResourceLocation resolveTexture(PlanetType planetType) {
+        return planetType.texture();
     }
 
     public static class Loader implements IGeometryLoader<PlanetCardItemModel>
