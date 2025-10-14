@@ -69,4 +69,8 @@ public class PlanetCardItem extends Item {
         }
     }
 
+    @Override
+    public int getMaxStackSize(ItemStack stack) {
+        return 1;
+    }
 }
