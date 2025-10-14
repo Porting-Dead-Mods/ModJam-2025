@@ -25,7 +25,7 @@ public class CompressorRenderer extends PDLBERenderer<CompressorBlockEntity> {
     @Override
     public void render(CompressorBlockEntity blockEntity, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
         float pylonOffset = 0.0f;
-        if (blockEntity.getMaxProgress() > 0) {
+        if (blockEntity.getProgress() > 0 && blockEntity.getMaxProgress() > 0) {
             long time = blockEntity.getLevel().getGameTime() + blockEntity.getAnimationOffset();
             float animationTime = (time + partialTick) % 80;
             float animationProgress = animationTime / 80.0f;
