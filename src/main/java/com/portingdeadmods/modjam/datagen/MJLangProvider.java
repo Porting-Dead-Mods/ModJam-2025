@@ -32,6 +32,10 @@ public class MJLangProvider extends LanguageProvider {
         add("item.modjam.tantalum_nugget", "Tantalum Nugget");
         add("item.modjam.tantalum_sheet", "Tantalum Sheet");
         addItem(MJItems.PLANET_CARD, "Planet Card");
+        add("item.modjam.planet_card_modjam_earth", "Earth Planet Card");
+        add("item.modjam.planet_card_modjam_mars", "Mars Planet Card");
+        add("item.modjam.planet_card_modjam_venus", "Venus Planet Card");
+        add("item.modjam.planet_card_modjam_blackhole", "Black Hole Card");
         
         add("modjam.jei.multiblock.title", "Multiblock Assembly");
         add("modjam.jei.multiblock.component", "Required Component");

@@ -8,6 +8,7 @@ import com.mojang.datafixers.util.Pair;
 import com.mojang.math.Transformation;
 import com.portingdeadmods.modjam.Modjam;
 import com.portingdeadmods.modjam.data.PlanetComponent;
+import com.portingdeadmods.modjam.data.PlanetType;
 import com.portingdeadmods.modjam.registries.MJDataComponents;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.RenderType;
@@ -38,11 +39,12 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 
-public record PlanetCardItemModel(Optional<ResourceKey<Level>> planet) implements IUnbakedGeometry<PlanetCardItemModel> {
+public record PlanetCardItemModel(Optional<ResourceKey<Level>> planet, Optional<PlanetType> planetType) implements IUnbakedGeometry<PlanetCardItemModel> {
 
     @Override
     public BakedModel bake(IGeometryBakingContext context, ModelBaker baker, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelState, ItemOverrides overrides) {
-        Pair<ResourceLocation, Optional<Integer>> resolved = resolveTextureOrTint(planet.orElse(ResourceKey.create(Registries.DIMENSION, Modjam.rl("empty"))));
+        Pair<ResourceLocation, Optional<Integer>> resolved = planetType.map(this::resolveFromPlanetType)
+                .orElseGet(() -> resolveTextureOrTint(planet.orElse(ResourceKey.create(Registries.DIMENSION, Modjam.rl("empty")))));
         final ResourceLocation overlayLoc = resolved.getFirst();
         final TextureAtlasSprite overlaySprite = spriteGetter.apply(new Material(InventoryMenu.BLOCK_ATLAS, overlayLoc));
         final TextureAtlasSprite baseSprite = spriteGetter.apply(new Material(InventoryMenu.BLOCK_ATLAS, Modjam.rl("item/planet_card/base")));
@@ -61,6 +63,10 @@ public record PlanetCardItemModel(Optional<ResourceKey<Level>> planet) implement
         ResourceLocation location = ResourceLocation.fromNamespaceAndPath(planetOwner, "item/planet_card/planets/" + planetName);
         return Pair.of(location, Optional.empty());
     }
+    
+    private Pair<ResourceLocation, Optional<Integer>> resolveFromPlanetType(PlanetType planetType) {
+        return Pair.of(planetType.texture(), planetType.tint());
+    }
 
     private static void addQuads(ModelState modelState, TextureAtlasSprite sprite, CompositeModel.Baked.Builder builder, RenderTypeGroup normalRenderTypes, @Nullable Transformation transformation) {
         var transformedState = transformation == null ? modelState : new SimpleModelState(modelState.getRotation().compose(transformation), modelState.isUvLocked());
@@ -74,7 +80,7 @@ public record PlanetCardItemModel(Optional<ResourceKey<Level>> planet) implement
         @Override
         public PlanetCardItemModel read(JsonObject json, JsonDeserializationContext context) throws JsonParseException
         {
-            return new PlanetCardItemModel(Optional.empty());
+            return new PlanetCardItemModel(Optional.empty(), Optional.empty());
         }
     }
 
@@ -103,10 +109,10 @@ public record PlanetCardItemModel(Optional<ResourceKey<Level>> planet) implement
             BakedModel overridden = nested.resolve(originalModel, stack, level, entity, seed);
             if (overridden != originalModel || level == null) return overridden;
             final PlanetComponent planetComponent = stack.get(MJDataComponents.PLANET);
-            final Optional<ResourceKey<Level>> planet = planetComponent != null ? planetComponent.dimension() : Optional.empty();
-            final String name = planet.map(levelResourceKey -> levelResourceKey.location().toString()).orElse(Modjam.MODID + ":empty");
+            final Optional<PlanetType> planetType = planetComponent != null ? planetComponent.planetType() : Optional.empty();
+            final String name = planetType.map(pt -> "type:" + pt.texture().toString()).orElse(Modjam.MODID + ":empty");
             if (!cache.containsKey(name)) {
-                PlanetCardItemModel unbaked = new PlanetCardItemModel(planet);
+                PlanetCardItemModel unbaked = new PlanetCardItemModel(Optional.empty(), planetType);
                 BakedModel bakedModel = unbaked.bake(owner, baker, Material::sprite, BlockModelRotation.X0_Y0, this);
                 cache.put(name, bakedModel);
                 return bakedModel;

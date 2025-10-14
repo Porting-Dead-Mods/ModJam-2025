@@ -4,6 +4,7 @@ import com.portingdeadmods.modjam.client.models.CompressorModel;
 import com.portingdeadmods.modjam.client.models.item.PlanetCardItemModel;
 import com.portingdeadmods.modjam.client.renderers.CompressorRenderer;
 import com.portingdeadmods.modjam.registries.MJBlockEntities;
+import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
@@ -12,7 +13,7 @@ import net.neoforged.neoforge.client.event.ModelEvent;
 import net.neoforged.neoforge.client.gui.ConfigurationScreen;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 
-@Mod(Modjam.MODID)
+@Mod(value = Modjam.MODID, dist = Dist.CLIENT)
 public final class ModjamClient {
     public ModjamClient(IEventBus modEventbus, ModContainer modContainer) {
         modEventbus.addListener(this::registerModelLayers);

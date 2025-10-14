@@ -25,6 +25,8 @@ public class MJCreativeTabs {
                                     .map(Supplier::get)
                                     .map(Item::getDefaultInstance)
                                     .toList());
+                            
+                            MJPlanetCards.getPlanetCardStacks().forEach(output::accept);
                         })
                         .build()
         );

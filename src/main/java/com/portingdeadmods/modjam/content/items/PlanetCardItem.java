@@ -1,6 +1,7 @@
 package com.portingdeadmods.modjam.content.items;
 
 import com.portingdeadmods.modjam.data.PlanetComponent;
+import com.portingdeadmods.modjam.data.PlanetType;
 import com.portingdeadmods.modjam.registries.MJDataComponents;
 import com.portingdeadmods.modjam.registries.MJTranslations;
 import com.portingdeadmods.portingdeadlibs.utils.Utils;
@@ -25,23 +26,47 @@ public class PlanetCardItem extends Item {
 
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand usedHand) {
-        ResourceKey<Level> dimension = level.dimension();
         ItemStack stack = player.getItemInHand(usedHand);
-        stack.set(MJDataComponents.PLANET, new PlanetComponent(Optional.of(dimension)));
+        PlanetComponent currentComponent = stack.getOrDefault(MJDataComponents.PLANET, PlanetComponent.EMPTY);
+        
+        if (currentComponent.planetType().isPresent()) {
+            PlanetType planetType = currentComponent.planetType().get();
+            ResourceKey<Level> currentDimension = level.dimension();
+            
+            if (currentDimension.equals(planetType.dimension())) {
+                if (!currentComponent.activated()) {
+                    stack.set(MJDataComponents.PLANET, new PlanetComponent(currentComponent.planetType(), true));
+                    player.displayClientMessage(Component.literal("Planet Card Activated!").withStyle(ChatFormatting.GREEN), true);
+                    return InteractionResultHolder.success(stack);
+                } else {
+                    player.displayClientMessage(Component.literal("Already activated!").withStyle(ChatFormatting.YELLOW), true);
+                    return InteractionResultHolder.pass(stack);
+                }
+            } else {
+                player.displayClientMessage(Component.literal("Wrong dimension!").withStyle(ChatFormatting.RED), true);
+                return InteractionResultHolder.fail(stack);
+            }
+        }
 
-        return InteractionResultHolder.success(stack);
+        return InteractionResultHolder.pass(stack);
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, TooltipContext p_339594_, List<Component> tooltip, TooltipFlag p_41424_) {
+    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
         PlanetComponent planetComponent = stack.get(MJDataComponents.PLANET);
 
-        Optional<ResourceKey<Level>> dimension = planetComponent.dimension();
-        tooltip.add(MJTranslations.PLANET_CARD.component(dimension
-                        .map(key -> Utils.registryTranslation(key).getString())
-                        .orElse("Empty"))
-                .withStyle(ChatFormatting.GRAY));
-
+        if (planetComponent != null && planetComponent.planetType().isPresent()) {
+            PlanetType planetType = planetComponent.planetType().get();
+            
+            tooltip.add(Component.literal("Dimension: ")
+                    .append(Utils.registryTranslation(planetType.dimension()))
+                    .withStyle(ChatFormatting.GRAY));
+            
+            tooltip.add(Component.literal("Status: ")
+                    .append(Component.literal(planetComponent.activated() ? "Activated" : "Not Activated")
+                            .withStyle(planetComponent.activated() ? ChatFormatting.GREEN : ChatFormatting.RED))
+                    .withStyle(ChatFormatting.GRAY));
+        }
     }
 
 }

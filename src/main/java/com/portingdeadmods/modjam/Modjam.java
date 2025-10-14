@@ -36,6 +36,7 @@ public final class Modjam {
 
         modEventBus.addListener(MJNetworking::register);
         modEventBus.addListener(this::registerCapabilities);
+        modEventBus.addListener(MJRegistries::registerDatapackRegistries);
 
         modContainer.registerConfig(ModConfig.Type.COMMON, MJConfig.SPEC);
     }

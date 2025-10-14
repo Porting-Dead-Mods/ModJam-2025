@@ -4,15 +4,18 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.portingdeadmods.modjam.Modjam;
 import com.portingdeadmods.modjam.client.screens.CompressorScreen;
 import com.portingdeadmods.modjam.client.screens.PlanetSimulatorScreen;
+import com.portingdeadmods.modjam.data.PlanetComponent;
+import com.portingdeadmods.modjam.registries.MJDataComponents;
+import com.portingdeadmods.modjam.registries.MJItems;
 import com.portingdeadmods.modjam.registries.MJMenus;
 import com.portingdeadmods.modjam.registries.MJShaders;
-import net.minecraft.client.Camera;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
+import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 import net.neoforged.neoforge.client.event.RegisterShadersEvent;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
@@ -55,5 +58,18 @@ public class ClientEvents {
     @SubscribeEvent
     public static void registerScreens(RegisterShadersEvent event) {
         MJShaders.registerShaders(event);
+    }
+
+    @SubscribeEvent
+    public static void registerItemColors(RegisterColorHandlersEvent.Item event) {
+        event.register((stack, tintIndex) -> {
+            if (tintIndex == 1) {
+                PlanetComponent component = stack.get(MJDataComponents.PLANET);
+                if (component != null && component.planetType().isPresent()) {
+                    return component.planetType().get().tint().orElse(-1);
+                }
+            }
+            return -1;
+        }, MJItems.PLANET_CARD.get());
     }
 }
