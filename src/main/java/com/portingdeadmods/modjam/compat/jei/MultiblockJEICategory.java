@@ -100,16 +100,18 @@ public class MultiblockJEICategory implements IRecipeCategory<Multiblock> {
 
         this.blocks = Minecraft.getInstance().getBlockRenderer();
         
-        int centerX = width / 2;
-        this.explodeToggle = new ScreenArea(centerX - 30, 60, 10, 10);
-        this.layerSwap = new ScreenArea(centerX - 15, 60, 10, 10);
-        this.layerUp = new ScreenArea(centerX, 60, 10, 10);
-        this.layerDown = new ScreenArea(centerX + 15, 60, 10, 10);
+        int renderWidth = width - 10;
+        int renderHeight = 82;
+        int scissorX = 5;
+        int scissorY = 0;
+        this.renderArea = new ScreenArea(scissorX, scissorY, renderWidth, renderHeight);
         
-        int renderWidth = 70;
-        int renderHeight = 60;
-        int scissorX = (width - renderWidth) / 2;
-        this.renderArea = new ScreenArea(scissorX, 0, renderWidth, renderHeight);
+        int controlsY = renderHeight;
+        int centerX = width / 2;
+        this.explodeToggle = new ScreenArea(centerX - 30, controlsY, 10, 10);
+        this.layerSwap = new ScreenArea(centerX - 15, controlsY, 10, 10);
+        this.layerUp = new ScreenArea(centerX, controlsY, 10, 10);
+        this.layerDown = new ScreenArea(centerX + 15, controlsY, 10, 10);
     }
 
     @Override
@@ -180,16 +182,12 @@ public class MultiblockJEICategory implements IRecipeCategory<Multiblock> {
         public boolean handleMouseDragged(double mouseX, double mouseY, InputConstants.Key mouseButton, double dragX, double dragY) {
             if (mouseButton.getValue() == 0) {
                 isDragging = true;
-                double deltaX = mouseX - lastMouseX;
-                double deltaY = mouseY - lastMouseY;
                 
-                rotationY += (float)deltaX * 2.0f;
-                rotationX += (float)deltaY * 2.0f;
+                rotationY += (float)dragX * 2.0f;
+                rotationX += (float)dragY * 2.0f;
                 
                 rotationX = Math.max(-90f, Math.min(90f, rotationX));
                 
-                lastMouseX = mouseX;
-                lastMouseY = mouseY;
                 return true;
             }
             isDragging = false;
@@ -340,22 +338,11 @@ public class MultiblockJEICategory implements IRecipeCategory<Multiblock> {
         PoseStack pose = guiGraphics.pose();
 
         Window mainWindow = Minecraft.getInstance().getWindow();
-
-        int renderWidth = 70;
-        int renderHeight = 60;
-        int scissorX = (background.getWidth() - renderWidth) / 2;
-        int scissorY = 0;
-
         double guiScaleFactor = mainWindow.getGuiScale();
-        ScreenArea scissorBounds = new ScreenArea(
-                scissorX, scissorY,
-                renderWidth,
-                renderHeight
-        );
 
         renderPreviewControls(guiGraphics, multiblock);
 
-        renderRecipe(multiblock, guiGraphics, guiScaleFactor, scissorBounds);
+        renderRecipe(multiblock, guiGraphics, guiScaleFactor, renderArea);
         
         if (renderArea.contains((int)mouseX, (int)mouseY)) {
             guiGraphics.renderOutline(renderArea.x, renderArea.y, renderArea.width, renderArea.height, 0x80FFFFFF);

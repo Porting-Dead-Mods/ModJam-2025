@@ -23,14 +23,14 @@ public class PlanetSimulatorCategory extends AbstractRecipeCategory<PlanetSimula
     private final IPlatformFluidHelper<?> fluidHelper;
 
     public PlanetSimulatorCategory(IGuiHelper guiHelper, IPlatformFluidHelper<?> fluidHelper) {
-        super(TYPE, Component.translatable("jei.modjam.category.planet_simulator"), guiHelper.createDrawableItemLike(MJBlocks.PLANET_SIMULATOR_CONTROLLER), 150, 80);
+        super(TYPE, Component.translatable("jei.modjam.category.planet_simulator"), guiHelper.createDrawableItemLike(MJBlocks.PLANET_SIMULATOR_CONTROLLER), 176, 90);
         this.fluidHelper = fluidHelper;
     }
 
     @Override
     public void setRecipe(IRecipeLayoutBuilder builder, PlanetSimulatorRecipe recipe, IFocusGroup focuses) {
-        int inputX = 10;
-        int inputY = 10;
+        int inputX = 1;
+        int inputY = 1;
         
         for (int i = 0; i < recipe.catalysts().size() && i < 9; i++) {
             int slotX = inputX + (i % 3) * 18;
@@ -41,14 +41,14 @@ public class PlanetSimulatorCategory extends AbstractRecipeCategory<PlanetSimula
         }
         
         if (recipe.fluidInput().isPresent()) {
-            builder.addInputSlot(80, 10)
+            builder.addInputSlot(60, 1)
                     .setStandardSlotBackground()
-                    .setFluidRenderer(10000, true, 16, 16)
+                    .setFluidRenderer(10000, true, 16, 54)
                     .addIngredients(NeoForgeTypes.FLUID_STACK, Arrays.stream(recipe.fluidInput().get().getStacks()).toList());
         }
         
-        int outputX = 110;
-        int outputY = 10;
+        int outputX = 85;
+        int outputY = 1;
         
         for (int i = 0; i < recipe.outputs().size() && i < 9; i++) {
             PlanetSimulatorRecipe.WeightedOutput output = recipe.outputs().get(i);
@@ -77,7 +77,8 @@ public class PlanetSimulatorCategory extends AbstractRecipeCategory<PlanetSimula
 
     @Override
     public void createRecipeExtras(IRecipeExtrasBuilder builder, PlanetSimulatorRecipe recipe, IFocusGroup focuses) {
-        builder.addText(Component.literal("Energy: " + recipe.energyPerTick() + " FE/t"), 10, 65);
-        builder.addText(Component.literal("Duration: " + recipe.duration() + " ticks"), 10, 75);
+        builder.addText(Component.literal("Energy: " + recipe.energyPerTick() + " FE/t"), 1, 60);
+        builder.addText(Component.literal("Duration: " + recipe.duration() + " ticks"), 1, 70);
+        builder.addText(Component.literal("→"), 72, 24);
     }
 }
