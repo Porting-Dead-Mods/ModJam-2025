@@ -16,7 +16,10 @@ public class PlanetSimulatorMenu extends PDLAbstractContainerMenu<PlanetSimulato
 
     public PlanetSimulatorMenu(int containerId, @NotNull Inventory inv, @NotNull PlanetSimulatorBlockEntity blockEntity) {
         super(MJMenus.PLANET_SIMULATOR.get(), containerId, inv, blockEntity);
-        addSlot(new SlotItemHandler(blockEntity.getItemHandler(), 0, 10, 10));
+        addSlot(new SlotItemHandler(blockEntity.getItemHandler(), 0, 80, 35));
+
+        addPlayerInventory(inv);
+        addPlayerHotbar(inv);
     }
 
     @Override
