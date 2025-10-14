@@ -1,0 +1,98 @@
+{
+  "type": "modjam:planet_simulator",
+  "planet_type": "modjam:earth",
+  "catalysts": [
+    {
+      "item": "minecraft:stone",
+      "count": 16
+    }
+  ],
+  "energy_per_tick": 200,
+  "duration": 400,
+  "outputs": [
+    {
+      "item": {
+        "id": "minecraft:coal",
+        "count": 4
+      },
+      "chance": 0.8
+    },
+    {
+      "item": {
+        "id": "minecraft:iron_ore",
+        "count": 2
+      },
+      "chance": 0.6
+    },
+    {
+      "item": {
+        "id": "minecraft:raw_iron",
+        "count": 3
+      },
+      "chance": 0.5
+    },
+    {
+      "item": {
+        "id": "minecraft:copper_ore",
+        "count": 2
+      },
+      "chance": 0.6
+    },
+    {
+      "item": {
+        "id": "minecraft:raw_copper",
+        "count": 3
+      },
+      "chance": 0.5
+    },
+    {
+      "item": {
+        "id": "minecraft:gold_ore",
+        "count": 1
+      },
+      "chance": 0.4
+    },
+    {
+      "item": {
+        "id": "minecraft:raw_gold",
+        "count": 2
+      },
+      "chance": 0.35
+    },
+    {
+      "item": {
+        "id": "minecraft:redstone",
+        "count": 8
+      },
+      "chance": 0.6
+    },
+    {
+      "item": {
+        "id": "minecraft:lapis_lazuli",
+        "count": 6
+      },
+      "chance": 0.5
+    },
+    {
+      "item": {
+        "id": "minecraft:diamond",
+        "count": 1
+      },
+      "chance": 0.15
+    },
+    {
+      "item": {
+        "id": "minecraft:emerald",
+        "count": 1
+      },
+      "chance": 0.1
+    },
+    {
+      "item": {
+        "id": "minecraft:quartz",
+        "count": 4
+      },
+      "chance": 0.4
+    }
+  ]
+}

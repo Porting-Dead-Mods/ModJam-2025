@@ -37,10 +37,19 @@ public class MJLangProvider extends LanguageProvider {
         add("item.modjam.planet_card_modjam_mars", "Mars Planet Card");
         add("item.modjam.planet_card_modjam_venus", "Venus Planet Card");
         add("item.modjam.planet_card_modjam_blackhole", "Black Hole Card");
+        addItem(MJItems.ENERGY_UPGRADE, "Energy Upgrade");
+        addItem(MJItems.SPEED_UPGRADE, "Speed Upgrade");
+        addItem(MJItems.LUCK_UPGRADE, "Luck Upgrade");
+        
+        add("tooltip.modjam.upgrade.energy", "Increases energy efficiency");
+        add("tooltip.modjam.upgrade.speed", "Increases processing speed");
+        add("tooltip.modjam.upgrade.luck", "Increases bonus output chance");
         
         add("modjam.jei.multiblock.title", "Multiblock Assembly");
         add("modjam.jei.multiblock.component", "Required Component");
         add("modjam.jei.grinding", "Grinding");
+        add("jei.modjam.category.planet_simulator", "Planet Simulator");
+        add("jei.modjam.category.planet_power", "Planet Power Generation");
         add("modjam.jei.toggle_exploded_view", "Show Exploded View");
         add("modjam.jei.toggle_condensed_view", "Show Condensed View");
         add("modjam.jei.all_layers_mode", "Show All Layers");

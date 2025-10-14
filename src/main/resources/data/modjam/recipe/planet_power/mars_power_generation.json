@@ -1,0 +1,12 @@
+{
+  "type": "modjam:planet_power",
+  "planet_type": "modjam:mars",
+  "catalysts": [
+    {
+      "item": "minecraft:redstone",
+      "count": 1
+    }
+  ],
+  "energy_per_tick": 500,
+  "duration": 100
+}

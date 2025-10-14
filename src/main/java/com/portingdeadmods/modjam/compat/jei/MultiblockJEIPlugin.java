@@ -3,6 +3,8 @@ package com.portingdeadmods.modjam.compat.jei;
 import com.portingdeadmods.modjam.Modjam;
 import com.portingdeadmods.modjam.client.screens.CompressorScreen;
 import com.portingdeadmods.modjam.content.recipe.CompressingRecipe;
+import com.portingdeadmods.modjam.content.recipe.PlanetPowerRecipe;
+import com.portingdeadmods.modjam.content.recipe.PlanetSimulatorRecipe;
 import com.portingdeadmods.modjam.registries.MJBlocks;
 import com.portingdeadmods.modjam.registries.MJItems;
 import com.portingdeadmods.portingdeadlibs.api.client.screens.PanelContainerScreen;
@@ -53,6 +55,8 @@ public class MultiblockJEIPlugin implements IModPlugin {
     public void registerCategories(IRecipeCategoryRegistration registration) {
         registration.addRecipeCategories(new MultiblockJEICategory(registration.getJeiHelpers().getGuiHelper()));
         registration.addRecipeCategories(new CompressingCategory(registration.getJeiHelpers().getGuiHelper()));
+        registration.addRecipeCategories(new PlanetSimulatorCategory(registration.getJeiHelpers().getGuiHelper(), registration.getJeiHelpers().getPlatformFluidHelper()));
+        registration.addRecipeCategories(new PlanetPowerCategory(registration.getJeiHelpers().getGuiHelper(), registration.getJeiHelpers().getPlatformFluidHelper()));
     }
 
     @Override
@@ -65,6 +69,18 @@ public class MultiblockJEIPlugin implements IModPlugin {
                 .map(RecipeHolder::value)
                 .toList();
         registration.addRecipes(CompressingCategory.TYPE, compressingRecipes);
+
+        List<PlanetSimulatorRecipe> planetSimulatorRecipes = recipeManager.getAllRecipesFor(PlanetSimulatorRecipe.TYPE)
+                .stream()
+                .map(RecipeHolder::value)
+                .toList();
+        registration.addRecipes(PlanetSimulatorCategory.TYPE, planetSimulatorRecipes);
+
+        List<PlanetPowerRecipe> planetPowerRecipes = recipeManager.getAllRecipesFor(PlanetPowerRecipe.TYPE)
+                .stream()
+                .map(RecipeHolder::value)
+                .toList();
+        registration.addRecipes(PlanetPowerCategory.TYPE, planetPowerRecipes);
 
 //        ItemStack dustStack = new ItemStack(MJItems.TANTALUM_DUST.get());
 //        dustStack.set(DataComponents.CUSTOM_NAME, Component.translatable("modjam.jei.grinding_output").withStyle(ChatFormatting.RESET));
@@ -96,6 +112,8 @@ public class MultiblockJEIPlugin implements IModPlugin {
         }
         
         registration.addRecipeCatalyst(new ItemStack(MJBlocks.COMPRESSOR.get()), CompressingCategory.TYPE);
+        registration.addRecipeCatalyst(new ItemStack(MJBlocks.PLANET_SIMULATOR_CONTROLLER.get()), PlanetSimulatorCategory.TYPE);
+        registration.addRecipeCatalyst(new ItemStack(MJBlocks.PLANET_SIMULATOR_CONTROLLER.get()), PlanetPowerCategory.TYPE);
     }
 
     @Override

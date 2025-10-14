@@ -1,0 +1,28 @@
+{
+  "type": "modjam:planet_simulator",
+  "planet_type": "modjam:earth",
+  "catalysts": [
+    {
+      "item": "minecraft:coal",
+      "count": 4
+    }
+  ],
+  "energy_per_tick": 100,
+  "duration": 200,
+  "outputs": [
+    {
+      "item": {
+        "id": "minecraft:diamond",
+        "count": 1
+      },
+      "chance": 0.5
+    },
+    {
+      "item": {
+        "id": "minecraft:coal",
+        "count": 2
+      },
+      "chance": 1.0
+    }
+  ]
+}

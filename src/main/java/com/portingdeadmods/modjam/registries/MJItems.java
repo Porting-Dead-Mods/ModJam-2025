@@ -3,7 +3,9 @@ package com.portingdeadmods.modjam.registries;
 import com.portingdeadmods.modjam.Modjam;
 import com.portingdeadmods.modjam.content.items.PlanetCardItem;
 import com.portingdeadmods.modjam.content.items.TintedPlanetCardItem;
+import com.portingdeadmods.modjam.content.items.UpgradeItem;
 import com.portingdeadmods.modjam.data.PlanetComponent;
+import com.portingdeadmods.modjam.data.UpgradeType;
 import com.portingdeadmods.portingdeadlibs.api.utils.PDLDeferredRegisterItems;
 import net.minecraft.world.item.Item;
 import net.neoforged.neoforge.registries.DeferredItem;
@@ -24,5 +26,11 @@ public final class MJItems {
 
     public static final DeferredItem<TintedPlanetCardItem> TINTED_PLANET_CARD = ITEMS.register("tinted_planet_card", () -> new TintedPlanetCardItem(new Item.Properties()
             .component(MJDataComponents.PLANET, PlanetComponent.EMPTY)));
+
+    public static final DeferredItem<UpgradeItem> ENERGY_UPGRADE = ITEMS.register("energy_upgrade", () -> new UpgradeItem(UpgradeType.ENERGY, new Item.Properties()));
+
+    public static final DeferredItem<UpgradeItem> SPEED_UPGRADE = ITEMS.register("speed_upgrade", () -> new UpgradeItem(UpgradeType.SPEED, new Item.Properties()));
+
+    public static final DeferredItem<UpgradeItem> LUCK_UPGRADE = ITEMS.register("luck_upgrade", () -> new UpgradeItem(UpgradeType.LUCK, new Item.Properties()));
 
 }

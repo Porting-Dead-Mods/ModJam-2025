@@ -15,11 +15,15 @@ import mezz.jei.api.gui.builder.ITooltipBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.gui.drawable.IDrawableStatic;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
+import mezz.jei.api.gui.inputs.IJeiInputHandler;
+import mezz.jei.api.gui.inputs.IJeiUserInput;
+import mezz.jei.api.gui.widgets.IRecipeExtrasBuilder;
 import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
+import net.minecraft.client.gui.navigation.ScreenRectangle;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -72,6 +76,14 @@ public class MultiblockJEICategory implements IRecipeCategory<Multiblock> {
 
     private boolean exploded = false;
     private double explodeMulti = 1.0d;
+    
+    private float rotationX = 35f;
+    private float rotationY = 0f;
+    private float zoom = 1.0f;
+    private double lastMouseX = 0;
+    private double lastMouseY = 0;
+    private boolean isDragging = false;
+    private ScreenArea renderArea;
 
     private final MutableComponent MATERIAL_COMPONENT = Component.translatable(Modjam.MODID + ".jei.multiblock.component")
             .withStyle(ChatFormatting.GRAY)
@@ -93,6 +105,11 @@ public class MultiblockJEICategory implements IRecipeCategory<Multiblock> {
         this.layerSwap = new ScreenArea(centerX - 15, 60, 10, 10);
         this.layerUp = new ScreenArea(centerX, 60, 10, 10);
         this.layerDown = new ScreenArea(centerX + 15, 60, 10, 10);
+        
+        int renderWidth = 70;
+        int renderHeight = 60;
+        int scissorX = (width - renderWidth) / 2;
+        this.renderArea = new ScreenArea(scissorX, 0, renderWidth, renderHeight);
     }
 
     @Override
@@ -119,11 +136,70 @@ public class MultiblockJEICategory implements IRecipeCategory<Multiblock> {
     public void setRecipe(IRecipeLayoutBuilder layout, Multiblock multiblock, IFocusGroup focuses) {
         singleLayer = false;
         singleLayerOffset = 0;
+        rotationX = 35f;
+        rotationY = 0f;
+        zoom = 1.0f;
+        isDragging = false;
 
         try {
             addMaterialSlots(multiblock, layout);
         } catch (Exception ex) {
             Modjam.LOGGER.error("Error displaying multiblock", ex);
+        }
+    }
+    
+    @Override
+    public void createRecipeExtras(IRecipeExtrasBuilder builder, Multiblock multiblock, IFocusGroup focuses) {
+        builder.addInputHandler(new MultiblockInputHandler());
+    }
+    
+    private class MultiblockInputHandler implements IJeiInputHandler {
+        @Override
+        public ScreenRectangle getArea() {
+            return new ScreenRectangle(renderArea.x, renderArea.y, renderArea.width, renderArea.height);
+        }
+        
+        @Override
+        public boolean handleInput(double mouseX, double mouseY, IJeiUserInput input) {
+            InputConstants.Key key = input.getKey();
+            if (key.getType() == InputConstants.Type.MOUSE && key.getValue() == 0) {
+                if (renderArea.contains((int)mouseX, (int)mouseY)) {
+                    if (input.isSimulate()) {
+                        return true;
+                    }
+                    lastMouseX = mouseX;
+                    lastMouseY = mouseY;
+                    return true;
+                }
+            }
+            
+            return false;
+        }
+        
+        @Override
+        public boolean handleMouseDragged(double mouseX, double mouseY, InputConstants.Key mouseButton, double dragX, double dragY) {
+            if (mouseButton.getValue() == 0) {
+                isDragging = true;
+                double deltaX = mouseX - lastMouseX;
+                double deltaY = mouseY - lastMouseY;
+                
+                rotationY += (float)deltaX * 2.0f;
+                rotationX += (float)deltaY * 2.0f;
+                
+                rotationX = Math.max(-90f, Math.min(90f, rotationX));
+                
+                lastMouseX = mouseX;
+                lastMouseY = mouseY;
+                return true;
+            }
+            isDragging = false;
+            return false;
+        }
+        
+        @Override
+        public boolean handleMouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
+            zoom = Math.max(0.3f, Math.min(3.0f, zoom + (float)scrollY * 0.1f));
+            return true;
         }
     }
 
@@ -232,6 +308,17 @@ public class MultiblockJEICategory implements IRecipeCategory<Multiblock> {
 
                 return true;
             }
+            
+            if (renderArea.contains((int)mouseX, (int)mouseY)) {
+                isDragging = true;
+                lastMouseX = mouseX;
+                lastMouseY = mouseY;
+                return true;
+            }
+        }
+        
+        if (input.getType() == InputConstants.Type.MOUSE && input.getValue() == -1) {
+            isDragging = false;
         }
 
         return false;
@@ -269,6 +356,10 @@ public class MultiblockJEICategory implements IRecipeCategory<Multiblock> {
         renderPreviewControls(guiGraphics, multiblock);
 
         renderRecipe(multiblock, guiGraphics, guiScaleFactor, scissorBounds);
+        
+        if (renderArea.contains((int)mouseX, (int)mouseY)) {
+            guiGraphics.renderOutline(renderArea.x, renderArea.y, renderArea.width, renderArea.height, 0x80FFFFFF);
+        }
     }
 
     private void renderRecipe(Multiblock multiblock, GuiGraphics guiGraphics, double guiScaleFactor, ScreenArea scissorBounds) {
@@ -307,7 +398,7 @@ public class MultiblockJEICategory implements IRecipeCategory<Multiblock> {
 
             int totalLayers = multiblock.getLayout().length;
             float avgDim = (float) Math.sqrt(totalLayers * 9);
-            float previewScale = (float) ((3 + Math.exp(3 - (avgDim / 5))) / explodeMulti);
+            float previewScale = (float) ((3 + Math.exp(3 - (avgDim / 5))) / explodeMulti) * zoom;
             mx.scale(previewScale, -previewScale, previewScale);
 
             drawActualMultiblock(multiblock, mx, buffers);
@@ -323,11 +414,9 @@ public class MultiblockJEICategory implements IRecipeCategory<Multiblock> {
     }
 
     private void drawActualMultiblock(Multiblock multiblock, PoseStack mx, MultiBufferSource.BufferSource buffers) {
-        double gameTime = Minecraft.getInstance().level.getGameTime();
-        double test = Math.toDegrees(gameTime) / 15;
         mx.mulPose(new Quaternionf().rotationXYZ(
-                (float) Math.toRadians(35f),
-                (float) Math.toRadians(-test),
+                (float) Math.toRadians(rotationX),
+                (float) Math.toRadians(rotationY),
                 0
         ));
 
