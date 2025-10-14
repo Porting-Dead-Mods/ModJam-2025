@@ -9,6 +9,7 @@ import net.minecraft.data.recipes.*;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.ItemLike;
+import net.neoforged.neoforge.common.Tags;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -41,40 +42,46 @@ public class MJRecipeProvider extends RecipeProvider {
                 .requires(MJItems.TANTALUM_INGOT.get())
                 .unlockedBy("has_tantalum_ingot", has(MJItems.TANTALUM_INGOT.get()))
                 .save(recipeOutput);
-        
-//        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, MJItems.HAMMER.get())
-//                .pattern("III")
-//                .pattern(" S ")
-//                .pattern(" S ")
-//                .define('I', MJItems.TANTALUM_INGOT.get())
-//                .define('S', Items.STICK)
-//                .unlockedBy("has_tantalum_ingot", has(MJItems.TANTALUM_INGOT.get()))
-//                .save(recipeOutput);
-//
-//        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, MJItems.PESTLE.get())
-//                .pattern(" S ")
-//                .pattern(" S ")
-//                .pattern(" S ")
-//                .define('S', Items.STICK)
-//                .unlockedBy("has_stick", has(Items.STICK))
-//                .save(recipeOutput);
-//
-//        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, MJItems.MORTAR.get())
-//                .pattern("S S")
-//                .pattern("S S")
-//                .pattern(" S ")
-//                .define('S', Items.STONE)
-//                .unlockedBy("has_stone", has(Items.STONE))
-//                .save(recipeOutput);
-//
-//        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, MJItems.TANTALUM_SHEET.get())
-//                .pattern("H")
-//                .pattern("I")
-//                .pattern("I")
-//                .define('H', MJItems.HAMMER.get())
-//                .define('I', MJItems.TANTALUM_INGOT.get())
-//                .unlockedBy("has_hammer", has(MJItems.HAMMER.get()))
-//                .save(recipeOutput);
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, MJBlocks.PLANET_SIMULATOR_CASING.get(), 4)
+                .pattern("IPI")
+                .pattern("P P")
+                .pattern("IPI")
+                .define('I', MJItems.TANTALUM_INGOT)
+                .define('P', MJItems.TANTALUM_SHEET)
+                .unlockedBy("has_tantalum_ingot", has(MJItems.TANTALUM_INGOT))
+                .save(recipeOutput);
+        ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, MJBlocks.PLANET_SIMULATOR_FRAME.get(), 8)
+                .pattern("III")
+                .pattern("I I")
+                .pattern("III")
+                .define('I', MJItems.TANTALUM_INGOT)
+                .unlockedBy("has_tantalum_ingot", has(MJItems.TANTALUM_INGOT))
+                .save(recipeOutput);
+        ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, MJBlocks.PLANET_SIMULATOR_CONTROLLER.get())
+                .pattern(" C ")
+                .pattern("CDC")
+                .pattern(" C ")
+                .define('C', MJBlocks.PLANET_SIMULATOR_CASING)
+                .define('D', Tags.Items.STORAGE_BLOCKS_DIAMOND)
+                .unlockedBy("has_casing", has(MJBlocks.PLANET_SIMULATOR_CASING))
+                .save(recipeOutput);
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.DECORATIONS, MJBlocks.PLANET_SIMULATOR_BUS.get())
+                .requires(MJBlocks.PLANET_SIMULATOR_CASING)
+                .requires(Items.HOPPER)
+                .unlockedBy("has_casing", has(MJBlocks.PLANET_SIMULATOR_CASING))
+                .save(recipeOutput);
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, MJItems.PLANET_CARD.get())
+                .pattern(" P ")
+                .pattern("PIP")
+                .pattern(" G ")
+                .define('I', MJItems.TANTALUM_INGOT)
+                .define('P', MJItems.TANTALUM_SHEET)
+                .define('G', Tags.Items.NUGGETS_GOLD)
+                .unlockedBy("has_tantalum_ingot", has(MJItems.TANTALUM_INGOT))
+                .save(recipeOutput);
+
     }
     
     protected static void oreSmelting(RecipeOutput recipeOutput, List<ItemLike> ingredients, RecipeCategory category, ItemLike result, float experience, int cookingTime, String group) {

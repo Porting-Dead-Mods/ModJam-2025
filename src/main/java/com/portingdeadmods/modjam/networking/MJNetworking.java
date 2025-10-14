@@ -18,7 +18,7 @@ import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 
 import java.util.Optional;
 
-public class MJNetworking {
+public final class MJNetworking {
 
     public static void register(RegisterPayloadHandlersEvent event) {
         PayloadRegistrar registrar = event.registrar(Modjam.MODID);
@@ -27,6 +27,16 @@ public class MJNetworking {
                 SyncPlanetCardsPayload.TYPE,
                 SyncPlanetCardsPayload.STREAM_CODEC,
                 MJNetworking::handleSyncPlanetCards
+        );
+        registrar.playToServer(
+                UpgradeWidgetOpenClosePayload.TYPE,
+                UpgradeWidgetOpenClosePayload.STREAM_CODEC,
+                UpgradeWidgetOpenClosePayload::handle
+        );
+        registrar.playToServer(
+                UpgradeWidgetSetSlotPositionsPayload.TYPE,
+                UpgradeWidgetSetSlotPositionsPayload.STREAM_CODEC,
+                UpgradeWidgetSetSlotPositionsPayload::handle
         );
     }
 

@@ -9,7 +9,12 @@ import net.minecraft.world.inventory.MenuType;
 import net.neoforged.neoforge.items.SlotItemHandler;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class PlanetSimulatorMenu extends PDLAbstractContainerMenu<PlanetSimulatorBlockEntity> {
+    private final List<UpgradeSlot> upgradeSlots;
+
     public PlanetSimulatorMenu(int containerId, @NotNull Inventory inv, @NotNull FriendlyByteBuf byteBuf) {
         this(containerId, inv, (PlanetSimulatorBlockEntity) inv.player.level().getBlockEntity(byteBuf.readBlockPos()));
     }
@@ -20,10 +25,31 @@ public class PlanetSimulatorMenu extends PDLAbstractContainerMenu<PlanetSimulato
 
         addPlayerInventory(inv);
         addPlayerHotbar(inv);
+
+        this.upgradeSlots = new ArrayList<>();
+        for (int i = 0; i < blockEntity.getUpgradeItemHandler().getSlots(); i++) {
+            UpgradeSlot slot = new UpgradeSlot(blockEntity.getUpgradeItemHandler(), i, 179, 51 + i * 20);
+            slot.setActive(false);
+            this.addSlot(slot);
+            this.upgradeSlots.add(slot);
+        }
+    }
+
+    public List<UpgradeSlot> getUpgradeSlots() {
+        return upgradeSlots;
     }
 
     @Override
     protected int getMergeableSlotCount() {
         return 1;
     }
+
+    public void setUpgradeSlotPositions(int startY) {
+        List<UpgradeSlot> upgradeSlots = this.getUpgradeSlots();
+        for (int i = 0; i < upgradeSlots.size(); i++) {
+            UpgradeSlot upgradeSlot = upgradeSlots.get(i);
+            ((SlotAccessor) upgradeSlot).setY(startY + i * 20);
+        }
+    }
+
 }
