@@ -21,14 +21,14 @@ public class PlanetPowerCategory extends AbstractRecipeCategory<PlanetPowerRecip
     private final IPlatformFluidHelper<?> fluidHelper;
 
     public PlanetPowerCategory(IGuiHelper guiHelper, IPlatformFluidHelper<?> fluidHelper) {
-        super(TYPE, Component.translatable("jei.modjam.category.planet_power"), guiHelper.createDrawableItemLike(MJBlocks.PLANET_SIMULATOR_CONTROLLER), 150, 80);
+        super(TYPE, Component.translatable("jei.modjam.category.planet_power"), guiHelper.createDrawableItemLike(MJBlocks.PLANET_SIMULATOR_CONTROLLER), 176, 90);
         this.fluidHelper = fluidHelper;
     }
 
     @Override
     public void setRecipe(IRecipeLayoutBuilder builder, PlanetPowerRecipe recipe, IFocusGroup focuses) {
-        int inputX = 10;
-        int inputY = 10;
+        int inputX = 1;
+        int inputY = 1;
         
         for (int i = 0; i < recipe.catalysts().size() && i < 9; i++) {
             int slotX = inputX + (i % 3) * 18;
@@ -39,16 +39,16 @@ public class PlanetPowerCategory extends AbstractRecipeCategory<PlanetPowerRecip
         }
         
         if (recipe.fluidInput().isPresent()) {
-            builder.addInputSlot(80, 10)
+            builder.addInputSlot(60, 1)
                     .setStandardSlotBackground()
-                    .setFluidRenderer(10000, true, 16, 16)
+                    .setFluidRenderer(10000, true, 16, 54)
                     .addIngredients(NeoForgeTypes.FLUID_STACK, Arrays.stream(recipe.fluidInput().get().getStacks()).toList());
         }
     }
 
     @Override
     public void createRecipeExtras(IRecipeExtrasBuilder builder, PlanetPowerRecipe recipe, IFocusGroup focuses) {
-        builder.addText(Component.literal("Generates: " + recipe.energyPerTick() + " FE/t"), 10, 65);
-        builder.addText(Component.literal("Duration: " + recipe.duration() + " ticks"), 10, 75);
+        builder.addText(Component.literal("Generates: " + recipe.energyPerTick() + " FE/t"), 1, 60);
+        builder.addText(Component.literal("Duration: " + recipe.duration() + " ticks"), 1, 70);
     }
 }
