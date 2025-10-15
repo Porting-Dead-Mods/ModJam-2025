@@ -101,8 +101,4 @@ public class UpgradePanelWidget extends PanelWidget {
 
     }
 
-    @Override
-    protected void updateWidgetNarration(NarrationElementOutput narrationElementOutput) {
-    }
-
 }
