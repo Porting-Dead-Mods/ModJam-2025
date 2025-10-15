@@ -41,9 +41,10 @@ public class MJLangProvider extends LanguageProvider {
         addItem(MJItems.SPEED_UPGRADE, "Speed Upgrade");
         addItem(MJItems.LUCK_UPGRADE, "Luck Upgrade");
         
-        add("tooltip.modjam.upgrade.energy", "Increases energy efficiency");
-        add("tooltip.modjam.upgrade.speed", "Increases processing speed");
-        add("tooltip.modjam.upgrade.luck", "Increases bonus output chance");
+        add("tooltip.modjam.upgrade.energy", "Energy Efficiency");
+        add("tooltip.modjam.upgrade.speed", "Processing Speed");
+        add("tooltip.modjam.upgrade.luck", "Bonus Output Chance");
+        add("tooltip.modjam.no_upgrades", "No upgrades installed");
         
         add("modjam.jei.multiblock.title", "Multiblock Assembly");
         add("modjam.jei.multiblock.component", "Required Component");

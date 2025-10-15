@@ -2,17 +2,30 @@ package com.portingdeadmods.modjam.client.screens.widgets;
 
 import com.portingdeadmods.modjam.Modjam;
 import com.portingdeadmods.modjam.content.block.UpgradeBlockEntity;
+import com.portingdeadmods.modjam.content.items.UpgradeItem;
 import com.portingdeadmods.modjam.content.menus.PlanetSimulatorMenu;
 import com.portingdeadmods.modjam.content.menus.UpgradeSlot;
+import com.portingdeadmods.modjam.data.UpgradeType;
 import com.portingdeadmods.modjam.networking.UpgradeWidgetOpenClosePayload;
 import com.portingdeadmods.modjam.networking.UpgradeWidgetSetSlotPositionsPayload;
 import com.portingdeadmods.portingdeadlibs.api.client.screens.widgets.MenuWidgetContext;
 import com.portingdeadmods.portingdeadlibs.api.client.screens.widgets.PanelWidget;
 import com.portingdeadmods.portingdeadlibs.api.gui.menus.PDLAbstractContainerMenu;
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
+import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.network.PacketDistributor;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 public class UpgradePanelWidget extends PanelWidget {
     public static final ResourceLocation WIDGET_SPRITE = Modjam.rl("widgets/widget_upgrade_right");
@@ -68,7 +81,7 @@ public class UpgradePanelWidget extends PanelWidget {
     }
 
     @Override
-    protected void renderWidget(GuiGraphics guiGraphics, int i, int i1, float v) {
+    protected void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float v) {
         if (open) {
 //            Font font = Minecraft.getInstance().font;
 //
@@ -83,6 +96,49 @@ public class UpgradePanelWidget extends PanelWidget {
 //            guiGraphics.drawString(font, Component.translatable("redstone_signal_type." + IndustrialReforged.MODID + "." + signalType.getSerializedName()).withStyle(ChatFormatting.WHITE), getX() + 5, getY() + 54 + font.lineHeight + 2, -1);
         } else {
             guiGraphics.blitSprite(WIDGET_SPRITE, getX(), getY(), WIDGET_WIDTH, WIDGET_HEIGHT);
+        }
+
+        boolean isHoveringSprite = mouseX >= this.getX()
+                && mouseY >= this.getY()
+                && mouseX < this.getX() + WIDGET_WIDTH
+                && mouseY < this.getY() + WIDGET_HEIGHT;
+
+        if (isHoveringSprite && context != null){
+            List<Component> tooltip = new ArrayList<>();
+            IItemHandler upgradeHandler = upgradeBlockEntity.getUpgradeItemHandler();
+            
+            Map<UpgradeType, Integer> upgradeCounts = new HashMap<>();
+            for (int j = 0; j < upgradeHandler.getSlots(); j++) {
+                ItemStack stack = upgradeHandler.getStackInSlot(j);
+                if (!stack.isEmpty() && stack.getItem() instanceof UpgradeItem upgradeItem) {
+                    upgradeCounts.merge(upgradeItem.getUpgradeType(), stack.getCount(), Integer::sum);
+                }
+            }
+            
+            if (!upgradeCounts.isEmpty()) {
+                for (Map.Entry<UpgradeType, Integer> entry : upgradeCounts.entrySet()) {
+                    UpgradeType type = entry.getKey();
+                    int count = entry.getValue();
+                    float totalValue = type.getModifierValue() * count;
+                    
+                    String modifierText = switch (type.getModifierType()) {
+                        case MULTIPLY -> "x" + String.format(Locale.US, "%.1f", totalValue);
+                        case DIVIDE -> "/" + String.format(Locale.US, "%.1f", totalValue);
+                        case ADD -> (totalValue >= 0 ? "+" : "") + String.format(Locale.US, "%.0f%%", totalValue * 100);
+                    };
+                    
+                    tooltip.add(Component.translatable("tooltip.modjam.upgrade." + type.getName())
+                            .append(": ")
+                            .append(Component.literal(modifierText).withStyle(ChatFormatting.GOLD))
+                            .withStyle(ChatFormatting.GRAY));
+                }
+            } else {
+                tooltip.add(Component.translatable("tooltip.modjam.no_upgrades").withStyle(ChatFormatting.GRAY));
+            }
+            
+            if (!tooltip.isEmpty()) {
+                guiGraphics.renderComponentTooltip(Minecraft.getInstance().font, tooltip, mouseX, mouseY);
+            }
         }
     }
 
