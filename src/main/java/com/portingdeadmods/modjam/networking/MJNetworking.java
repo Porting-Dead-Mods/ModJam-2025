@@ -38,6 +38,11 @@ public final class MJNetworking {
                 UpgradeWidgetSetSlotPositionsPayload.STREAM_CODEC,
                 UpgradeWidgetSetSlotPositionsPayload::handle
         );
+        registrar.playToServer(
+                PlanetCardWidgetSetSlotPositionPayload.TYPE,
+                PlanetCardWidgetSetSlotPositionPayload.STREAM_CODEC,
+                PlanetCardWidgetSetSlotPositionPayload::handle
+        );
     }
 
     private static void handleSyncPlanetCards(SyncPlanetCardsPayload payload, IPayloadContext context) {
