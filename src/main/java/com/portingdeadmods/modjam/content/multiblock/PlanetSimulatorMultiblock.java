@@ -64,7 +64,11 @@ public class PlanetSimulatorMultiblock implements Multiblock {
     @Override
     public MultiblockDefinition getDefinition() {
         MultiblockDefinition def = new MultiblockDefinition();
-        def.put(0, state -> state.is(MJBlocks.PLANET_SIMULATOR_CASING.get()) || state.is(MJBlocks.PLANET_SIMULATOR_BUS.get()), MJBlocks.PLANET_SIMULATOR_CASING.get());
+        def.put(0, state -> state.is(MJBlocks.PLANET_SIMULATOR_CASING.get()) || 
+                state.is(MJBlocks.ENERGY_INPUT_BUS.get()) || state.is(MJBlocks.ENERGY_OUTPUT_BUS.get()) ||
+                state.is(MJBlocks.ITEM_INPUT_BUS.get()) || state.is(MJBlocks.ITEM_OUTPUT_BUS.get()) ||
+                state.is(MJBlocks.FLUID_INPUT_BUS.get()) || state.is(MJBlocks.FLUID_OUTPUT_BUS.get()), 
+                MJBlocks.PLANET_SIMULATOR_CASING.get());
         def.put(1, BlockState::isEmpty, Blocks.AIR);
         def.put(2, MJBlocks.PLANET_SIMULATOR_FRAME.get());
         def.put(3, this.getUnformedController());
@@ -98,7 +102,11 @@ public class PlanetSimulatorMultiblock implements Multiblock {
     @Override
     public BlockState unformBlock(Level level, BlockPos blockPos, BlockPos controllerPos, int layerIndex, int layoutIndex, MultiblockData multiblockData, @Nullable Player player) {
         BlockState state = level.getBlockState(blockPos);
-        if ((blockPos.equals(controllerPos) || state.is(MJBlocks.PLANET_SIMULATOR_BUS)) && state.hasProperty(FORMED)) {
+        if ((blockPos.equals(controllerPos) || 
+                state.is(MJBlocks.ENERGY_INPUT_BUS.get()) || state.is(MJBlocks.ENERGY_OUTPUT_BUS.get()) ||
+                state.is(MJBlocks.ITEM_INPUT_BUS.get()) || state.is(MJBlocks.ITEM_OUTPUT_BUS.get()) ||
+                state.is(MJBlocks.FLUID_INPUT_BUS.get()) || state.is(MJBlocks.FLUID_OUTPUT_BUS.get())) 
+                && state.hasProperty(FORMED)) {
             return state.setValue(FORMED, false);
         }
         return Multiblock.super.unformBlock(level, blockPos, controllerPos, layerIndex, layoutIndex, multiblockData, player);

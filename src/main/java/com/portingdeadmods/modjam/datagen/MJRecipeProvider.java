@@ -66,11 +66,6 @@ public class MJRecipeProvider extends RecipeProvider {
                 .define('D', Tags.Items.STORAGE_BLOCKS_DIAMOND)
                 .unlockedBy("has_casing", has(MJBlocks.PLANET_SIMULATOR_CASING))
                 .save(recipeOutput);
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.DECORATIONS, MJBlocks.PLANET_SIMULATOR_BUS.get())
-                .requires(MJBlocks.PLANET_SIMULATOR_CASING)
-                .requires(Items.HOPPER)
-                .unlockedBy("has_casing", has(MJBlocks.PLANET_SIMULATOR_CASING))
-                .save(recipeOutput);
 
         ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, MJItems.PLANET_CARD.get())
                 .pattern(" P ")

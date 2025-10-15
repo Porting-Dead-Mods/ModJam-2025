@@ -1,9 +1,7 @@
-package com.portingdeadmods.modjam.content.block;
+package com.portingdeadmods.modjam.content.block.bus;
 
-import com.mojang.serialization.MapCodec;
-import com.portingdeadmods.modjam.content.blockentity.PlanetSimulatorBusBlockEntity;
-import com.portingdeadmods.modjam.content.blockentity.PlanetSimulatorPartBlockEntity;
-import com.portingdeadmods.modjam.registries.MJBlockEntities;
+import com.portingdeadmods.modjam.content.blockentity.bus.AbstractBusBlockEntity;
+import com.portingdeadmods.modjam.data.BusType;
 import com.portingdeadmods.modjam.registries.MJMultiblocks;
 import com.portingdeadmods.portingdeadlibs.api.multiblocks.Multiblock;
 import com.portingdeadmods.portingdeadlibs.utils.MultiblockHelper;
@@ -12,31 +10,32 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RenderShape;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
-import org.jetbrains.annotations.Nullable;
 
-public class PlanetSimulatorBusBlock extends BaseEntityBlock {
-    public PlanetSimulatorBusBlock(Properties properties) {
+public abstract class AbstractBusBlock extends BaseEntityBlock {
+    private final BusType busType;
+    private final boolean isInput;
+
+    protected AbstractBusBlock(Properties properties, BusType busType, boolean isInput) {
         super(properties);
+        this.busType = busType;
+        this.isInput = isInput;
         registerDefaultState(this.defaultBlockState()
                 .setValue(Multiblock.FORMED, false));
     }
 
+    public BusType getBusType() {
+        return busType;
+    }
+
+    public boolean isInput() {
+        return isInput;
+    }
+
     @Override
-    protected RenderShape getRenderShape(BlockState p_49232_) {
+    protected RenderShape getRenderShape(BlockState state) {
         return RenderShape.MODEL;
-    }
-
-    @Override
-    protected MapCodec<? extends BaseEntityBlock> codec() {
-        return simpleCodec(PlanetSimulatorBusBlock::new);
-    }
-
-    @Override
-    public @Nullable BlockEntity newBlockEntity(BlockPos blockPos, BlockState blockState) {
-        return MJBlockEntities.PLANET_SIMULATOR_BUS.get().create(blockPos, blockState);
     }
 
     @Override
@@ -46,7 +45,7 @@ public class PlanetSimulatorBusBlock extends BaseEntityBlock {
 
     @Override
     public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
-        if (state.getValue(Multiblock.FORMED) && !state.is(newState.getBlock()) && level.getBlockEntity(pos) instanceof PlanetSimulatorBusBlockEntity be) {
+        if (state.getValue(Multiblock.FORMED) && !state.is(newState.getBlock()) && level.getBlockEntity(pos) instanceof AbstractBusBlockEntity be) {
             BlockPos controllerPos = be.getControllerPos();
             if (controllerPos != null) {
                 MultiblockHelper.unform(MJMultiblocks.PLANET_SIMULATOR.get(), controllerPos, level);
@@ -54,7 +53,5 @@ public class PlanetSimulatorBusBlock extends BaseEntityBlock {
         }
 
         super.onRemove(state, level, pos, newState, movedByPiston);
-
     }
-
 }

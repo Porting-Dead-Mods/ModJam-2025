@@ -1,0 +1,58 @@
+package com.portingdeadmods.modjam.content.blockentity.bus;
+
+import com.portingdeadmods.modjam.content.menus.FluidBusMenu;
+import com.portingdeadmods.modjam.data.BusType;
+import com.portingdeadmods.modjam.registries.MJBlockEntities;
+import com.portingdeadmods.portingdeadlibs.api.capabilities.DynamicFluidTank;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.MenuProvider;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.level.block.state.BlockState;
+import org.jetbrains.annotations.Nullable;
+
+public class FluidOutputBusBlockEntity extends AbstractBusBlockEntity implements MenuProvider {
+    private final DynamicFluidTank fluidTank = new DynamicFluidTank(16000) {
+        @Override
+        protected void onContentsChanged() {
+            setChanged();
+        }
+    };
+
+    public FluidOutputBusBlockEntity(BlockPos pos, BlockState blockState) {
+        super(MJBlockEntities.FLUID_OUTPUT_BUS.get(), pos, blockState, BusType.FLUID, false);
+    }
+
+    public DynamicFluidTank getFluidTank() {
+        return fluidTank;
+    }
+
+    @Override
+    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+        super.saveAdditional(tag, registries);
+        tag.put("FluidTank", fluidTank.serializeNBT(registries));
+    }
+
+    @Override
+    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+        super.loadAdditional(tag, registries);
+        if (tag.contains("FluidTank")) {
+            fluidTank.deserializeNBT(registries, tag.getCompound("FluidTank"));
+        }
+    }
+
+    @Override
+    public Component getDisplayName() {
+        return Component.translatable("container.modjam.fluid_output_bus");
+    }
+
+    @Nullable
+    @Override
+    public AbstractContainerMenu createMenu(int containerId, Inventory playerInventory, Player player) {
+        return new FluidBusMenu(containerId, playerInventory, this);
+    }
+}

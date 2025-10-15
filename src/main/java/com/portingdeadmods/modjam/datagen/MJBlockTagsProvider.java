@@ -24,12 +24,24 @@ public class MJBlockTagsProvider extends BlockTagsProvider {
         tag(BlockTags.MINEABLE_WITH_PICKAXE)
                 .add(MJBlocks.TANTALUM_STORAGE_BLOCK.get())
                 .add(MJBlocks.TANTALUM_ORE.get())
-                .add(MJBlocks.DEEPSLATE_TANTALUM_ORE.get());
+                .add(MJBlocks.DEEPSLATE_TANTALUM_ORE.get())
+                .add(MJBlocks.ENERGY_INPUT_BUS.get())
+                .add(MJBlocks.ENERGY_OUTPUT_BUS.get())
+                .add(MJBlocks.ITEM_INPUT_BUS.get())
+                .add(MJBlocks.ITEM_OUTPUT_BUS.get())
+                .add(MJBlocks.FLUID_INPUT_BUS.get())
+                .add(MJBlocks.FLUID_OUTPUT_BUS.get());
         
         tag(BlockTags.NEEDS_IRON_TOOL)
                 .add(MJBlocks.TANTALUM_STORAGE_BLOCK.get())
                 .add(MJBlocks.TANTALUM_ORE.get())
-                .add(MJBlocks.DEEPSLATE_TANTALUM_ORE.get());
+                .add(MJBlocks.DEEPSLATE_TANTALUM_ORE.get())
+                .add(MJBlocks.ENERGY_INPUT_BUS.get())
+                .add(MJBlocks.ENERGY_OUTPUT_BUS.get())
+                .add(MJBlocks.ITEM_INPUT_BUS.get())
+                .add(MJBlocks.ITEM_OUTPUT_BUS.get())
+                .add(MJBlocks.FLUID_INPUT_BUS.get())
+                .add(MJBlocks.FLUID_OUTPUT_BUS.get());
         
         tag(Tags.Blocks.STORAGE_BLOCKS)
                 .add(MJBlocks.TANTALUM_STORAGE_BLOCK.get());

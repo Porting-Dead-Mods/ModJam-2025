@@ -22,10 +22,16 @@ public class MJLangProvider extends LanguageProvider {
         add("block.modjam.compressor", "Compressor");
         add("block.modjam.creative_power", "Creative Power Source");
         add("block.modjam.planet_simulator_controller", "Planet Simulator Controller");
-        add("block.modjam.planet_simulator_bus", "Planet Simulator Bus");
         add("block.modjam.planet_simulator_part", "Planet Simulator Part");
         add("block.modjam.planet_simulator_casing", "Planet Simulator Casing");
         add("block.modjam.planet_simulator_frame", "Planet Simulator Frame");
+        
+        add("block.modjam.energy_input_bus", "Energy Input Bus");
+        add("block.modjam.energy_output_bus", "Energy Output Bus");
+        add("block.modjam.item_input_bus", "Item Input Bus");
+        add("block.modjam.item_output_bus", "Item Output Bus");
+        add("block.modjam.fluid_input_bus", "Fluid Input Bus");
+        add("block.modjam.fluid_output_bus", "Fluid Output Bus");
         
         add("item.modjam.raw_tantalum", "Raw Tantalum");
         add("item.modjam.tantalum_ingot", "Tantalum Ingot");
@@ -59,6 +65,12 @@ public class MJLangProvider extends LanguageProvider {
         add("modjam.jei.layer_down", "Layer Down");
         
         add("container.modjam.compressor", "Compressor");
+        add("container.modjam.item_input_bus", "Item Input Bus");
+        add("container.modjam.item_output_bus", "Item Output Bus");
+        add("container.modjam.energy_input_bus", "Energy Input Bus");
+        add("container.modjam.energy_output_bus", "Energy Output Bus");
+        add("container.modjam.fluid_input_bus", "Fluid Input Bus");
+        add("container.modjam.fluid_output_bus", "Fluid Output Bus");
         add("jei.modjam.category.compressing", "Compressing");
         
         add("redstone_signal_type.portingdeadlibs.ignored", "Ignored");

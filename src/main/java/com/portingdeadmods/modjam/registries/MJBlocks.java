@@ -1,7 +1,18 @@
 package com.portingdeadmods.modjam.registries;
 
 import com.portingdeadmods.modjam.Modjam;
-import com.portingdeadmods.modjam.content.block.*;
+import com.portingdeadmods.modjam.content.block.CompressorBlock;
+import com.portingdeadmods.modjam.content.block.CompressorGhostBlock;
+import com.portingdeadmods.modjam.content.block.CreativePowerBlock;
+import com.portingdeadmods.modjam.content.block.PlanetSimulatorControllerBlock;
+import com.portingdeadmods.modjam.content.block.PlanetSimulatorFrameBlock;
+import com.portingdeadmods.modjam.content.block.PlanetSimulatorPartBlock;
+import com.portingdeadmods.modjam.content.block.bus.EnergyInputBusBlock;
+import com.portingdeadmods.modjam.content.block.bus.EnergyOutputBusBlock;
+import com.portingdeadmods.modjam.content.block.bus.FluidInputBusBlock;
+import com.portingdeadmods.modjam.content.block.bus.FluidOutputBusBlock;
+import com.portingdeadmods.modjam.content.block.bus.ItemInputBusBlock;
+import com.portingdeadmods.modjam.content.block.bus.ItemOutputBusBlock;
 import com.portingdeadmods.portingdeadlibs.api.utils.PDLDeferredRegisterBlocks;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
@@ -18,7 +29,14 @@ public final class MJBlocks {
 
     public static final DeferredBlock<PlanetSimulatorControllerBlock> PLANET_SIMULATOR_CONTROLLER = BLOCKS.registerBlockWithItem("planet_simulator_controller", PlanetSimulatorControllerBlock::new, TANTALUM_PROPERTIES);
 
-    public static final DeferredBlock<PlanetSimulatorBusBlock> PLANET_SIMULATOR_BUS = BLOCKS.registerBlockWithItem("planet_simulator_bus", PlanetSimulatorBusBlock::new, TANTALUM_PROPERTIES);
+    public static final DeferredBlock<EnergyInputBusBlock> ENERGY_INPUT_BUS = BLOCKS.registerBlockWithItem("energy_input_bus", EnergyInputBusBlock::new, TANTALUM_PROPERTIES);
+    public static final DeferredBlock<EnergyOutputBusBlock> ENERGY_OUTPUT_BUS = BLOCKS.registerBlockWithItem("energy_output_bus", EnergyOutputBusBlock::new, TANTALUM_PROPERTIES);
+    
+    public static final DeferredBlock<ItemInputBusBlock> ITEM_INPUT_BUS = BLOCKS.registerBlockWithItem("item_input_bus", ItemInputBusBlock::new, TANTALUM_PROPERTIES);
+    public static final DeferredBlock<ItemOutputBusBlock> ITEM_OUTPUT_BUS = BLOCKS.registerBlockWithItem("item_output_bus", ItemOutputBusBlock::new, TANTALUM_PROPERTIES);
+    
+    public static final DeferredBlock<FluidInputBusBlock> FLUID_INPUT_BUS = BLOCKS.registerBlockWithItem("fluid_input_bus", FluidInputBusBlock::new, TANTALUM_PROPERTIES);
+    public static final DeferredBlock<FluidOutputBusBlock> FLUID_OUTPUT_BUS = BLOCKS.registerBlockWithItem("fluid_output_bus", FluidOutputBusBlock::new, TANTALUM_PROPERTIES);
 
     public static final DeferredBlock<PlanetSimulatorPartBlock> PLANET_SIMULATOR_PART = BLOCKS.registerBlock("planet_simulator_part", PlanetSimulatorPartBlock::new, TANTALUM_PROPERTIES);
     public static final DeferredBlock<Block> TANTALUM_STORAGE_BLOCK = BLOCKS.registerBlockWithItem("tantalum_storage_block", Block::new, TANTALUM_PROPERTIES);

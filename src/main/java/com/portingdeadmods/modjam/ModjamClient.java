@@ -3,13 +3,19 @@ package com.portingdeadmods.modjam;
 import com.portingdeadmods.modjam.client.models.CompressorModel;
 import com.portingdeadmods.modjam.client.models.item.PlanetCardItemModel;
 import com.portingdeadmods.modjam.client.renderers.CompressorRenderer;
+import com.portingdeadmods.modjam.client.screens.EnergyBusScreen;
+import com.portingdeadmods.modjam.client.screens.FluidBusScreen;
+import com.portingdeadmods.modjam.client.screens.ItemBusScreen;
 import com.portingdeadmods.modjam.registries.MJBlockEntities;
+import com.portingdeadmods.modjam.registries.MJMenus;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.client.event.ModelEvent;
+import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 import net.neoforged.neoforge.client.gui.ConfigurationScreen;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 
@@ -19,6 +25,7 @@ public final class ModjamClient {
         modEventbus.addListener(this::registerModelLayers);
         modEventbus.addListener(this::registerBERs);
         modEventbus.addListener(this::registerModelLoaders);
+        modEventbus.addListener(this::registerScreens);
 
         modContainer.registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);
     }
@@ -34,5 +41,11 @@ public final class ModjamClient {
 
     public void registerModelLoaders(ModelEvent.RegisterGeometryLoaders event) {
         event.register(Modjam.rl("planet_card"), new PlanetCardItemModel.Loader());
+    }
+
+    private void registerScreens(RegisterMenuScreensEvent event) {
+        event.register(MJMenus.ITEM_BUS.get(), ItemBusScreen::new);
+        event.register(MJMenus.ENERGY_BUS.get(), EnergyBusScreen::new);
+        event.register(MJMenus.FLUID_BUS.get(), FluidBusScreen::new);
     }
 }
