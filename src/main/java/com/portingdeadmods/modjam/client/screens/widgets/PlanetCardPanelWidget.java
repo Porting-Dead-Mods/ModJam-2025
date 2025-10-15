@@ -3,6 +3,7 @@ package com.portingdeadmods.modjam.client.screens.widgets;
 import com.portingdeadmods.modjam.Modjam;
 import com.portingdeadmods.modjam.content.menus.PlanetSimulatorMenu;
 import com.portingdeadmods.modjam.networking.PlanetCardWidgetSetSlotPositionPayload;
+import com.portingdeadmods.portingdeadlibs.api.client.screens.widgets.MenuWidgetContext;
 import com.portingdeadmods.portingdeadlibs.api.client.screens.widgets.PanelWidget;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
@@ -14,7 +15,15 @@ public class PlanetCardPanelWidget extends PanelWidget {
 
     public PlanetCardPanelWidget(int x, int y) {
         super(x, y, WIDGET_WIDTH, WIDGET_HEIGHT, WIDGET_WIDTH, WIDGET_HEIGHT);
+    }
+
+    @Override
+    public void setContext(MenuWidgetContext context) {
+        super.setContext(context);
         PlanetSimulatorMenu menu = (PlanetSimulatorMenu) this.context.menu();
+
+        int y = 32;
+
         menu.setPlanetCardSlotPosition(y);
         PacketDistributor.sendToServer(new PlanetCardWidgetSetSlotPositionPayload(y));
     }

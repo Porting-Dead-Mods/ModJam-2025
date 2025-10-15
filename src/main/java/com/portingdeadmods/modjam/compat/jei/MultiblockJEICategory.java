@@ -442,23 +442,23 @@ public class MultiblockJEICategory implements IRecipeCategory<Multiblock> {
         ResourceLocation sprites = ResourceLocation.fromNamespaceAndPath(Modjam.MODID, "textures/gui/jei-sprites.png");
 
         if (exploded) {
-            drawScaledTexture(guiGraphics, sprites, explodeToggle, 20, 0, 20, 20, 120, 20);
+            drawScaledTexture(guiGraphics, sprites, explodeToggle, 16, 0, 16, 16, 96, 16);
         } else {
-            drawScaledTexture(guiGraphics, sprites, explodeToggle, 0, 0, 20, 20, 120, 20);
+            drawScaledTexture(guiGraphics, sprites, explodeToggle, 0, 0, 16, 16, 96, 16);
         }
 
         if (singleLayer) {
-            drawScaledTexture(guiGraphics, sprites, layerSwap, 60, 0, 20, 20, 120, 20);
+            drawScaledTexture(guiGraphics, sprites, layerSwap, 48, 0, 16, 16, 96, 16);
         } else {
-            drawScaledTexture(guiGraphics, sprites, layerSwap, 40, 0, 20, 20, 120, 20);
+            drawScaledTexture(guiGraphics, sprites, layerSwap, 32, 0, 16, 16, 96, 16);
         }
 
         if (singleLayer) {
             if (singleLayerOffset < multiblock.getLayout().length - 1)
-                drawScaledTexture(guiGraphics, sprites, layerUp, 80, 0, 20, 20, 120, 20);
+                drawScaledTexture(guiGraphics, sprites, layerUp, 64, 0, 16, 16, 96, 16);
 
             if (singleLayerOffset > 0) {
-                drawScaledTexture(guiGraphics, sprites, layerDown, 100, 0, 20, 20, 120, 20);
+                drawScaledTexture(guiGraphics, sprites, layerDown, 80, 0, 16, 16, 96, 16);
             }
         }
 
