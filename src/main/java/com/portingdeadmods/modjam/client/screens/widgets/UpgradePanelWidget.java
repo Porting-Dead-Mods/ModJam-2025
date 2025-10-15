@@ -31,6 +31,14 @@ public class UpgradePanelWidget extends PanelWidget {
     public void setContext(MenuWidgetContext context) {
         super.setContext(context);
         this.upgradeBlockEntity = (UpgradeBlockEntity) context.menu().blockEntity;
+        PacketDistributor.sendToServer(new UpgradeWidgetOpenClosePayload(false));
+        for (UpgradeSlot upgradeSlot : ((PlanetSimulatorMenu) this.context.menu()).getUpgradeSlots()) {
+            upgradeSlot.setActive(false);
+        }
+
+        PacketDistributor.sendToServer(new UpgradeWidgetSetSlotPositionsPayload(27));
+        PlanetSimulatorMenu menu = (PlanetSimulatorMenu) this.context.menu();
+        menu.setUpgradeSlotPositions(27);
     }
 
     @Override
@@ -87,8 +95,8 @@ public class UpgradePanelWidget extends PanelWidget {
             PacketDistributor.sendToServer(new UpgradeWidgetSetSlotPositionsPayload(27 + resizedWidget.getOpenHeight()));
             menu.setUpgradeSlotPositions(27 + resizedWidget.getOpenHeight());
         } else {
-            PacketDistributor.sendToServer(new UpgradeWidgetSetSlotPositionsPayload(51));
-            menu.setUpgradeSlotPositions(51);
+            PacketDistributor.sendToServer(new UpgradeWidgetSetSlotPositionsPayload(27));
+            menu.setUpgradeSlotPositions(27);
         }
 
     }

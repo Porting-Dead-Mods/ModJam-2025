@@ -25,10 +25,7 @@ public class PlanetSimulatorScreen extends PanelContainerScreen<PlanetSimulatorM
     protected void init() {
         super.init();
 
-        addPanelWidget(new UpgradePanelWidget(this.leftPos + this.imageWidth, this.topPos + 2 + 24 + 2));
-
-        PacketDistributor.sendToServer(new UpgradeWidgetSetSlotPositionsPayload(51));
-        this.menu.setUpgradeSlotPositions(51);
+        addPanelWidget(new UpgradePanelWidget(this.leftPos + this.imageWidth, this.topPos + 4));
     }
 
     @Override

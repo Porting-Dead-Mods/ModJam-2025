@@ -33,6 +33,7 @@ public class MJItemModelProvider extends ItemModelProvider {
         basicItem(MJItems.RAW_TANTALUM.get());
         planetCard(MJItems.PLANET_CARD.get());
         tintedPlanetCard(MJItems.TINTED_PLANET_CARD.get());
+
         basicItem(MJItems.ENERGY_UPGRADE.get());
         basicItem(MJItems.SPEED_UPGRADE.get());
         basicItem(MJItems.LUCK_UPGRADE.get());

@@ -27,10 +27,10 @@ public final class MJItems {
     public static final DeferredItem<TintedPlanetCardItem> TINTED_PLANET_CARD = ITEMS.register("tinted_planet_card", () -> new TintedPlanetCardItem(new Item.Properties()
             .component(MJDataComponents.PLANET, PlanetComponent.EMPTY)));
 
-    public static final DeferredItem<UpgradeItem> ENERGY_UPGRADE = ITEMS.register("energy_upgrade", () -> new UpgradeItem(UpgradeType.ENERGY, new Item.Properties()));
+    public static final DeferredItem<UpgradeItem> ENERGY_UPGRADE = ITEMS.register("upgrade_energy", () -> new UpgradeItem(UpgradeType.ENERGY, new Item.Properties()));
 
-    public static final DeferredItem<UpgradeItem> SPEED_UPGRADE = ITEMS.register("speed_upgrade", () -> new UpgradeItem(UpgradeType.SPEED, new Item.Properties()));
+    public static final DeferredItem<UpgradeItem> SPEED_UPGRADE = ITEMS.register("upgrade_speed", () -> new UpgradeItem(UpgradeType.SPEED, new Item.Properties()));
 
-    public static final DeferredItem<UpgradeItem> LUCK_UPGRADE = ITEMS.register("luck_upgrade", () -> new UpgradeItem(UpgradeType.LUCK, new Item.Properties()));
+    public static final DeferredItem<UpgradeItem> LUCK_UPGRADE = ITEMS.register("upgrade_luck", () -> new UpgradeItem(UpgradeType.LUCK, new Item.Properties()));
 
 }
