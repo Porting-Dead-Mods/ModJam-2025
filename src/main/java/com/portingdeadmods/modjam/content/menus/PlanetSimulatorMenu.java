@@ -41,7 +41,29 @@ public class PlanetSimulatorMenu extends PDLAbstractContainerMenu<PlanetSimulato
 
     @Override
     protected int getMergeableSlotCount() {
-        return 1;
+        return 1 + upgradeSlots.size();
+    }
+
+    @Override
+    protected boolean performMerge(int index, net.minecraft.world.item.ItemStack stack) {
+        int mainSlot = 1;
+        int invFull = slots.size();
+        int upgradeStart = invFull - upgradeSlots.size();
+        int invHotbar = upgradeStart - 9;
+        int invPlayer = invHotbar - 27;
+
+        if (index >= upgradeStart) {
+            return moveItemStackTo(stack, invPlayer, upgradeStart, true);
+        } else if (index >= invPlayer && index < upgradeStart) {
+            if (stack.getItem() instanceof com.portingdeadmods.modjam.content.items.UpgradeItem) {
+                if (moveItemStackTo(stack, upgradeStart, invFull, false)) {
+                    return true;
+                }
+            }
+            return moveItemStackTo(stack, 0, mainSlot, false);
+        } else {
+            return moveItemStackTo(stack, invPlayer, invHotbar, false);
+        }
     }
 
     public void setUpgradeSlotPositions(int startY) {
