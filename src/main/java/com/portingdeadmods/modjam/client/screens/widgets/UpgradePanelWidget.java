@@ -100,8 +100,8 @@ public class UpgradePanelWidget extends PanelWidget {
 
         boolean isHoveringSprite = mouseX >= this.getX()
                 && mouseY >= this.getY()
-                && mouseX < this.getX() + WIDGET_WIDTH
-                && mouseY < this.getY() + WIDGET_HEIGHT;
+                && mouseX < this.getX() + 24
+                && mouseY < this.getY() + 24;
 
         if (isHoveringSprite && context != null){
             List<Component> tooltip = new ArrayList<>();

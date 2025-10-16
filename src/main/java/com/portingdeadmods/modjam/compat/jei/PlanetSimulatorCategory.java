@@ -3,73 +3,76 @@ package com.portingdeadmods.modjam.compat.jei;
 import com.portingdeadmods.modjam.Modjam;
 import com.portingdeadmods.modjam.content.recipe.PlanetSimulatorRecipe;
 import com.portingdeadmods.modjam.registries.MJBlocks;
+import com.portingdeadmods.portingdeadlibs.api.recipes.IngredientWithCount;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.builder.IRecipeSlotBuilder;
 import mezz.jei.api.gui.widgets.IRecipeExtrasBuilder;
+import mezz.jei.api.gui.widgets.ITextWidget;
 import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.helpers.IPlatformFluidHelper;
 import mezz.jei.api.neoforge.NeoForgeTypes;
 import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.AbstractRecipeCategory;
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
-import net.neoforged.neoforge.fluids.FluidStack;
-import org.jetbrains.annotations.NotNull;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.util.FastColor;
 
 import java.util.Arrays;
+import java.util.List;
 
 public class PlanetSimulatorCategory extends AbstractRecipeCategory<PlanetSimulatorRecipe> {
     public static final RecipeType<PlanetSimulatorRecipe> TYPE = RecipeType.create(Modjam.MODID, "planet_simulator", PlanetSimulatorRecipe.class);
     private final IPlatformFluidHelper<?> fluidHelper;
 
     public PlanetSimulatorCategory(IGuiHelper guiHelper, IPlatformFluidHelper<?> fluidHelper) {
-        super(TYPE, Component.translatable("jei.modjam.category.planet_simulator"), guiHelper.createDrawableItemLike(MJBlocks.PLANET_SIMULATOR_CONTROLLER), 176, 90);
+        super(TYPE, Component.translatable("jei.modjam.category.planet_simulator"), guiHelper.createDrawableItemLike(MJBlocks.PLANET_SIMULATOR_CONTROLLER), 176, 126);
         this.fluidHelper = fluidHelper;
     }
 
     @Override
     public void setRecipe(IRecipeLayoutBuilder builder, PlanetSimulatorRecipe recipe, IFocusGroup focuses) {
-        int inputX = 1;
-        int inputY = 1;
-        
-        for (int i = 0; i < recipe.catalysts().size() && i < 9; i++) {
-            int slotX = inputX + (i % 3) * 18;
-            int slotY = inputY + (i / 3) * 18;
-            builder.addInputSlot(slotX, slotY)
+        int size = recipe.inputs().size();
+        int startX = (this.getWidth() - size * 18) / 2;
+
+        for (int i = 0; i < size; i++) {
+            builder.addInputSlot(startX + i * 18, 20)
                     .setStandardSlotBackground()
-                    .addIngredients(CompressingCategory.iWCToIngredientSaveCount(recipe.catalysts().get(i)));
+                    .addIngredients(CompressingCategory.iWCToIngredientSaveCount(recipe.inputs().get(i)));
         }
-        
+
         if (recipe.fluidInput().isPresent()) {
             builder.addInputSlot(60, 1)
                     .setStandardSlotBackground()
                     .setFluidRenderer(10000, true, 16, 54)
                     .addIngredients(NeoForgeTypes.FLUID_STACK, Arrays.stream(recipe.fluidInput().get().getStacks()).toList());
         }
-        
-        int outputX = 85;
+
         int outputY = 1;
-        
+
         for (int i = 0; i < recipe.outputs().size() && i < 9; i++) {
             PlanetSimulatorRecipe.WeightedOutput output = recipe.outputs().get(i);
+            int outputX = (this.getWidth() - (recipe.outputs().size() % 3) * 18) / 2;
             int slotX = outputX + (i % 3) * 18;
             int slotY = outputY + (i / 3) * 18;
-            
-            IRecipeSlotBuilder slot = builder.addOutputSlot(slotX, slotY)
-                    .setOutputSlotBackground();
-            
+
+            IRecipeSlotBuilder slot = builder.addOutputSlot(slotX, slotY + 40)
+                    .setStandardSlotBackground();
+
             if (output.itemStack().isPresent()) {
                 slot.addItemStack(output.itemStack().get());
             }
-            
+
             if (output.fluidStack().isPresent()) {
                 slot.setFluidRenderer(10000, false, 16, 16)
                         .addIngredient(NeoForgeTypes.FLUID_STACK, output.fluidStack().get());
             }
-            
+
             if (output.chance() < 1.0f) {
-                slot.addTooltipCallback((view, tooltip) -> {
-                    tooltip.add(Component.literal("Chance: " + (int)(output.chance() * 100) + "%"));
+                slot.addRichTooltipCallback((view, tooltip) -> {
+                    tooltip.add(Component.literal("Chance: " + (int) (output.chance() * 100) + "%"));
                 });
             }
         }
@@ -77,8 +80,16 @@ public class PlanetSimulatorCategory extends AbstractRecipeCategory<PlanetSimula
 
     @Override
     public void createRecipeExtras(IRecipeExtrasBuilder builder, PlanetSimulatorRecipe recipe, IFocusGroup focuses) {
-        builder.addText(Component.literal("Energy: " + recipe.energyPerTick() + " FE/t"), 1, 60);
-        builder.addText(Component.literal("Duration: " + recipe.duration() + " ticks"), 1, 70);
-        builder.addText(Component.literal("→"), 72, 24);
+        addText(builder, Component.literal(recipe.energyPerTick() + " FE/t")
+                .withStyle(ChatFormatting.DARK_GRAY))
+                .setPosition(0, 0);
+        addText(builder, Component.literal(recipe.duration() + " ticks")
+                .withStyle(ChatFormatting.DARK_GRAY))
+                .setPosition(0, 20);
+    }
+
+    private static ITextWidget addText(IRecipeExtrasBuilder builder, MutableComponent component) {
+        MutableComponent literal = component;
+        return builder.addText(literal, Minecraft.getInstance().font.width(literal), Minecraft.getInstance().font.lineHeight);
     }
 }
