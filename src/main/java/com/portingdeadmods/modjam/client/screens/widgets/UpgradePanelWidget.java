@@ -3,6 +3,7 @@ package com.portingdeadmods.modjam.client.screens.widgets;
 import com.portingdeadmods.modjam.Modjam;
 import com.portingdeadmods.modjam.content.block.UpgradeBlockEntity;
 import com.portingdeadmods.modjam.content.items.UpgradeItem;
+import com.portingdeadmods.modjam.content.menus.CompressorMenu;
 import com.portingdeadmods.modjam.content.menus.PlanetSimulatorMenu;
 import com.portingdeadmods.modjam.content.menus.UpgradeSlot;
 import com.portingdeadmods.modjam.data.UpgradeType;
@@ -45,13 +46,27 @@ public class UpgradePanelWidget extends PanelWidget {
         super.setContext(context);
         this.upgradeBlockEntity = (UpgradeBlockEntity) context.menu().blockEntity;
         PacketDistributor.sendToServer(new UpgradeWidgetOpenClosePayload(false));
-        for (UpgradeSlot upgradeSlot : ((PlanetSimulatorMenu) this.context.menu()).getUpgradeSlots()) {
+        
+        PDLAbstractContainerMenu<?> menu = this.context.menu();
+        List<UpgradeSlot> upgradeSlots;
+        if (menu instanceof PlanetSimulatorMenu psMenu) {
+            upgradeSlots = psMenu.getUpgradeSlots();
+        } else if (menu instanceof CompressorMenu cMenu) {
+            upgradeSlots = cMenu.getUpgradeSlots();
+        } else {
+            return;
+        }
+        
+        for (UpgradeSlot upgradeSlot : upgradeSlots) {
             upgradeSlot.setActive(false);
         }
 
         PacketDistributor.sendToServer(new UpgradeWidgetSetSlotPositionsPayload(27));
-        PlanetSimulatorMenu menu = (PlanetSimulatorMenu) this.context.menu();
-        menu.setUpgradeSlotPositions(27);
+        if (menu instanceof PlanetSimulatorMenu psMenu) {
+            psMenu.setUpgradeSlotPositions(27);
+        } else if (menu instanceof CompressorMenu cMenu) {
+            cMenu.setUpgradeSlotPositions(27);
+        }
     }
 
     @Override
@@ -65,7 +80,18 @@ public class UpgradePanelWidget extends PanelWidget {
             this.open = !this.open;
 
             PacketDistributor.sendToServer(new UpgradeWidgetOpenClosePayload(open));
-            for (UpgradeSlot upgradeSlot : ((PlanetSimulatorMenu) this.context.menu()).getUpgradeSlots()) {
+            
+            PDLAbstractContainerMenu<?> menu = this.context.menu();
+            List<UpgradeSlot> upgradeSlots;
+            if (menu instanceof PlanetSimulatorMenu psMenu) {
+                upgradeSlots = psMenu.getUpgradeSlots();
+            } else if (menu instanceof CompressorMenu cMenu) {
+                upgradeSlots = cMenu.getUpgradeSlots();
+            } else {
+                return false;
+            }
+            
+            for (UpgradeSlot upgradeSlot : upgradeSlots) {
                 upgradeSlot.setActive(this.open);
             }
 
@@ -111,7 +137,10 @@ public class UpgradePanelWidget extends PanelWidget {
             for (int j = 0; j < upgradeHandler.getSlots(); j++) {
                 ItemStack stack = upgradeHandler.getStackInSlot(j);
                 if (!stack.isEmpty() && stack.getItem() instanceof UpgradeItem upgradeItem) {
-                    upgradeCounts.merge(upgradeItem.getUpgradeType(), stack.getCount(), Integer::sum);
+                    UpgradeType upgradeType = upgradeItem.getUpgradeType();
+                    if (upgradeBlockEntity.getSupportedUpgrades().contains(upgradeType)) {
+                        upgradeCounts.merge(upgradeType, stack.getCount(), Integer::sum);
+                    }
                 }
             }
             
@@ -181,13 +210,21 @@ public class UpgradePanelWidget extends PanelWidget {
     public void onWidgetResized(PanelWidget resizedWidget) {
         super.onWidgetResized(resizedWidget);
 
-        PlanetSimulatorMenu menu = ((PlanetSimulatorMenu) this.context.menu());
+        PDLAbstractContainerMenu<?> menu = this.context.menu();
         if (resizedWidget.isOpen()) {
             PacketDistributor.sendToServer(new UpgradeWidgetSetSlotPositionsPayload(27 + resizedWidget.getOpenHeight()));
-            menu.setUpgradeSlotPositions(27 + resizedWidget.getOpenHeight());
+            if (menu instanceof PlanetSimulatorMenu psMenu) {
+                psMenu.setUpgradeSlotPositions(27 + resizedWidget.getOpenHeight());
+            } else if (menu instanceof CompressorMenu cMenu) {
+                cMenu.setUpgradeSlotPositions(27 + resizedWidget.getOpenHeight());
+            }
         } else {
             PacketDistributor.sendToServer(new UpgradeWidgetSetSlotPositionsPayload(27));
-            menu.setUpgradeSlotPositions(27);
+            if (menu instanceof PlanetSimulatorMenu psMenu) {
+                psMenu.setUpgradeSlotPositions(27);
+            } else if (menu instanceof CompressorMenu cMenu) {
+                cMenu.setUpgradeSlotPositions(27);
+            }
         }
 
     }

@@ -46,14 +46,10 @@ import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.items.IItemHandler;
 import org.jetbrains.annotations.Nullable;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class PlanetSimulatorBlockEntity extends ContainerBlockEntity implements MultiblockEntity, MenuProvider, UpgradeBlockEntity {
-    private static final Logger LOGGER = LoggerFactory.getLogger(PlanetSimulatorBlockEntity.class);
     public static final Set<UpgradeType> SUPPORTED_UPGRADES = Set.of(UpgradeType.values());
     private MultiblockData multiblockData;
     private final UpgradeItemHandler upgradeItemHandler;
@@ -62,7 +58,6 @@ public class PlanetSimulatorBlockEntity extends ContainerBlockEntity implements 
     private int maxProgress = 0;
     private int energyPerTick = 0;
     private boolean isProcessing = false;
-    private long lastLogTime = 0;
 
     public int getProgress() {
         return progress;
@@ -198,37 +193,14 @@ public class PlanetSimulatorBlockEntity extends ContainerBlockEntity implements 
         List<AbstractBusBlockEntity> inputBusses = getBusses(true);
         List<AbstractBusBlockEntity> outputBusses = getBusses(false);
 
-        boolean shouldLog = (this.level.getGameTime() - lastLogTime) > 100;
-        if (shouldLog && !isProcessing) {
-            LOGGER.debug("Planet Simulator at {}: Found {} input busses, {} output busses", 
-                this.worldPosition, inputBusses.size(), outputBusses.size());
-            Map<Item, Integer> items = gatherAllInputItems(inputBusses);
-            int energy = getTotalInputEnergy(inputBusses);
-            LOGGER.debug("Available items: {}, Energy: {}", items, energy);
-        }
-
         PlanetSimulatorRecipe regularRecipe = findMatchingRegularRecipe(planetComponent, inputBusses);
         PlanetPowerRecipe powerRecipe = findMatchingPowerRecipe(planetComponent, inputBusses);
 
         if (regularRecipe != null) {
-            if (shouldLog && !isProcessing) {
-                LOGGER.debug("Found matching regular recipe: {} catalysts, {} energy/tick, {} duration",
-                    regularRecipe.catalysts().size(), regularRecipe.energyPerTick(), regularRecipe.duration());
-                lastLogTime = this.level.getGameTime();
-            }
             processRegularRecipe(regularRecipe, inputBusses, outputBusses);
         } else if (powerRecipe != null) {
-            if (shouldLog && !isProcessing) {
-                LOGGER.debug("Found matching power recipe: {} catalysts, {} energy/tick, {} duration",
-                    powerRecipe.catalysts().size(), powerRecipe.energyPerTick(), powerRecipe.duration());
-                lastLogTime = this.level.getGameTime();
-            }
             processPowerRecipe(powerRecipe, inputBusses);
         } else {
-            if (shouldLog && !isProcessing) {
-                LOGGER.debug("No matching recipe found for planet type: {}", planetComponent.planetType());
-                lastLogTime = this.level.getGameTime();
-            }
             resetProgress();
         }
     }
@@ -507,13 +479,8 @@ public class PlanetSimulatorBlockEntity extends ContainerBlockEntity implements 
         if (progress >= maxProgress) {
             if (consumeInputs(recipe, inputBusses) && canOutputResults(recipe.outputs(), outputBusses)) {
                 outputResults(recipe.outputs(), outputBusses);
-                LOGGER.debug("Completed recipe at {}, progress reset", this.worldPosition);
                 resetProgress();
             } else {
-                if ((this.level.getGameTime() - lastLogTime) > 100) {
-                    LOGGER.debug("Recipe at {} blocked: cannot consume inputs or output space full", this.worldPosition);
-                    lastLogTime = this.level.getGameTime();
-                }
                 progress = maxProgress - 1;
             }
         }

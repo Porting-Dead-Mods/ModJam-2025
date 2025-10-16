@@ -1,6 +1,7 @@
 package com.portingdeadmods.modjam.client.screens;
 
 import com.portingdeadmods.modjam.Modjam;
+import com.portingdeadmods.modjam.client.screens.widgets.UpgradePanelWidget;
 import com.portingdeadmods.modjam.content.blockentity.CompressorBlockEntity;
 import com.portingdeadmods.modjam.content.menus.CompressorMenu;
 import com.portingdeadmods.portingdeadlibs.api.client.screens.PanelContainerScreen;
@@ -26,7 +27,9 @@ public class CompressorScreen extends PanelContainerScreen<CompressorMenu> {
         super.init();
 
         addRenderableOnly(new EnergyBarWidget(this.leftPos + 11, this.topPos + 17, menu.blockEntity, true));
-        addPanelWidget(new RedstonePanelWidget(this.leftPos + this.imageWidth, this.topPos + 2));
+        RedstonePanelWidget redstonePanelWidget = new RedstonePanelWidget(this.leftPos + this.imageWidth, this.topPos + 2);
+        addPanelWidget(redstonePanelWidget);
+        addPanelWidget(new UpgradePanelWidget(this.leftPos + this.imageWidth, this.topPos + 2 + redstonePanelWidget.getClosedHeight()));
     }
 
 
