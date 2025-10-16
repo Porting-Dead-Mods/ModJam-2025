@@ -101,17 +101,19 @@ public class MultiblockJEICategory implements IRecipeCategory<Multiblock> {
         this.blocks = Minecraft.getInstance().getBlockRenderer();
         
         int renderWidth = width - 10;
-        int renderHeight = 82;
+        int renderHeight = 68;
         int scissorX = 5;
         int scissorY = 0;
         this.renderArea = new ScreenArea(scissorX, scissorY, renderWidth, renderHeight);
         
-        int controlsY = renderHeight;
+        int controlsYOffset = 70;
         int centerX = width / 2;
-        this.explodeToggle = new ScreenArea(centerX - 30, controlsY, 10, 10);
-        this.layerSwap = new ScreenArea(centerX - 15, controlsY, 10, 10);
-        this.layerUp = new ScreenArea(centerX, controlsY, 10, 10);
-        this.layerDown = new ScreenArea(centerX + 15, controlsY, 10, 10);
+        int controlSize = 16;
+        int spacing = 18;
+        this.explodeToggle = new ScreenArea(centerX - (spacing * 2) - (controlSize / 2), controlsYOffset, controlSize, controlSize);
+        this.layerSwap = new ScreenArea(centerX - spacing - (controlSize / 2), controlsYOffset, controlSize, controlSize);
+        this.layerUp = new ScreenArea(centerX - (controlSize / 2), controlsYOffset, controlSize, controlSize);
+        this.layerDown = new ScreenArea(centerX + spacing - (controlSize / 2), controlsYOffset, controlSize, controlSize);
     }
 
     @Override
