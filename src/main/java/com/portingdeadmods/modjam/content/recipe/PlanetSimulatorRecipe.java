@@ -20,6 +20,7 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.item.crafting.SingleRecipeInput;
 import net.minecraft.world.level.Level;
+import net.neoforged.neoforge.common.util.NeoForgeExtraCodecs;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.crafting.FluidIngredient;
 import org.jetbrains.annotations.NotNull;
@@ -30,6 +31,7 @@ import java.util.Optional;
 public record PlanetSimulatorRecipe(
         ResourceKey<PlanetType> planetType,
         List<IngredientWithCount> catalysts,
+        List<IngredientWithCount> inputs,
         Optional<FluidIngredient> fluidInput,
         int energyPerTick,
         int duration,
@@ -80,27 +82,37 @@ public record PlanetSimulatorRecipe(
         public static final MapCodec<PlanetSimulatorRecipe> CODEC = RecordCodecBuilder.mapCodec(inst -> inst.group(
                 ResourceKey.codec(MJRegistries.PLANET_TYPE_KEY).fieldOf("planet_type").forGetter(PlanetSimulatorRecipe::planetType),
                 IngredientWithCount.CODEC.listOf().optionalFieldOf("catalysts", List.of()).forGetter(PlanetSimulatorRecipe::catalysts),
+                IngredientWithCount.CODEC.listOf().optionalFieldOf("inputs", List.of()).forGetter(PlanetSimulatorRecipe::inputs),
                 FluidIngredient.CODEC.optionalFieldOf("fluid_input").forGetter(PlanetSimulatorRecipe::fluidInput),
                 Codec.INT.fieldOf("energy_per_tick").forGetter(PlanetSimulatorRecipe::energyPerTick),
                 Codec.INT.fieldOf("duration").forGetter(PlanetSimulatorRecipe::duration),
                 WeightedOutput.CODEC.listOf().fieldOf("outputs").forGetter(PlanetSimulatorRecipe::outputs)
         ).apply(inst, PlanetSimulatorRecipe::new));
 
-        public static final StreamCodec<RegistryFriendlyByteBuf, PlanetSimulatorRecipe> STREAM_CODEC = StreamCodec.composite(
-                ResourceKey.streamCodec(MJRegistries.PLANET_TYPE_KEY),
-                PlanetSimulatorRecipe::planetType,
-                IngredientWithCount.STREAM_CODEC.apply(ByteBufCodecs.list()),
-                PlanetSimulatorRecipe::catalysts,
-                ByteBufCodecs.optional(FluidIngredient.STREAM_CODEC),
-                PlanetSimulatorRecipe::fluidInput,
-                ByteBufCodecs.INT,
-                PlanetSimulatorRecipe::energyPerTick,
-                ByteBufCodecs.INT,
-                PlanetSimulatorRecipe::duration,
-                WeightedOutput.STREAM_CODEC.apply(ByteBufCodecs.list()),
-                PlanetSimulatorRecipe::outputs,
-                PlanetSimulatorRecipe::new
-        );
+        public static final StreamCodec<RegistryFriendlyByteBuf, PlanetSimulatorRecipe> STREAM_CODEC = new StreamCodec<>() {
+            @Override
+            public PlanetSimulatorRecipe decode(RegistryFriendlyByteBuf buf) {
+                ResourceKey<PlanetType> planetType = ResourceKey.streamCodec(MJRegistries.PLANET_TYPE_KEY).decode(buf);
+                List<IngredientWithCount> catalysts = IngredientWithCount.STREAM_CODEC.apply(ByteBufCodecs.list()).decode(buf);
+                List<IngredientWithCount> inputs = IngredientWithCount.STREAM_CODEC.apply(ByteBufCodecs.list()).decode(buf);
+                Optional<FluidIngredient> fluidInput = ByteBufCodecs.optional(FluidIngredient.STREAM_CODEC).decode(buf);
+                int energyPerTick = ByteBufCodecs.INT.decode(buf);
+                int duration = ByteBufCodecs.INT.decode(buf);
+                List<WeightedOutput> outputs = WeightedOutput.STREAM_CODEC.apply(ByteBufCodecs.list()).decode(buf);
+                return new PlanetSimulatorRecipe(planetType, catalysts, inputs, fluidInput, energyPerTick, duration, outputs);
+            }
+
+            @Override
+            public void encode(RegistryFriendlyByteBuf buf, PlanetSimulatorRecipe recipe) {
+                ResourceKey.streamCodec(MJRegistries.PLANET_TYPE_KEY).encode(buf, recipe.planetType());
+                IngredientWithCount.STREAM_CODEC.apply(ByteBufCodecs.list()).encode(buf, recipe.catalysts());
+                IngredientWithCount.STREAM_CODEC.apply(ByteBufCodecs.list()).encode(buf, recipe.inputs());
+                ByteBufCodecs.optional(FluidIngredient.STREAM_CODEC).encode(buf, recipe.fluidInput());
+                ByteBufCodecs.INT.encode(buf, recipe.energyPerTick());
+                ByteBufCodecs.INT.encode(buf, recipe.duration());
+                WeightedOutput.STREAM_CODEC.apply(ByteBufCodecs.list()).encode(buf, recipe.outputs());
+            }
+        };
 
         public static final Serializer INSTANCE = new Serializer();
 

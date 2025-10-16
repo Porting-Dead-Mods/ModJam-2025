@@ -1,7 +1,7 @@
 {
   "type": "modjam:planet_simulator",
   "planet_type": "modjam:earth",
-  "catalysts": [
+  "inputs": [
     {
       "item": "minecraft:stone",
       "count": 16

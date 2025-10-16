@@ -15,21 +15,21 @@ public record ReadOnlyEnergyStorage(IEnergyStorage inner) implements IEnergyStor
 
     @Override
     public int getEnergyStored() {
-        return this.inner.getEnergyStored();
+        return this.inner != null ? this.inner.getEnergyStored() : 0;
     }
 
     @Override
     public int getMaxEnergyStored() {
-        return this.inner.getMaxEnergyStored();
+        return this.inner != null ? this.inner.getMaxEnergyStored() : 0;
     }
 
     @Override
     public boolean canExtract() {
-        return this.inner.canExtract();
+        return this.inner != null && this.inner.canExtract();
     }
 
     @Override
     public boolean canReceive() {
-        return this.inner.canReceive();
+        return this.inner != null && this.inner.canReceive();
     }
 }

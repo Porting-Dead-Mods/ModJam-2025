@@ -116,21 +116,25 @@ public class UpgradePanelWidget extends PanelWidget {
             }
             
             if (!upgradeCounts.isEmpty()) {
+                Map<UpgradeType.EffectTarget, Float> mergedEffects = new HashMap<>();
+                
                 for (Map.Entry<UpgradeType, Integer> entry : upgradeCounts.entrySet()) {
                     UpgradeType type = entry.getKey();
                     int count = entry.getValue();
-                    float totalValue = type.getModifierValue() * count;
                     
-                    String modifierText = switch (type.getModifierType()) {
-                        case MULTIPLY -> "x" + String.format(Locale.US, "%.1f", totalValue);
-                        case DIVIDE -> "/" + String.format(Locale.US, "%.1f", totalValue);
-                        case ADD -> (totalValue >= 0 ? "+" : "") + String.format(Locale.US, "%.0f%%", totalValue * 100);
-                    };
+                    for (UpgradeType.UpgradeEffect effect : type.getEffects()) {
+                        float totalPercent = effect.getPercentPerUpgrade() * count;
+                        mergedEffects.merge(effect.getTarget(), totalPercent, Float::sum);
+                    }
+                }
+                
+                for (Map.Entry<UpgradeType.EffectTarget, Float> entry : mergedEffects.entrySet()) {
+                    String effectName = formatEffectTarget(entry.getKey());
+                    String effectValue = String.format(Locale.US, "%+.1f%%", entry.getValue());
+                    ChatFormatting color = getMergedEffectColor(entry.getKey(), entry.getValue());
                     
-                    tooltip.add(Component.translatable("tooltip.modjam.upgrade." + type.getName())
-                            .append(": ")
-                            .append(Component.literal(modifierText).withStyle(ChatFormatting.GOLD))
-                            .withStyle(ChatFormatting.GRAY));
+                    tooltip.add(Component.literal(effectName + ": " + effectValue)
+                            .withStyle(color));
                 }
             } else {
                 tooltip.add(Component.translatable("tooltip.modjam.no_upgrades").withStyle(ChatFormatting.GRAY));
@@ -140,6 +144,37 @@ public class UpgradePanelWidget extends PanelWidget {
                 guiGraphics.renderComponentTooltip(Minecraft.getInstance().font, tooltip, mouseX, mouseY);
             }
         }
+    }
+    
+    private String formatEffectTarget(UpgradeType.EffectTarget target) {
+        return switch (target) {
+            case DURATION -> "Time";
+            case ENERGY_USAGE -> "Energy";
+            case LUCK_CHANCE -> "Luck";
+        };
+    }
+    
+    private String formatEffectValue(UpgradeType.UpgradeEffect effect, int count) {
+        float totalPercent = effect.getPercentPerUpgrade() * count;
+        return String.format(Locale.US, "%+.1f%%", totalPercent);
+    }
+    
+    private ChatFormatting getEffectColor(UpgradeType.UpgradeEffect effect) {
+        boolean isBonus = switch (effect.getTarget()) {
+            case DURATION, ENERGY_USAGE -> effect.getPercentPerUpgrade() < 0;
+            case LUCK_CHANCE -> effect.getPercentPerUpgrade() > 0;
+        };
+        
+        return isBonus ? ChatFormatting.GREEN : ChatFormatting.RED;
+    }
+    
+    private ChatFormatting getMergedEffectColor(UpgradeType.EffectTarget target, float totalPercent) {
+        boolean isBonus = switch (target) {
+            case DURATION, ENERGY_USAGE -> totalPercent < 0;
+            case LUCK_CHANCE -> totalPercent > 0;
+        };
+        
+        return isBonus ? ChatFormatting.GREEN : ChatFormatting.RED;
     }
 
     @Override

@@ -73,6 +73,11 @@ public class MJLangProvider extends LanguageProvider {
         add("container.modjam.fluid_output_bus", "Fluid Output Bus");
         add("jei.modjam.category.compressing", "Compressing");
         
+        add("jade.modjam.recipe_progress", "Progress: %s / %s");
+        add("jade.modjam.energy_per_tick", "Energy: %s FE/t");
+        add("jade.modjam.total_energy", "Total Energy: %s / %s FE");
+        add("jade.modjam.multiblock_not_formed", "Multiblock Not Formed");
+        
         add("redstone_signal_type.portingdeadlibs.ignored", "Ignored");
         add("redstone_signal_type.portingdeadlibs.low_signal", "Low Signal");
         add("redstone_signal_type.portingdeadlibs.high_signal", "High Signal");

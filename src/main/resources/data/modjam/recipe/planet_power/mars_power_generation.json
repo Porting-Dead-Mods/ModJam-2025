@@ -1,7 +1,7 @@
 {
   "type": "modjam:planet_power",
   "planet_type": "modjam:mars",
-  "catalysts": [
+  "inputs": [
     {
       "item": "minecraft:redstone",
       "count": 1
