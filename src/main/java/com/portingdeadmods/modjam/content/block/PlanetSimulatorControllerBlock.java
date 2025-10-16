@@ -1,6 +1,7 @@
 package com.portingdeadmods.modjam.content.block;
 
 import com.mojang.serialization.MapCodec;
+import com.portingdeadmods.modjam.content.blockentity.PlanetSimulatorBlockEntity;
 import com.portingdeadmods.modjam.registries.MJBlockEntities;
 import com.portingdeadmods.modjam.registries.MJMultiblocks;
 import com.portingdeadmods.portingdeadlibs.api.blockentities.ContainerBlockEntity;
@@ -8,9 +9,11 @@ import com.portingdeadmods.portingdeadlibs.api.blocks.RotatableContainerBlock;
 import com.portingdeadmods.portingdeadlibs.api.multiblocks.Multiblock;
 import com.portingdeadmods.portingdeadlibs.utils.MultiblockHelper;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.Containers;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
@@ -44,8 +47,18 @@ public class PlanetSimulatorControllerBlock extends RotatableContainerBlock {
 
     @Override
     public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
-        if (!state.is(newState.getBlock()) && state.getValue(Multiblock.FORMED)) {
-            MultiblockHelper.unform(MJMultiblocks.PLANET_SIMULATOR.get(), pos, level);
+        if (!state.is(newState.getBlock())) {
+            BlockEntity blockEntity = level.getBlockEntity(pos);
+            if (blockEntity instanceof PlanetSimulatorBlockEntity planetSimulator) {
+                for (int i = 0; i < planetSimulator.getUpgradeItemHandler().getSlots(); i++) {
+                    Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(), 
+                            planetSimulator.getUpgradeItemHandler().getStackInSlot(i));
+                }
+            }
+            
+            if (state.getValue(Multiblock.FORMED)) {
+                MultiblockHelper.unform(MJMultiblocks.PLANET_SIMULATOR.get(), pos, level);
+            }
         }
 
         super.onRemove(state, level, pos, newState, movedByPiston);

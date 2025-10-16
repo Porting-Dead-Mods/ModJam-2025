@@ -1,6 +1,7 @@
 package com.portingdeadmods.modjam.content.block;
 
 import com.mojang.serialization.MapCodec;
+import com.portingdeadmods.modjam.content.blockentity.CompressorBlockEntity;
 import com.portingdeadmods.modjam.registries.MJBlockEntities;
 import com.portingdeadmods.modjam.registries.MJBlocks;
 import com.portingdeadmods.portingdeadlibs.api.blockentities.ContainerBlockEntity;
@@ -8,7 +9,9 @@ import com.portingdeadmods.portingdeadlibs.api.blocks.RotatableContainerBlock;
 import com.portingdeadmods.portingdeadlibs.api.utils.PDLBlockStateProperties;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.world.Containers;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
@@ -139,6 +142,14 @@ public class CompressorBlock extends RotatableContainerBlock {
     @Override
     public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
         if (!state.is(newState.getBlock())) {
+            BlockEntity blockEntity = level.getBlockEntity(pos);
+            if (blockEntity instanceof CompressorBlockEntity compressor) {
+                for (int i = 0; i < compressor.getUpgradeItemHandler().getSlots(); i++) {
+                    Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(), 
+                            compressor.getUpgradeItemHandler().getStackInSlot(i));
+                }
+            }
+            
             BlockPos above = pos.above();
             if (level.getBlockState(above).is(MJBlocks.COMPRESSOR_GHOST.get())) {
                 level.setBlock(above, Blocks.AIR.defaultBlockState(), 3);

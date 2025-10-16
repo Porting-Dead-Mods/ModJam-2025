@@ -43,14 +43,26 @@ public class MJRecipeProvider extends RecipeProvider {
                 .unlockedBy("has_tantalum_ingot", has(MJItems.TANTALUM_INGOT.get()))
                 .save(recipeOutput);
 
+        ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, MJBlocks.COMPRESSOR.get())
+                .pattern("IPI")
+                .pattern("PBP")
+                .pattern("IRI")
+                .define('I', MJItems.TANTALUM_INGOT)
+                .define('P', Tags.Items.STORAGE_BLOCKS_IRON)
+                .define('B', MJBlocks.PLANET_SIMULATOR_FRAME.get().asItem())
+                .define('R', Tags.Items.DUSTS_REDSTONE)
+                .unlockedBy("has_tantalum_ingot", has(MJItems.TANTALUM_INGOT))
+                .save(recipeOutput);
+
         ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, MJBlocks.PLANET_SIMULATOR_CASING.get(), 4)
                 .pattern("IPI")
                 .pattern("P P")
                 .pattern("IPI")
                 .define('I', MJItems.TANTALUM_INGOT)
                 .define('P', MJItems.TANTALUM_SHEET)
-                .unlockedBy("has_tantalum_ingot", has(MJItems.TANTALUM_INGOT))
+                .unlockedBy("has_tantalum_sheet", has(MJItems.TANTALUM_SHEET))
                 .save(recipeOutput);
+
         ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, MJBlocks.PLANET_SIMULATOR_FRAME.get(), 8)
                 .pattern("III")
                 .pattern("I I")
@@ -58,6 +70,7 @@ public class MJRecipeProvider extends RecipeProvider {
                 .define('I', MJItems.TANTALUM_INGOT)
                 .unlockedBy("has_tantalum_ingot", has(MJItems.TANTALUM_INGOT))
                 .save(recipeOutput);
+
         ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, MJBlocks.PLANET_SIMULATOR_CONTROLLER.get())
                 .pattern(" C ")
                 .pattern("CDC")
@@ -74,7 +87,106 @@ public class MJRecipeProvider extends RecipeProvider {
                 .define('I', MJItems.TANTALUM_INGOT)
                 .define('P', MJItems.TANTALUM_SHEET)
                 .define('G', Tags.Items.NUGGETS_GOLD)
-                .unlockedBy("has_tantalum_ingot", has(MJItems.TANTALUM_INGOT))
+                .unlockedBy("has_tantalum_sheet", has(MJItems.TANTALUM_SHEET))
+                .save(recipeOutput);
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, MJBlocks.ENERGY_INPUT_BUS.get())
+                .pattern("IRI")
+                .pattern("RCR")
+                .pattern("IRI")
+                .define('I', MJItems.TANTALUM_INGOT)
+                .define('R', Tags.Items.DUSTS_REDSTONE)
+                .define('C', MJBlocks.PLANET_SIMULATOR_CASING)
+                .unlockedBy("has_casing", has(MJBlocks.PLANET_SIMULATOR_CASING))
+                .save(recipeOutput);
+
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.DECORATIONS, MJBlocks.ENERGY_OUTPUT_BUS.get())
+                .requires(MJBlocks.ENERGY_INPUT_BUS.get())
+                .unlockedBy("has_energy_input_bus", has(MJBlocks.ENERGY_INPUT_BUS.get()))
+                .save(recipeOutput);
+
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.DECORATIONS, MJBlocks.ENERGY_INPUT_BUS.get())
+                .requires(MJBlocks.ENERGY_OUTPUT_BUS.get())
+                .unlockedBy("has_energy_output_bus", has(MJBlocks.ENERGY_OUTPUT_BUS.get()))
+                .save(recipeOutput, Modjam.MODID + ":energy_input_bus_from_output");
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, MJBlocks.ITEM_INPUT_BUS.get())
+                .pattern("IPI")
+                .pattern("PCP")
+                .pattern("IPI")
+                .define('I', MJItems.TANTALUM_INGOT)
+                .define('P', Tags.Items.CHESTS_WOODEN)
+                .define('C', MJBlocks.PLANET_SIMULATOR_CASING)
+                .unlockedBy("has_casing", has(MJBlocks.PLANET_SIMULATOR_CASING))
+                .save(recipeOutput);
+
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.DECORATIONS, MJBlocks.ITEM_OUTPUT_BUS.get())
+                .requires(MJBlocks.ITEM_INPUT_BUS.get())
+                .unlockedBy("has_item_input_bus", has(MJBlocks.ITEM_INPUT_BUS.get()))
+                .save(recipeOutput);
+
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.DECORATIONS, MJBlocks.ITEM_INPUT_BUS.get())
+                .requires(MJBlocks.ITEM_OUTPUT_BUS.get())
+                .unlockedBy("has_item_output_bus", has(MJBlocks.ITEM_OUTPUT_BUS.get()))
+                .save(recipeOutput, Modjam.MODID + ":item_input_bus_from_output");
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, MJBlocks.FLUID_INPUT_BUS.get())
+                .pattern("IBI")
+                .pattern("BCB")
+                .pattern("IBI")
+                .define('I', MJItems.TANTALUM_INGOT)
+                .define('B', Items.BUCKET)
+                .define('C', MJBlocks.PLANET_SIMULATOR_CASING)
+                .unlockedBy("has_casing", has(MJBlocks.PLANET_SIMULATOR_CASING))
+                .save(recipeOutput);
+
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.DECORATIONS, MJBlocks.FLUID_OUTPUT_BUS.get())
+                .requires(MJBlocks.FLUID_INPUT_BUS.get())
+                .unlockedBy("has_fluid_input_bus", has(MJBlocks.FLUID_INPUT_BUS.get()))
+                .save(recipeOutput);
+
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.DECORATIONS, MJBlocks.FLUID_INPUT_BUS.get())
+                .requires(MJBlocks.FLUID_OUTPUT_BUS.get())
+                .unlockedBy("has_fluid_output_bus", has(MJBlocks.FLUID_OUTPUT_BUS.get()))
+                .save(recipeOutput, Modjam.MODID + ":fluid_input_bus_from_output");
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, MJItems.ENERGY_UPGRADE.get())
+                .pattern("RGR")
+                .pattern("GPG")
+                .pattern("RGR")
+                .define('R', Tags.Items.DUSTS_REDSTONE)
+                .define('G', Tags.Items.INGOTS_GOLD)
+                .define('P', MJItems.TANTALUM_SHEET)
+                .unlockedBy("has_tantalum_sheet", has(MJItems.TANTALUM_SHEET))
+                .save(recipeOutput);
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, MJItems.SPEED_UPGRADE.get())
+                .pattern("RSR")
+                .pattern("SPS")
+                .pattern("RSR")
+                .define('R', Tags.Items.DUSTS_REDSTONE)
+                .define('S', Items.SUGAR)
+                .define('P', MJItems.TANTALUM_SHEET)
+                .unlockedBy("has_tantalum_sheet", has(MJItems.TANTALUM_SHEET))
+                .save(recipeOutput);
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, MJItems.LUCK_UPGRADE.get())
+                .pattern("RLR")
+                .pattern("LPL")
+                .pattern("RLR")
+                .define('R', Tags.Items.DUSTS_REDSTONE)
+                .define('L', Tags.Items.GEMS_LAPIS)
+                .define('P', MJItems.TANTALUM_SHEET)
+                .unlockedBy("has_tantalum_sheet", has(MJItems.TANTALUM_SHEET))
+                .save(recipeOutput);
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, MJItems.TINTED_PLANET_CARD.get())
+                .pattern(" D ")
+                .pattern("DPD")
+                .pattern(" D ")
+                .define('D', Tags.Items.DYES)
+                .define('P', MJItems.PLANET_CARD)
+                .unlockedBy("has_planet_card", has(MJItems.PLANET_CARD))
                 .save(recipeOutput);
 
     }
