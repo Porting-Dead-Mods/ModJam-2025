@@ -40,13 +40,14 @@ public final class Modjam {
         modEventBus.addListener(MJRegistries::registerDatapackRegistries);
 
         modContainer.registerConfig(ModConfig.Type.COMMON, MJConfig.SPEC);
+
+        if (ModList.get().isLoaded("guideme")) {
+            initGuideMECompat();
+        }
     }
 
     private void commonSetup(final FMLCommonSetupEvent event) {
         event.enqueueWork(MJMultiblocks::init);
-        if (ModList.get().isLoaded("guideme")) {
-            event.enqueueWork(this::initGuideMECompat);
-        }
     }
 
     private void initGuideMECompat() {

@@ -28,6 +28,10 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import java.util.Set;
 
 public class MultiblockShapeCompiler implements SceneElementTagCompiler {
+    public MultiblockShapeCompiler() {
+        System.out.println("aaaaaa");
+    }
+
     @Override
     public Set<String> getTagNames() {
         return Set.of("MultiblockShape");

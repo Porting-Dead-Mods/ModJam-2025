@@ -12,6 +12,7 @@ public final class GuideMECompat {
 
     public static void init() {
         Guide.builder(ID)
+                .folder("mj_guide")
                 .extension(SceneElementTagCompiler.EXTENSION_POINT, new MultiblockShapeCompiler())
                 .build();
     }
