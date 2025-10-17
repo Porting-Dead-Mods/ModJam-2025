@@ -35,7 +35,7 @@ Planet cards start as blank items. To link them to a planet:
 
 ### Earth (Overworld)
 
-<ItemImage id="modjam:planet_card" components="modjam:planet={planetType:'modjam:earth',activated:true}" />
+<ItemImage id="modjam:planet_card" components="modjam:planet={planet_type:{texture:'minecraft:item/planet_card/planets/overworld',dimension:'minecraft:overworld'},activated:true}" />
 
 **Dimension:** Overworld
 
@@ -43,7 +43,7 @@ Planet cards start as blank items. To link them to a planet:
 
 ### Mars (Nether)
 
-<ItemImage id="modjam:planet_card" components="modjam:planet={planetType:'modjam:mars',activated:true}" />
+<ItemImage id="modjam:planet_card" components="modjam:planet={planet_type:{texture:'minecraft:item/planet_card/planets/the_nether',dimension:'minecraft:the_nether'},activated:true}" />
 
 **Dimension:** Nether  
 

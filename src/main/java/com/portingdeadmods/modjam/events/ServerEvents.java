@@ -1,13 +1,20 @@
 package com.portingdeadmods.modjam.events;
 
+import com.mojang.brigadier.Command;
 import com.portingdeadmods.modjam.Modjam;
 import com.portingdeadmods.modjam.registries.MJPlanetCards;
+import net.minecraft.ChatFormatting;
+import net.minecraft.commands.Commands;
+import net.minecraft.core.component.TypedDataComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.LogicalSide;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.util.thread.EffectiveSide;
 import net.neoforged.neoforge.event.AddReloadListenerEvent;
+import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.server.ServerStartedEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
@@ -55,5 +62,38 @@ public class ServerEvents {
         if (EffectiveSide.get() == LogicalSide.SERVER) {
             MJPlanetCards.syncToAllPlayers();
         }
+    }
+
+    @SubscribeEvent
+    public static void onRegisterCommands(RegisterCommandsEvent event) {
+        event.getDispatcher().register(
+            Commands.literal("itemdata")
+                .executes(context -> {
+                    ServerPlayer player = context.getSource().getPlayerOrException();
+                    ItemStack heldItem = player.getMainHandItem();
+
+                    if (heldItem.isEmpty()) {
+                        player.sendSystemMessage(Component.literal("No item in hand").withStyle(ChatFormatting.RED));
+                        return 0;
+                    }
+
+                    player.sendSystemMessage(Component.literal("=== Item Data Components ===").withStyle(ChatFormatting.GOLD));
+                    Modjam.LOGGER.info("=== Item Data Components for {} ===", heldItem.getItem().toString());
+
+                    player.sendSystemMessage(Component.literal("Item: " + heldItem.getDisplayName().getString()).withStyle(ChatFormatting.YELLOW));
+                    Modjam.LOGGER.info("Item: {}", heldItem.getDisplayName().getString());
+
+                    for (TypedDataComponent<?> component : heldItem.getComponents()) {
+                        String componentInfo = component.type().toString() + " = " + component.value().toString();
+                        player.sendSystemMessage(Component.literal("  " + componentInfo).withStyle(ChatFormatting.AQUA));
+                        Modjam.LOGGER.info("  {}", componentInfo);
+                    }
+
+                    player.sendSystemMessage(Component.literal("=== End Data Components ===").withStyle(ChatFormatting.GOLD));
+                    Modjam.LOGGER.info("=== End Data Components ===");
+
+                    return Command.SINGLE_SUCCESS;
+                })
+        );
     }
 }
