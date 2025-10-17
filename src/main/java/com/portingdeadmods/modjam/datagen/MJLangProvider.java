@@ -46,6 +46,7 @@ public class MJLangProvider extends LanguageProvider {
         addItem(MJItems.ENERGY_UPGRADE, "Energy Upgrade");
         addItem(MJItems.SPEED_UPGRADE, "Speed Upgrade");
         addItem(MJItems.LUCK_UPGRADE, "Luck Upgrade");
+        addItem(MJItems.GUIDE, "ModJam Guide");
         
         add("tooltip.modjam.upgrade.energy", "Energy Efficiency");
         add("tooltip.modjam.upgrade.speed", "Processing Speed");
@@ -81,6 +82,8 @@ public class MJLangProvider extends LanguageProvider {
         add("redstone_signal_type.portingdeadlibs.ignored", "Ignored");
         add("redstone_signal_type.portingdeadlibs.low_signal", "Low Signal");
         add("redstone_signal_type.portingdeadlibs.high_signal", "High Signal");
+        
+        add("modjam.guide.name", "ModJam Guide");
 
         MJTranslations.TRANSLATIONS.getDefaultTranslations().forEach(this::add);
 

@@ -21,8 +21,11 @@ public class MJCreativeTabs {
                         .title(Component.translatable("itemGroup." + Modjam.MODID))
                         .icon(() -> new ItemStack(MJItems.TANTALUM_INGOT.get()))
                         .displayItems((parameters, output) -> {
+                            output.accept(MJItems.GUIDE.get().getDefaultInstance());
+                            
                             output.acceptAll(MJItems.ITEMS.getCreativeTabItems().stream()
                                     .map(Supplier::get)
+                                    .filter(item -> item != MJItems.TINTED_PLANET_CARD.get())
                                     .map(Item::getDefaultInstance)
                                     .toList());
                             

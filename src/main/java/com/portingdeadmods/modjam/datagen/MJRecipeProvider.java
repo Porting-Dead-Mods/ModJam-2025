@@ -42,6 +42,16 @@ public class MJRecipeProvider extends RecipeProvider {
                 .requires(MJItems.TANTALUM_INGOT.get())
                 .unlockedBy("has_tantalum_ingot", has(MJItems.TANTALUM_INGOT.get()))
                 .save(recipeOutput);
+        
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, MJItems.PLANET_CARD.get())
+                .requires(MJItems.PLANET_CARD.get())
+                .unlockedBy("has_planet_card", has(MJItems.PLANET_CARD.get()))
+                .save(recipeOutput, Modjam.MODID + ":unlink_planet_card");
+        
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, MJItems.PLANET_CARD.get())
+                .requires(MJItems.TINTED_PLANET_CARD.get())
+                .unlockedBy("has_tinted_planet_card", has(MJItems.TINTED_PLANET_CARD.get()))
+                .save(recipeOutput, Modjam.MODID + ":unlink_tinted_planet_card");
 
         ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, MJBlocks.COMPRESSOR.get())
                 .pattern("IPI")

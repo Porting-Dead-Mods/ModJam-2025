@@ -3,6 +3,7 @@ package com.portingdeadmods.modjam.content.items;
 import com.portingdeadmods.modjam.data.PlanetComponent;
 import com.portingdeadmods.modjam.data.PlanetType;
 import com.portingdeadmods.modjam.registries.MJDataComponents;
+import com.portingdeadmods.modjam.registries.MJPlanetCards;
 import com.portingdeadmods.modjam.registries.MJTranslations;
 import com.portingdeadmods.portingdeadlibs.utils.Utils;
 import net.minecraft.ChatFormatting;
@@ -46,9 +47,39 @@ public class PlanetCardItem extends Item {
                 player.displayClientMessage(Component.literal("Wrong dimension!").withStyle(ChatFormatting.RED), true);
                 return InteractionResultHolder.fail(stack);
             }
+        } else {
+            Optional<PlanetType> matchingPlanet = findMatchingPlanetType(level, false);
+            
+            if (matchingPlanet.isPresent()) {
+                stack.set(MJDataComponents.PLANET, new PlanetComponent(matchingPlanet, false));
+                player.displayClientMessage(Component.literal("Planet Card linked!").withStyle(ChatFormatting.AQUA), true);
+                return InteractionResultHolder.success(stack);
+            } else {
+                player.displayClientMessage(Component.literal("No matching planet for this dimension!").withStyle(ChatFormatting.RED), true);
+                return InteractionResultHolder.fail(stack);
+            }
         }
-
-        return InteractionResultHolder.pass(stack);
+    }
+    
+    private Optional<PlanetType> findMatchingPlanetType(Level level, boolean preferTinted) {
+        ResourceKey<Level> currentDimension = level.dimension();
+        
+        for (PlanetType planetType : MJPlanetCards.getAllPlanetTypes()) {
+            if (planetType.dimension().equals(currentDimension)) {
+                boolean isTinted = planetType.tint().isPresent();
+                if (preferTinted == isTinted) {
+                    return Optional.of(planetType);
+                }
+            }
+        }
+        
+        for (PlanetType planetType : MJPlanetCards.getAllPlanetTypes()) {
+            if (planetType.dimension().equals(currentDimension)) {
+                return Optional.of(planetType);
+            }
+        }
+        
+        return Optional.empty();
     }
 
     @Override

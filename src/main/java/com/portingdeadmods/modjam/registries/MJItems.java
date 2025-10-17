@@ -1,6 +1,7 @@
 package com.portingdeadmods.modjam.registries;
 
 import com.portingdeadmods.modjam.Modjam;
+import com.portingdeadmods.modjam.content.items.GuideItem;
 import com.portingdeadmods.modjam.content.items.PlanetCardItem;
 import com.portingdeadmods.modjam.content.items.TintedPlanetCardItem;
 import com.portingdeadmods.modjam.content.items.UpgradeItem;
@@ -32,5 +33,7 @@ public final class MJItems {
     public static final DeferredItem<UpgradeItem> SPEED_UPGRADE = ITEMS.register("upgrade_speed", () -> new UpgradeItem(UpgradeType.SPEED, new Item.Properties()));
 
     public static final DeferredItem<UpgradeItem> LUCK_UPGRADE = ITEMS.register("upgrade_luck", () -> new UpgradeItem(UpgradeType.LUCK, new Item.Properties()));
+
+    public static final DeferredItem<GuideItem> GUIDE = ITEMS.register("guide", () -> new GuideItem(new Item.Properties()));
 
 }

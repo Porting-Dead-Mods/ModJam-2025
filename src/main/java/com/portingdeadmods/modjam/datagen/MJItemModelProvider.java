@@ -37,6 +37,7 @@ public class MJItemModelProvider extends ItemModelProvider {
         basicItem(MJItems.ENERGY_UPGRADE.get());
         basicItem(MJItems.SPEED_UPGRADE.get());
         basicItem(MJItems.LUCK_UPGRADE.get());
+        basicItem(MJItems.GUIDE.get());
 
         Set<Block> noItemModels = MJBlocks.NO_ITEM_MODELS.stream().map(DeferredHolder::get).collect(Collectors.toSet());
 

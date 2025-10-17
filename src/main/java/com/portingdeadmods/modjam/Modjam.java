@@ -1,12 +1,14 @@
 package com.portingdeadmods.modjam;
 
 import com.mojang.logging.LogUtils;
+import com.portingdeadmods.modjam.compat.guideme.GuideMECompat;
 import com.portingdeadmods.modjam.content.blockentity.PlanetSimulatorBlockEntity;
 import com.portingdeadmods.modjam.networking.MJNetworking;
 import com.portingdeadmods.modjam.registries.*;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
+import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
@@ -42,6 +44,13 @@ public final class Modjam {
 
     private void commonSetup(final FMLCommonSetupEvent event) {
         event.enqueueWork(MJMultiblocks::init);
+        if (ModList.get().isLoaded("guideme")) {
+            event.enqueueWork(this::initGuideMECompat);
+        }
+    }
+
+    private void initGuideMECompat() {
+        GuideMECompat.init();
     }
 
     private void registerCapabilities(final RegisterCapabilitiesEvent event) {
