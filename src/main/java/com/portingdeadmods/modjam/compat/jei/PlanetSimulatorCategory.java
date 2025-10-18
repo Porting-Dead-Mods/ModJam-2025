@@ -18,27 +18,28 @@ import mezz.jei.api.neoforge.NeoForgeTypes;
 import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.AbstractRecipeCategory;
-import mezz.jei.common.Internal;
-import mezz.jei.common.gui.elements.DrawableAnimated;
-import mezz.jei.common.gui.elements.DrawableCombined;
-import mezz.jei.common.gui.elements.OffsetDrawable;
-import mezz.jei.common.gui.textures.Textures;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FastColor;
 
 import java.util.Arrays;
 import java.util.List;
 
 public class PlanetSimulatorCategory extends AbstractRecipeCategory<PlanetSimulatorRecipe> {
-    public static final RecipeType<PlanetSimulatorRecipe> TYPE = RecipeType.create(Modjam.MODID, "planet_simulator", PlanetSimulatorRecipe.class);
-    private final IPlatformFluidHelper<?> fluidHelper;
+    public static final ResourceLocation RECIPE_ARROW_VERTICAL_SPRITE = Modjam.rl("textures/gui/sprites/recipe_arrow_vertical.png");
+    public static final ResourceLocation RECIPE_ARROW_VERTICAL_FILLED_SPRITE = Modjam.rl("textures/gui/sprites/recipe_arrow_filled_vertical.png");
 
-    public PlanetSimulatorCategory(IGuiHelper guiHelper, IPlatformFluidHelper<?> fluidHelper) {
+    public static final RecipeType<PlanetSimulatorRecipe> TYPE = RecipeType.create(Modjam.MODID, "planet_simulator", PlanetSimulatorRecipe.class);
+    @org.jetbrains.annotations.NotNull
+    private final IGuiHelper guiHelper;
+
+    public PlanetSimulatorCategory(IGuiHelper guiHelper) {
         super(TYPE, Component.translatable("jei.modjam.category.planet_simulator"), guiHelper.createDrawableItemLike(MJBlocks.PLANET_SIMULATOR_CONTROLLER), 176, 126);
-        this.fluidHelper = fluidHelper;
+        this.guiHelper = guiHelper;
     }
 
     @Override
@@ -90,26 +91,28 @@ public class PlanetSimulatorCategory extends AbstractRecipeCategory<PlanetSimula
 
     @Override
     public void createRecipeExtras(IRecipeExtrasBuilder builder, PlanetSimulatorRecipe recipe, IFocusGroup focuses) {
-        addAnimatedRecipeArrow(builder, recipe.duration()).setPosition(this.getWidth() / 2 - 8, 20);
-        addText(builder, Component.literal(recipe.energyPerTick() + " FE/t")
+        IDrawableStatic recipeArrow = this.guiHelper.drawableBuilder(RECIPE_ARROW_VERTICAL_SPRITE, 0, 0, 16, 24)
+                .setTextureSize(16, 24)
+                .build();
+        IDrawableStatic recipeArrowFilled = this.guiHelper.drawableBuilder(RECIPE_ARROW_VERTICAL_FILLED_SPRITE, 0, 0, 16, 24)
+                .setTextureSize(16, 24)
+                .build();
+        IDrawableAnimated animatedDrawable = this.guiHelper.createAnimatedDrawable(recipeArrowFilled, recipe.duration(), IDrawableAnimated.StartDirection.TOP, false);
+
+        builder.addDrawable(recipeArrow).setPosition(this.getWidth() / 2 - 8, this.getHeight() / 2 - 12 - 20);
+        builder.addDrawable(animatedDrawable).setPosition(this.getWidth() / 2 - 8, this.getHeight() / 2 - 12 - 20);
+        MutableComponent literal = Component.literal(recipe.energyPerTick() + " FE/t");
+        Font font = Minecraft.getInstance().font;
+        addText(builder, literal
                 .withStyle(ChatFormatting.DARK_GRAY))
-                .setPosition(0, 0);
+                .setPosition(this.getWidth() - font.width(literal), this.getHeight() - font.lineHeight * 2 - 2 - 8);
         addText(builder, Component.literal(recipe.duration() + " ticks")
                 .withStyle(ChatFormatting.DARK_GRAY))
-                .setPosition(0, 20);
-    }
-
-    public IPlaceable<?> addAnimatedRecipeArrow(IRecipeExtrasBuilder builder, int ticksPerCycle) {
-        Textures textures = Internal.getTextures();
-        IDrawableStatic recipeArrowFilled = textures.getRecipeArrowFilled();
-        IDrawable animatedFill = new DrawableAnimated(recipeArrowFilled, ticksPerCycle, IDrawableAnimated.StartDirection.TOP, false);
-        IDrawable drawableCombined = new DrawableCombined(new IDrawable[]{textures.getRecipeArrow(), animatedFill});
-        OffsetDrawable offsetDrawable = new OffsetDrawable(drawableCombined, 0, 0);
-        return builder.addDrawable(offsetDrawable);
+                .setPosition(this.getWidth() - font.width(literal), this.getHeight() - font.lineHeight - 8);
     }
 
     private static ITextWidget addText(IRecipeExtrasBuilder builder, MutableComponent component) {
-        MutableComponent literal = component;
-        return builder.addText(literal, Minecraft.getInstance().font.width(literal), Minecraft.getInstance().font.lineHeight);
+        return builder.addText(component, Minecraft.getInstance().font.width(component), Minecraft.getInstance().font.lineHeight);
     }
+
 }
