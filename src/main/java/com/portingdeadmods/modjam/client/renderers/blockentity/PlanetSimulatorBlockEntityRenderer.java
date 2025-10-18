@@ -45,7 +45,7 @@ public class PlanetSimulatorBlockEntityRenderer implements BlockEntityRenderer<P
     private static final float PLANET_OFFSET_Y = 4.5f;
     private static final float PLANET_OFFSET_Z = 0.0f;
     private static final float ROTATION_SPEED = 1.0f;
-    private static final float BRIGHTNESS = 2.0f;
+    private static final float BRIGHTNESS = 1.0f;
 
     static PlanetSimulatorBlockEntityRenderer INSTANCE;
 
