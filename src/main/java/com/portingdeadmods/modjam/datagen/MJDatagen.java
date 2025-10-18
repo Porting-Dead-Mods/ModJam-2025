@@ -1,6 +1,7 @@
 package com.portingdeadmods.modjam.datagen;
 
 import com.portingdeadmods.modjam.Modjam;
+import com.portingdeadmods.modjam.datagen.recipe.MJPlanetSimProvider;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
@@ -26,6 +27,7 @@ public class MJDatagen {
         generator.addProvider(event.includeClient(), new MJLangProvider(output));
 
         generator.addProvider(event.includeServer(), new MJRecipeProvider(output, lookupProvider));
+        generator.addProvider(event.includeServer(), new MJPlanetSimProvider(output, lookupProvider));
         MJBlockTagsProvider blockTagsProvider = new MJBlockTagsProvider(output, lookupProvider, existingFileHelper);
         generator.addProvider(event.includeServer(), blockTagsProvider);
         generator.addProvider(event.includeServer(), new MJItemTagsProvider(output, lookupProvider, blockTagsProvider.contentsGetter(), existingFileHelper));
