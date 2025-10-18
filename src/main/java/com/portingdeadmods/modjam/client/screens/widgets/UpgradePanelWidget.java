@@ -137,8 +137,8 @@ public class UpgradePanelWidget extends PanelWidget {
             for (int j = 0; j < upgradeHandler.getSlots(); j++) {
                 ItemStack stack = upgradeHandler.getStackInSlot(j);
                 if (!stack.isEmpty() && stack.getItem() instanceof UpgradeItem upgradeItem) {
-                    UpgradeType upgradeType = upgradeItem.getUpgradeType();
-                    if (upgradeBlockEntity.getSupportedUpgrades().contains(upgradeType)) {
+                    if (upgradeBlockEntity.getSupportedUpgrades().contains(upgradeItem.getUpgradeTypeKey())) {
+                        UpgradeType upgradeType = upgradeItem.getUpgradeType();
                         upgradeCounts.merge(upgradeType, stack.getCount(), Integer::sum);
                     }
                 }

@@ -44,7 +44,7 @@ public class PlanetSimulatorBlockEntityRenderer implements BlockEntityRenderer<P
     private static final float PLANET_OFFSET_X = 0.0f;
     private static final float PLANET_OFFSET_Y = 4.5f;
     private static final float PLANET_OFFSET_Z = 0.0f;
-    private static final float ROTATION_SPEED = 1.0f;
+    private static final float ROTATION_SPEED = 0.7f;
     private static final float BRIGHTNESS = 1.0f;
 
     static PlanetSimulatorBlockEntityRenderer INSTANCE;
@@ -197,7 +197,11 @@ public class PlanetSimulatorBlockEntityRenderer implements BlockEntityRenderer<P
         poseStack.mulPose(Axis.YP.rotationDegrees((Minecraft.getInstance().level.getGameTime() + partialTick) * ROTATION_SPEED));
         poseStack.scale(PLANET_SIZE, PLANET_SIZE, PLANET_SIZE);
         
-        this.renderPlanet(texture, poseStack, 16, 0.125f, -0.1f, 32, 4, new Vector3f(0, 0, 250f), new Vector3f(0.1f, 0.2f, 0.9f), new Vector4f(BRIGHTNESS, BRIGHTNESS, BRIGHTNESS, 0.5f), 0.05f, 533f, 1 - (float) planetSimulatorBlockEntity.getProgress() / (float) planetSimulatorBlockEntity.getMaxProgress());
+        float progress = planetSimulatorBlockEntity.getMaxProgress() > 0 
+            ? 1 - (float) planetSimulatorBlockEntity.getProgress() / (float) planetSimulatorBlockEntity.getMaxProgress()
+            : 1.0f;
+        
+        this.renderPlanet(texture, poseStack, 16, 0.125f, -0.1f, 32, 4, new Vector3f(0, 0, 250f), new Vector3f(0.1f, 0.2f, 0.9f), new Vector4f(BRIGHTNESS, BRIGHTNESS, BRIGHTNESS, 0.5f), 0.05f, 533f, progress);
         poseStack.popPose();
     }
 

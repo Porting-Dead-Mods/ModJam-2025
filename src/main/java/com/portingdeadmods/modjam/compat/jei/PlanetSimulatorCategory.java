@@ -55,13 +55,25 @@ public class PlanetSimulatorCategory extends AbstractRecipeCategory<PlanetSimula
 
     @Override
     public void setRecipe(IRecipeLayoutBuilder builder, PlanetSimulatorRecipe recipe, IFocusGroup focuses) {
-        int size = recipe.inputs().size();
-        int startX = (this.getWidth() - size * 18) / 2;
+        int totalSlots = recipe.catalysts().size() + recipe.inputs().size();
+        int startX = (this.getWidth() - totalSlots * 18) / 2;
+        
+        int slotIndex = 0;
+        for (int i = 0; i < recipe.catalysts().size(); i++) {
+            builder.addInputSlot(startX + slotIndex * 18, 10)
+                    .setStandardSlotBackground()
+                    .addIngredients(CompressingCategory.iWCToIngredientSaveCount(recipe.catalysts().get(i)))
+                    .addRichTooltipCallback((view, tooltip) -> {
+                        tooltip.add(Component.literal("Catalyst (Not consumed)").withStyle(ChatFormatting.AQUA));
+                    });
+            slotIndex++;
+        }
 
-        for (int i = 0; i < size; i++) {
-            builder.addInputSlot(startX + i * 18, 10)
+        for (int i = 0; i < recipe.inputs().size(); i++) {
+            builder.addInputSlot(startX + slotIndex * 18, 10)
                     .setStandardSlotBackground()
                     .addIngredients(CompressingCategory.iWCToIngredientSaveCount(recipe.inputs().get(i)));
+            slotIndex++;
         }
 
         if (recipe.fluidInput().isPresent()) {

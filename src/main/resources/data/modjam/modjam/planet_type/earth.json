@@ -1,4 +1,5 @@
 {
   "texture": "minecraft:item/planet_card/planets/overworld",
+  "projection_texture": "modjam:textures/planet/earth.png",
   "dimension": "minecraft:overworld"
 }
