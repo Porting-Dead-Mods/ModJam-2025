@@ -7,13 +7,22 @@ import com.mojang.math.Axis;
 import com.portingdeadmods.modjam.Modjam;
 import com.portingdeadmods.modjam.client.renderers.PlanetModel;
 import com.portingdeadmods.modjam.content.blockentity.PlanetSimulatorBlockEntity;
+import com.portingdeadmods.modjam.data.PlanetComponent;
+import com.portingdeadmods.modjam.registries.MJDataComponents;
+import com.portingdeadmods.modjam.registries.MJMultiblocks;
 import com.portingdeadmods.modjam.registries.MJShaders;
+import com.portingdeadmods.portingdeadlibs.api.multiblocks.Multiblock;
+import com.portingdeadmods.portingdeadlibs.api.utils.HorizontalDirection;
+import com.portingdeadmods.portingdeadlibs.utils.MultiblockHelper;
+import net.minecraft.core.Vec3i;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
@@ -29,6 +38,13 @@ import java.util.List;
 
 @EventBusSubscriber(modid = Modjam.MODID, value = Dist.CLIENT) // munted
 public class PlanetSimulatorBlockEntityRenderer implements BlockEntityRenderer<PlanetSimulatorBlockEntity> {
+
+    private static final float PLANET_SIZE = 3.0f;
+    private static final float PLANET_OFFSET_X = 0.0f;
+    private static final float PLANET_OFFSET_Y = 4.5f;
+    private static final float PLANET_OFFSET_Z = 0.0f;
+    private static final float ROTATION_SPEED = 1.0f;
+    private static final float BRIGHTNESS = 2.0f;
 
     static PlanetSimulatorBlockEntityRenderer INSTANCE;
 
@@ -118,28 +134,64 @@ public class PlanetSimulatorBlockEntityRenderer implements BlockEntityRenderer<P
 
     private ResourceLocation getTexture(PlanetSimulatorBlockEntity be)
     {
-        return Modjam.rl("textures/planet/ass.png");
+        if (be == null) return null;
+        
+        ItemStack planetCard = be.getItemHandler().getStackInSlot(0);
+        if (planetCard.isEmpty() || !planetCard.has(MJDataComponents.PLANET)) {
+            return null;
+        }
+        
+        PlanetComponent planetComponent = planetCard.get(MJDataComponents.PLANET);
+        if (planetComponent == null || planetComponent.planetType().isEmpty()) {
+            return null;
+        }
+        
+        return planetComponent.planetType().get().projectionTexture()
+                .orElse(Modjam.rl("textures/planet/ass.png"));
+    }
+    
+    private Vec3 getMultiblockCenter(PlanetSimulatorBlockEntity be) {
+        if (be.getMultiblockData() == null) {
+            return Vec3.atCenterOf(be.getBlockPos());
+        }
+        
+        HorizontalDirection direction = be.getMultiblockData().direction();
+        if (direction == null) {
+            return Vec3.atCenterOf(be.getBlockPos());
+        }
+        
+        Vec3i relativeControllerPos = MultiblockHelper.getRelativeControllerPos(MJMultiblocks.PLANET_SIMULATOR.get());
+        BlockPos firstBlockPos = MultiblockHelper.getFirstBlockPos(direction, be.getBlockPos(), relativeControllerPos);
+        
+        Vec3i centerOffset = new Vec3i(3, 1, 3);
+        BlockPos centerPos = MultiblockHelper.getCurPos(firstBlockPos, centerOffset, direction);
+        
+        return Vec3.atCenterOf(centerPos);
     }
 
     @Override
     public void render(PlanetSimulatorBlockEntity planetSimulatorBlockEntity, float partialTick, PoseStack poseStack, MultiBufferSource _multiBufferSource, int combinedLight, int combinedOverlay) {
-
-        if (    true) {
-            poseStack.pushPose();
-            Vec3 pos = Minecraft.getInstance().gameRenderer.getMainCamera().getPosition();
-         //   VertexConsumer vc = _multiBufferSource.getBuffer(MJShaders.PLANET_PROJECTION.apply(getTexture(planetSimulatorBlockEntity)));
-       //     prepareUniforms(8, 0.125f, 162, 126, new Vector3f(0, 0, 1), new Vector3f(0, 0, 1),0.00f, 0);
-         //   PlanetModel.renderPlanetModelToBuffer(poseStack.last().pose(), vc, new Vector4f(1,1,1,1.0f));
-
-       //     ( (MultiBufferSource.BufferSource)_multiBufferSource).endLastBatch();
-            poseStack.translate(0.5F, 2.5F, 0.5F);
-            poseStack.mulPose(Axis.YP.rotationDegrees((Minecraft.getInstance().level.getGameTime() + partialTick)  * 2));
-
-
-
-            this.renderPlanet(getTexture(planetSimulatorBlockEntity), poseStack, 16, 0.125f, -0.1f, 32, 4, new Vector3f(0, 0, 250f), new Vector3f(.1f, .1f, 0.9f), new Vector4f(0.4f, 0.4f, 12.8f, .5f), 0.03f, 0, /*1 - planetSimulatorBlockEntity.getProgress() / planetSimulatorBlockEntity.getMaxProgress()*/ 1 - (planetSimulatorBlockEntity.getLevel().getGameTime() % 100 / 100.0f));
-            poseStack.popPose();
+        if (!planetSimulatorBlockEntity.getBlockState().getValue(Multiblock.FORMED)) {
+            return;
         }
+        
+        ResourceLocation texture = getTexture(planetSimulatorBlockEntity);
+        if (texture == null) {
+            return;
+        }
+        
+        Vec3 center = getMultiblockCenter(planetSimulatorBlockEntity);
+        Vec3 controllerPos = Vec3.atLowerCornerOf(planetSimulatorBlockEntity.getBlockPos());
+        Vec3 offset = center.subtract(controllerPos);
+        
+        poseStack.pushPose();
+        
+        poseStack.translate(offset.x + PLANET_OFFSET_X, offset.y + PLANET_OFFSET_Y, offset.z + PLANET_OFFSET_Z);
+        poseStack.mulPose(Axis.YP.rotationDegrees((Minecraft.getInstance().level.getGameTime() + partialTick) * ROTATION_SPEED));
+        poseStack.scale(PLANET_SIZE, PLANET_SIZE, PLANET_SIZE);
+        
+        this.renderPlanet(texture, poseStack, 16, 0.125f, -0.1f, 32, 4, new Vector3f(0, 0, 250f), new Vector3f(0.1f, 0.2f, 0.9f), new Vector4f(BRIGHTNESS, BRIGHTNESS, BRIGHTNESS, 0.5f), 0.03f, 0);
+        poseStack.popPose();
     }
 
     @Override
@@ -159,6 +211,19 @@ public class PlanetSimulatorBlockEntityRenderer implements BlockEntityRenderer<P
 
     @Override
     public AABB getRenderBoundingBox(PlanetSimulatorBlockEntity blockEntity) {
-        return BlockEntityRenderer.super.getRenderBoundingBox(blockEntity);
+        double planetSize = PLANET_SIZE;
+        double rotationRadius = Math.sqrt(2 * (planetSize / 2) * (planetSize / 2));
+        
+        Vec3 center = getMultiblockCenter(blockEntity);
+        Vec3 renderCenter = center.add(PLANET_OFFSET_X, PLANET_OFFSET_Y, PLANET_OFFSET_Z);
+        
+        return new AABB(
+            renderCenter.x - rotationRadius,
+            renderCenter.y - planetSize / 2,
+            renderCenter.z - rotationRadius,
+            renderCenter.x + rotationRadius,
+            renderCenter.y + planetSize / 2,
+            renderCenter.z + rotationRadius
+        );
     }
 }

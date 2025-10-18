@@ -1,12 +1,15 @@
 package com.portingdeadmods.modjam.content.blockentity;
 
 import com.portingdeadmods.modjam.MJConfig;
+import com.portingdeadmods.modjam.Modjam;
 import com.portingdeadmods.modjam.capabilities.UpgradeItemHandler;
 import com.portingdeadmods.modjam.content.block.UpgradeBlockEntity;
+import com.portingdeadmods.modjam.content.items.UpgradeItem;
 import com.portingdeadmods.modjam.content.menus.CompressorMenu;
 import com.portingdeadmods.modjam.content.recipe.CompressingRecipe;
 import com.portingdeadmods.modjam.data.UpgradeType;
 import com.portingdeadmods.modjam.registries.MJBlockEntities;
+import com.portingdeadmods.modjam.registries.MJRegistries;
 import com.portingdeadmods.portingdeadlibs.api.blockentities.ContainerBlockEntity;
 import com.portingdeadmods.portingdeadlibs.api.blockentities.RedstoneBlockEntity;
 import com.portingdeadmods.portingdeadlibs.api.utils.IOAction;
@@ -16,6 +19,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -33,11 +37,15 @@ import net.neoforged.neoforge.items.ItemHandlerHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 public class CompressorBlockEntity extends ContainerBlockEntity implements MenuProvider, RedstoneBlockEntity, UpgradeBlockEntity {
-    public static final Set<UpgradeType> SUPPORTED_UPGRADES = Set.of(UpgradeType.ENERGY, UpgradeType.SPEED);
+    public static final Set<ResourceKey<UpgradeType>> SUPPORTED_UPGRADES = Set.of(
+            ResourceKey.create(MJRegistries.UPGRADE_TYPE_KEY, Modjam.rl("energy")),
+            ResourceKey.create(MJRegistries.UPGRADE_TYPE_KEY, Modjam.rl("speed"))
+    );
     private final UpgradeItemHandler upgradeItemHandler;
     private CompressingRecipe currentRecipe;
     private int progress;
@@ -64,13 +72,13 @@ public class CompressorBlockEntity extends ContainerBlockEntity implements MenuP
             }
 
             @Override
-            public void onUpgradeAdded(UpgradeType upgrade) {
+            public void onUpgradeAdded(ResourceKey<UpgradeType> upgrade) {
                 super.onUpgradeAdded(upgrade);
                 CompressorBlockEntity.this.onUpgradeAdded(upgrade);
             }
 
             @Override
-            public void onUpgradeRemoved(UpgradeType upgrade) {
+            public void onUpgradeRemoved(ResourceKey<UpgradeType> upgrade) {
                 super.onUpgradeRemoved(upgrade);
                 CompressorBlockEntity.this.onUpgradeRemoved(upgrade);
             }
@@ -121,9 +129,15 @@ public class CompressorBlockEntity extends ContainerBlockEntity implements MenuP
         float duration = currentRecipe.duration();
         float energyUsage = MJConfig.COMPRESSOR_USAGE.getAsInt();
 
-        for (UpgradeType upgradeType : SUPPORTED_UPGRADES) {
-            int count = getUpgradeAmount(upgradeType);
+        for (ResourceKey<UpgradeType> upgradeTypeKey : SUPPORTED_UPGRADES) {
+            int count = getUpgradeAmount(upgradeTypeKey);
             if (count == 0) continue;
+
+            UpgradeType upgradeType = level.registryAccess()
+                    .lookupOrThrow(MJRegistries.UPGRADE_TYPE_KEY)
+                    .get(upgradeTypeKey)
+                    .map(holder -> holder.value())
+                    .orElse(new UpgradeType(List.of()));
 
             for (UpgradeType.UpgradeEffect effect : upgradeType.getEffects()) {
                 switch (effect.getTarget()) {
@@ -248,14 +262,15 @@ public class CompressorBlockEntity extends ContainerBlockEntity implements MenuP
     }
 
     @Override
-    public Set<UpgradeType> getSupportedUpgrades() {
+    public Set<ResourceKey<UpgradeType>> getSupportedUpgrades() {
         return SUPPORTED_UPGRADES;
     }
 
     @Override
-    public boolean hasUpgrade(UpgradeType upgrade) {
+    public boolean hasUpgrade(ResourceKey<UpgradeType> upgrade) {
         for (int i = 0; i < this.getUpgradeItemHandler().getSlots(); i++) {
-            if (this.getUpgradeItemHandler().getStackInSlot(i).is(upgrade.getItem())) {
+            ItemStack stack = this.getUpgradeItemHandler().getStackInSlot(i);
+            if (stack.getItem() instanceof UpgradeItem upgradeItem && upgradeItem.getUpgradeTypeKey().equals(upgrade)) {
                 return true;
             }
         }
@@ -263,13 +278,12 @@ public class CompressorBlockEntity extends ContainerBlockEntity implements MenuP
     }
 
     @Override
-    public int getUpgradeAmount(UpgradeType upgrade) {
+    public int getUpgradeAmount(ResourceKey<UpgradeType> upgrade) {
         int amount = 0;
-        Item upgradeItem = upgrade.getItem();
 
         for (int i = 0; i < this.getUpgradeItemHandler().getSlots(); i++) {
             ItemStack stackInSlot = this.getUpgradeItemHandler().getStackInSlot(i);
-            if (stackInSlot.is(upgradeItem)) {
+            if (stackInSlot.getItem() instanceof UpgradeItem upgradeItem && upgradeItem.getUpgradeTypeKey().equals(upgrade)) {
                 amount += stackInSlot.getCount();
             }
         }
@@ -278,12 +292,12 @@ public class CompressorBlockEntity extends ContainerBlockEntity implements MenuP
     }
 
     @Override
-    public void onUpgradeAdded(UpgradeType upgrade) {
+    public void onUpgradeAdded(ResourceKey<UpgradeType> upgrade) {
 
     }
 
     @Override
-    public void onUpgradeRemoved(UpgradeType upgrade) {
+    public void onUpgradeRemoved(ResourceKey<UpgradeType> upgrade) {
 
     }
 }

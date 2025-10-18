@@ -13,6 +13,10 @@ repositories {
     maven {
         url = "https://cursemaven.com"
     }
+    maven {
+        name = "Jared's maven"
+        url = "https://maven.blamejared.com/"
+    }
     maven { url 'https://jitpack.io' }
 }
 
@@ -99,7 +103,11 @@ neoForge {
 sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 dependencies {
-    implementation "curse.maven:jei-238222:7057366"
+    compileOnly "mezz.jei:jei-${minecraft_version}-common-api:${jei_version}"
+    compileOnly "mezz.jei:jei-${minecraft_version}-neoforge-api:${jei_version}"
+
+    runtimeOnly "mezz.jei:jei-${minecraft_version}-neoforge:${jei_version}"
+
     implementation "com.github.Porting-Dead-Mods:Porting-Dead-Libs:${pdl_version}"
     implementation "curse.maven:fusion-connected-textures-854949:7058347"
     implementation "curse.maven:jade-324717:6853386"

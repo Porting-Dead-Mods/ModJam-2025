@@ -1,0 +1,35 @@
+{
+  "type": "modjam:planet_simulator",
+  "planet_type": "modjam:mars",
+  "inputs": [
+    {
+      "item": "minecraft:basalt",
+      "count": 64
+    }
+  ],
+  "energy_per_tick": 800,
+  "duration": 3000,
+  "outputs": [
+    {
+      "item": {
+        "id": "minecraft:ancient_debris",
+        "count": 1
+      },
+      "chance": 0.002
+    },
+    {
+      "item": {
+        "id": "minecraft:netherite_scrap",
+        "count": 1
+      },
+      "chance": 0.001
+    },
+    {
+      "item": {
+        "id": "minecraft:blackstone",
+        "count": 1
+      },
+      "chance": 0.025
+    }
+  ]
+}

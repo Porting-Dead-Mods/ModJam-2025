@@ -12,9 +12,10 @@ import net.minecraft.world.level.Level;
 
 import java.util.Optional;
 
-public record PlanetType(ResourceLocation texture, Optional<Integer> tint, ResourceKey<Level> dimension) {
+public record PlanetType(ResourceLocation texture, Optional<ResourceLocation> projectionTexture, Optional<Integer> tint, ResourceKey<Level> dimension) {
     public static final Codec<PlanetType> CODEC = RecordCodecBuilder.create(inst -> inst.group(
             ResourceLocation.CODEC.fieldOf("texture").forGetter(PlanetType::texture),
+            ResourceLocation.CODEC.optionalFieldOf("projection_texture").forGetter(PlanetType::projectionTexture),
             Codec.INT.optionalFieldOf("tint").forGetter(PlanetType::tint),
             ResourceKey.codec(Registries.DIMENSION).fieldOf("dimension").forGetter(PlanetType::dimension)
     ).apply(inst, PlanetType::new));
@@ -22,6 +23,8 @@ public record PlanetType(ResourceLocation texture, Optional<Integer> tint, Resou
     public static final StreamCodec<RegistryFriendlyByteBuf, PlanetType> STREAM_CODEC = StreamCodec.composite(
             ResourceLocation.STREAM_CODEC,
             PlanetType::texture,
+            ByteBufCodecs.optional(ResourceLocation.STREAM_CODEC),
+            PlanetType::projectionTexture,
             ByteBufCodecs.optional(ByteBufCodecs.INT),
             PlanetType::tint,
             ResourceKey.streamCodec(Registries.DIMENSION),

@@ -1,0 +1,12 @@
+{
+  "effects": [
+    {
+      "target": "duration",
+      "percent_per_upgrade": -10.0
+    },
+    {
+      "target": "energy_usage",
+      "percent_per_upgrade": 5.0
+    }
+  ]
+}

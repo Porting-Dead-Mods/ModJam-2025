@@ -55,7 +55,7 @@ public class MultiblockJEIPlugin implements IModPlugin {
     public void registerCategories(IRecipeCategoryRegistration registration) {
         registration.addRecipeCategories(new MultiblockJEICategory(registration.getJeiHelpers().getGuiHelper()));
         registration.addRecipeCategories(new CompressingCategory(registration.getJeiHelpers().getGuiHelper()));
-        registration.addRecipeCategories(new PlanetSimulatorCategory(registration.getJeiHelpers().getGuiHelper(), registration.getJeiHelpers().getPlatformFluidHelper()));
+        registration.addRecipeCategories(new PlanetSimulatorCategory(registration.getJeiHelpers().getGuiHelper()));
         registration.addRecipeCategories(new PlanetPowerCategory(registration.getJeiHelpers().getGuiHelper(), registration.getJeiHelpers().getPlatformFluidHelper()));
     }
 
