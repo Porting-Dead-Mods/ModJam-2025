@@ -184,7 +184,9 @@ public class PlanetSimulatorBlockEntity extends ContainerBlockEntity implements 
     }
 
     private void processRecipes() {
+
         if (this.level == null || this.level.isClientSide) return;
+        this.update();
 
         ItemStack planetCard = this.getItemHandler().getStackInSlot(0);
         if (planetCard.isEmpty() || !planetCard.has(MJDataComponents.PLANET)) {
@@ -483,6 +485,7 @@ public class PlanetSimulatorBlockEntity extends ContainerBlockEntity implements 
 
         consumeEnergy(inputBusses, energyPerTick);
         progress++;
+        this.setChanged();
 
         if (progress >= maxProgress) {
             if (consumeInputs(recipe, inputBusses) && canOutputResults(recipe.outputs(), outputBusses)) {

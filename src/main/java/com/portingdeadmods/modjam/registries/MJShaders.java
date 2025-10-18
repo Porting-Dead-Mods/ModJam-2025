@@ -64,6 +64,15 @@ public class MJShaders {
         return RenderType.create("modjam:planet_projection_rendertype", DefaultVertexFormat.POSITION_TEX_COLOR_NORMAL, VertexFormat.Mode.QUADS, 320, false, true, compositeState);
     });
 
+public static final RenderType PLANET_PROJECTION_DEPTH =
+        RenderType.create("modjam:planet_projection_depth_rendertype", DefaultVertexFormat.POSITION_TEX_COLOR_NORMAL, VertexFormat.Mode.QUADS, 320, false, false, RenderType.CompositeState.builder()
+                .setShaderState(PLANET_PROJECTION_SHADER_SHARD)
+                .setWriteMaskState(RenderStateShard.DEPTH_WRITE)
+                .setLightmapState(RenderStateShard.NO_LIGHTMAP)
+                .setTransparencyState(RenderStateShard.TRANSLUCENT_TRANSPARENCY)
+                .setCullState(RenderStateShard.NO_CULL)
+                .createCompositeState(false));
+
     public static class ProjecterShaderUniforms {
 
     }

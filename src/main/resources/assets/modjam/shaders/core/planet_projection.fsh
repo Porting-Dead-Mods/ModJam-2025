@@ -126,7 +126,7 @@ float hash11( float n )
 float flicker( float t )
 {
     float f = floor (t * FlickerRate * 22.1);
-    return (max( hash11(f), 0.4 ) - .4) * FlickerIntensity ;
+    return (max(hash11(f), .3) -.3)  * FlickerIntensity;
 }
 
 void main() {

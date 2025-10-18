@@ -1,5 +1,6 @@
 package com.portingdeadmods.modjam.client.renderers.blockentity;
 
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.ByteBufferBuilder;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -108,18 +109,24 @@ public class PlanetSimulatorBlockEntityRenderer implements BlockEntityRenderer<P
             for (Batch batch : INSTANCE.batches)
             {
               //  RenderSystem.depthMask(true); // Rendertype doesn't correctly set depth mask state
-                prepareUniforms(batch.gridSize, batch.gridWidth, batch.noiseThreshold, batch.noiseScale, batch.noisePixelization, batch.noiseDirection, batch.gridColor, batch.tint, batch.flickerIntensity, batch.flickerRate, batch.progress);
+                prepareUniforms(batch.gridSize, batch.gridWidth, batch.noiseThreshold, batch.noiseScale, batch.noisePixelization, batch.noiseDirection, batch.gridColor, batch.tint, batch.flickerRate, batch.flickerIntensity, batch.progress);
                 VertexConsumer vcModel = INSTANCE.getBuffer(MJShaders.PLANET_PROJECTION.apply(batch.texture));
 
                 PlanetModel.renderPlanetModelToBuffer(batch.viewModel, vcModel, batch.tint);
 
                 INSTANCE.bufferSource.endLastBatch();
 
-                VertexConsumer vcDepth = INSTANCE.getBuffer(RenderType.waterMask());
+                VertexConsumer vcDepth = INSTANCE.getBuffer(MJShaders.PLANET_PROJECTION_DEPTH);
 
                 PlanetModel.renderPlanetModelToBuffer(batch.viewModel, vcDepth, batch.tint);
 
+                  RenderSystem.depthMask(true); // Rendertype doesn't correctly set depth mask state
+                RenderSystem.colorMask(false, false, false, false); // Rendertype doesn't correctly set depth mask state
+
+
+
                 INSTANCE.bufferSource.endLastBatch();
+                RenderSystem.colorMask(true, true, true, true); // Rendertype doesn't correctly set depth mask state
 
 
             }
@@ -190,7 +197,7 @@ public class PlanetSimulatorBlockEntityRenderer implements BlockEntityRenderer<P
         poseStack.mulPose(Axis.YP.rotationDegrees((Minecraft.getInstance().level.getGameTime() + partialTick) * ROTATION_SPEED));
         poseStack.scale(PLANET_SIZE, PLANET_SIZE, PLANET_SIZE);
         
-        this.renderPlanet(texture, poseStack, 16, 0.125f, -0.1f, 32, 4, new Vector3f(0, 0, 250f), new Vector3f(0.1f, 0.2f, 0.9f), new Vector4f(BRIGHTNESS, BRIGHTNESS, BRIGHTNESS, 0.5f), 0.03f, 0, 1 - (float) planetSimulatorBlockEntity.getProgress() / (float) planetSimulatorBlockEntity.getMaxProgress());
+        this.renderPlanet(texture, poseStack, 16, 0.125f, -0.1f, 32, 4, new Vector3f(0, 0, 250f), new Vector3f(0.1f, 0.2f, 0.9f), new Vector4f(BRIGHTNESS, BRIGHTNESS, BRIGHTNESS, 0.5f), 0.05f, 533f, 1 - (float) planetSimulatorBlockEntity.getProgress() / (float) planetSimulatorBlockEntity.getMaxProgress());
         poseStack.popPose();
     }
 
