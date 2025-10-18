@@ -29,15 +29,15 @@ public class PlanetModel {
         consumer.addVertex(view, -0.5f, 0.5f, 0.5f).setUv(0f, 0.25f).setColor(color.x, color.y, color.z, color.w).setNormal(1f, 1f, 1f);
         consumer.addVertex(view, -0.5f, 0.5f, -0.5f).setUv(0.25f, 0.25f).setColor(color.x, color.y, color.z, color.w).setNormal(-1f, 1f, 1f);
 
-        consumer.addVertex(view, 0.5f, 0.5f, -0.5f).setUv(0.25f, 0.25f).setColor(color.x, color.y, color.z, color.w).setNormal(-1f, -1f, 1f);
-        consumer.addVertex(view, -0.5f, 0.5f, -0.5f).setUv(0.5f, 0.25f).setColor(color.x, color.y, color.z, color.w).setNormal(1f, -1f, 1f);
-        consumer.addVertex(view, -0.5f, 0.5f, 0.5f).setUv(0.5f, 0f).setColor(color.x, color.y, color.z, color.w).setNormal(1f, 1f, 1f);
-        consumer.addVertex(view, 0.5f, 0.5f, 0.5f).setUv(0.25f, 0f).setColor(color.x, color.y, color.z, color.w).setNormal(-1f, 1f, 1f);
+        consumer.addVertex(view, 0.5f, 0.5f, -0.5f).setUv(0.25f, 0.25f).setColor(color.x, color.y, color.z, color.w).setNormal(1f, 1f, -1f);
+        consumer.addVertex(view, -0.5f, 0.5f, -0.5f).setUv(0.5f, 0.25f).setColor(color.x, color.y, color.z, color.w).setNormal(-1f, 1f, -1f);
+        consumer.addVertex(view, -0.5f, 0.5f, 0.5f).setUv(0.5f, 0f).setColor(color.x, color.y, color.z, color.w).setNormal(-1f, 1f, 1f);
+        consumer.addVertex(view, 0.5f, 0.5f, 0.5f).setUv(0.25f, 0f).setColor(color.x, color.y, color.z, color.w).setNormal(1f, 1f, 1f);
 
         consumer.addVertex(view, -0.5f, -0.5f, 0.5f).setUv(0.25f, 0.5f).setColor(color.x, color.y, color.z, color.w).setNormal(-1f, -1f, 4f);
-        consumer.addVertex(view, -0.5f, -0.5f, -0.5f).setUv(0.25f, 0.75f).setColor(color.x, color.y, color.z, color.w).setNormal(1f, -1f, 4f);
-        consumer.addVertex(view, 0.5f, -0.5f, -0.5f).setUv(0.5f, 0.75f).setColor(color.x, color.y, color.z, color.w).setNormal(1f, 1f, 4f);
-        consumer.addVertex(view, 0.5f, -0.5f, 0.5f).setUv(0.5f, 0.5f).setColor(color.x, color.y, color.z, color.w).setNormal(-1f, 1f, 4f);
+        consumer.addVertex(view, -0.5f, -0.5f, -0.5f).setUv(0.25f, 0.75f).setColor(color.x, color.y, color.z, color.w).setNormal(-1f, -1f, -4f);
+        consumer.addVertex(view, 0.5f, -0.5f, -0.5f).setUv(0.5f, 0.75f).setColor(color.x, color.y, color.z, color.w).setNormal(1f, -1f, -4f);
+        consumer.addVertex(view, 0.5f, -0.5f, 0.5f).setUv(0.5f, 0.5f).setColor(color.x, color.y, color.z, color.w).setNormal(1f, -1f, 4f);
 
 //        consumer.addVertex(view, 0.5f, -0.5f, 0.5f).setUv(0.5f, 0.75f).setColor(color.x, color.y, color.z, color.w).setNormal(-1f, -1f, 1f); // Bottom-left
 

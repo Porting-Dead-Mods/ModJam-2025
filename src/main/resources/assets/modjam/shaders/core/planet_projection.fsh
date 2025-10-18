@@ -16,8 +16,10 @@ uniform float NoiseScale;
 uniform float NoisePixelization;
 uniform vec3 NoiseDirection;
 uniform vec3 GridColor;
+uniform vec4 Tint;
 uniform float FlickerRate;
 uniform float FlickerIntensity;
+uniform float Progress;
 
 
 vec4 permute(vec4 x){return mod(((x*34.0)+1.0)*x, 289.0);}
@@ -128,7 +130,7 @@ float flicker( float t )
 }
 
 void main() {
-    vec4 vcolor = vertexColor;
+    vec4 tint = Tint;
     vec2 coord = texCoord0;
     coord *= GridSize * 4;
 
@@ -179,13 +181,22 @@ void main() {
     if (!gl_FrontFacing)
     {
         alpha = 1;
-        vcolor = vec4(1,1,1,1);
+        tint = vec4(1,1,1,1);
         color = vec3(gridColor) * (1 - blendFactor);
-
     }
 
+// use better noise
+    if (step(norm.y + hash11(GameTime / 7 + round(norm.x * 128)) * 0.05, Progress) == 0)
+    {
+        discard;
+    }
 
-    fragColor = vec4(color, alpha) * vcolor;
+    //color += vec3(grid) * gridColor * smoothstep(0.5, norm.y, 0.12) * 100;
+
+//    if (step(Progress, 0.5 - 0.12) > 0)
+    color += smoothstep(Progress - 0.12, Progress + 0.12, norm.y) * 9;
+
+    fragColor = vec4(color, alpha) * tint;
 //    fragColor -= fragColor * 0.999999;
 //    fragColor += vec4(blendFactor, blendFactor, blendFactor, 1);
 

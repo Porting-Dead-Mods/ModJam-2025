@@ -76,9 +76,12 @@ public class MJShaders {
         public static AbstractUniform NOISE_PIXELIZATION;
         public static AbstractUniform NOISE_SPEED;
         public static AbstractUniform NOISE_DIRECTION;
+        public static AbstractUniform TINT;
         public static AbstractUniform GRID_COLOR;
         public static AbstractUniform FLICKER_RATE;
         public static AbstractUniform FLICKER_INTENSITY;
+        public static AbstractUniform PROGRESS;
+
 
     }
 
@@ -99,9 +102,12 @@ public class MJShaders {
                 PlanetProjectionShaderUniforms.NOISE_PIXELIZATION = shaderInstance.safeGetUniform("NoisePixelization");
                 PlanetProjectionShaderUniforms.NOISE_SPEED = shaderInstance.safeGetUniform("NoiseSpeed");
                 PlanetProjectionShaderUniforms.NOISE_DIRECTION = shaderInstance.safeGetUniform("NoiseDirection");
+                PlanetProjectionShaderUniforms.TINT = shaderInstance.safeGetUniform("Tint");
                 PlanetProjectionShaderUniforms.GRID_COLOR = shaderInstance.safeGetUniform("GridColor");
                 PlanetProjectionShaderUniforms.FLICKER_RATE = shaderInstance.safeGetUniform("FlickerRate");
                 PlanetProjectionShaderUniforms.FLICKER_INTENSITY = shaderInstance.safeGetUniform("FlickerIntensity");
+                PlanetProjectionShaderUniforms.PROGRESS = shaderInstance.safeGetUniform("Progress");
+
             }
         }));
 

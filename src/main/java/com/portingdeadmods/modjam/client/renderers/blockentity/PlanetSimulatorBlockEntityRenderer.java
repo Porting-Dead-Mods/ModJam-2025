@@ -1,6 +1,5 @@
 package com.portingdeadmods.modjam.client.renderers.blockentity;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.ByteBufferBuilder;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -22,7 +21,6 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 import org.joml.Matrix4f;
-import org.joml.Quaternionf;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 
@@ -34,7 +32,7 @@ public class PlanetSimulatorBlockEntityRenderer implements BlockEntityRenderer<P
 
     static PlanetSimulatorBlockEntityRenderer INSTANCE;
 
-    public static void prepareUniforms(float gridSize, float gridWidth, float noiseThreshold, float noiseScale, float noisePixelization, Vector3f noiseDirection, Vector3f gridColor, float flickerRate, float flickerIntensity)
+    public static void prepareUniforms(float gridSize, float gridWidth, float noiseThreshold, float noiseScale, float noisePixelization, Vector3f noiseDirection, Vector3f gridColor, Vector4f tint, float flickerRate, float flickerIntensity, float progress)
     {
         MJShaders.PlanetProjectionShaderUniforms.GRID_SIZE.set(gridSize);
         MJShaders.PlanetProjectionShaderUniforms.GRID_WIDTH.set(gridWidth);
@@ -43,12 +41,15 @@ public class PlanetSimulatorBlockEntityRenderer implements BlockEntityRenderer<P
         MJShaders.PlanetProjectionShaderUniforms.NOISE_PIXELIZATION.set(noisePixelization);
         MJShaders.PlanetProjectionShaderUniforms.NOISE_DIRECTION.set(noiseDirection);
         MJShaders.PlanetProjectionShaderUniforms.GRID_COLOR.set(gridColor);
+        MJShaders.PlanetProjectionShaderUniforms.TINT.set(tint);
         MJShaders.PlanetProjectionShaderUniforms.FLICKER_RATE.set(flickerRate);
         MJShaders.PlanetProjectionShaderUniforms.FLICKER_INTENSITY.set(flickerIntensity);
+        MJShaders.PlanetProjectionShaderUniforms.PROGRESS.set(progress);
+
 
     }
 
-    private record Batch(ResourceLocation texture, Matrix4f viewModel, float gridSize, float gridWidth, float noiseThreshold, float noiseScale, float noisePixelization, Vector3f noiseDirection, Vector3f gridColor, Vector4f tint, float flickerIntensity, float flickerRate)
+    private record Batch(ResourceLocation texture, Matrix4f viewModel, float gridSize, float gridWidth, float noiseThreshold, float noiseScale, float noisePixelization, Vector3f noiseDirection, Vector3f gridColor, Vector4f tint, float flickerIntensity, float flickerRate, float progress)
     {
     }
 
@@ -66,7 +67,7 @@ public class PlanetSimulatorBlockEntityRenderer implements BlockEntityRenderer<P
      * @param pose posestack
      * @param gridSize amount of cells for each face
      * @param gridWidth how thick the borders of each cell are
-     * @param noiseTreshhold how frequently noise appears range from 0 - -1
+     * @param noiseTreshhold how frequently noise appears range from 0 to -1
      * @param noiseScale how high resolution the noise is
      * @param noisePixelization how many pixels to quantize the noise to
      * @param noiseDirection how fast and what direction the noise is moving in
@@ -74,11 +75,12 @@ public class PlanetSimulatorBlockEntityRenderer implements BlockEntityRenderer<P
      * @param tint the color of the model
      * @param flickerIntensity how much flicker
      * @param flickerRate rate of flicker
+     * @param progress recipe progress range from 0 to 1
      */
     public void renderPlanet(ResourceLocation texture, PoseStack pose, float gridSize,
-                             float gridWidth, float noiseTreshhold, float noiseScale, float noisePixelization, Vector3f noiseDirection, Vector3f gridColor, Vector4f tint, float flickerIntensity, float flickerRate)
+                             float gridWidth, float noiseTreshhold, float noiseScale, float noisePixelization, Vector3f noiseDirection, Vector3f gridColor, Vector4f tint, float flickerIntensity, float flickerRate, float progress)
     {
-        batches.add(new Batch(texture, new Matrix4f().mul(pose.last().pose()), gridSize, gridWidth, noiseTreshhold, 1 / noiseScale, noisePixelization, noiseDirection, gridColor, tint, flickerIntensity, flickerRate));
+        batches.add(new Batch(texture, new Matrix4f().mul(pose.last().pose()), gridSize, gridWidth, noiseTreshhold, 1 / noiseScale, noisePixelization, noiseDirection, gridColor, tint, flickerIntensity, flickerRate, (progress - 0.5f) * 2));
     }
 
     // gross transparency "fix"
@@ -90,7 +92,7 @@ public class PlanetSimulatorBlockEntityRenderer implements BlockEntityRenderer<P
             for (Batch batch : INSTANCE.batches)
             {
               //  RenderSystem.depthMask(true); // Rendertype doesn't correctly set depth mask state
-                prepareUniforms(batch.gridSize, batch.gridWidth, batch.noiseThreshold, batch.noiseScale, batch.noisePixelization, batch.noiseDirection, batch.gridColor, batch.flickerIntensity, batch.flickerRate);
+                prepareUniforms(batch.gridSize, batch.gridWidth, batch.noiseThreshold, batch.noiseScale, batch.noisePixelization, batch.noiseDirection, batch.gridColor, batch.tint, batch.flickerIntensity, batch.flickerRate, batch.progress);
                 VertexConsumer vcModel = INSTANCE.getBuffer(MJShaders.PLANET_PROJECTION.apply(batch.texture));
 
                 PlanetModel.renderPlanetModelToBuffer(batch.viewModel, vcModel, batch.tint);
@@ -135,7 +137,7 @@ public class PlanetSimulatorBlockEntityRenderer implements BlockEntityRenderer<P
 
 
 
-            this.renderPlanet(getTexture(planetSimulatorBlockEntity), poseStack, 16, 0.125f, -0.1f, 32, 4, new Vector3f(0, 0, 250f), new Vector3f(0.1f, 0.2f, 0.9f), new Vector4f(1, 1, 1.6f, 0.5f), 0.03f, 0);
+            this.renderPlanet(getTexture(planetSimulatorBlockEntity), poseStack, 16, 0.125f, -0.1f, 32, 4, new Vector3f(0, 0, 250f), new Vector3f(.1f, .1f, 0.9f), new Vector4f(0.4f, 0.4f, 12.8f, .5f), 0.03f, 0, /*1 - planetSimulatorBlockEntity.getProgress() / planetSimulatorBlockEntity.getMaxProgress()*/ 1 - (planetSimulatorBlockEntity.getLevel().getGameTime() % 100 / 100.0f));
             poseStack.popPose();
         }
     }

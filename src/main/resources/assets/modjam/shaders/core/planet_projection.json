@@ -108,6 +108,14 @@
       ]
     },
     {
+      "name": "Tint",
+      "type": "float",
+      "count": 4,
+      "values": [
+        0.0,0.0,0.0,0.0
+      ]
+    },
+    {
       "name": "GridColor",
       "type": "float",
       "count": 3,
@@ -125,6 +133,14 @@
     },
     {
       "name": "FlickerIntensity",
+      "type": "float",
+      "count": 1,
+      "values": [
+        0.0
+      ]
+    },
+    {
+      "name": "Progress",
       "type": "float",
       "count": 1,
       "values": [
