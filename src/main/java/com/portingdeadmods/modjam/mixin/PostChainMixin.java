@@ -4,11 +4,14 @@ import com.google.common.collect.Lists;
 import com.portingdeadmods.modjam.render.PostChainExtensions;
 import net.minecraft.client.renderer.PostChain;
 import net.minecraft.client.renderer.PostPass;
+import net.minecraft.client.renderer.ShaderInstance;
 import org.joml.Matrix4f;
+import org.lwjgl.opengl.GL45;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
+import java.nio.ByteBuffer;
 import java.util.List;
 // use accses
 
@@ -25,6 +28,12 @@ public class PostChainMixin implements PostChainExtensions {
             postpass.getEffect().safeGetUniform(uniformName).set(matrix);
         }
     }
+
+    public List<PostPass> getPasses()
+    {
+        return passes;
+    }
+
 
     @Override
     public void _setUniform(String uniformName, float[] floats) {
