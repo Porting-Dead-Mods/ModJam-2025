@@ -3,16 +3,13 @@ package com.portingdeadmods.modjam.mixin;
 import com.mojang.blaze3d.vertex.ByteBufferBuilder;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.portingdeadmods.modjam.Modjam;
-import com.portingdeadmods.modjam.client.renderers.PlanetModel;
 import com.portingdeadmods.modjam.registries.MJShaders;
-import com.portingdeadmods.modjam.client.renderers.blockentity.BlackHoleExampleRenderer;
 import net.minecraft.client.Camera;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.*;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix4f;
-import org.joml.Vector4f;
 import org.lwjgl.opengl.GL45;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -69,7 +66,7 @@ public class LevelRendererMixin {
         //buf.endBatch(MJShaders.PLANET_PROJECTION.apply(Modjam.rl("textures/planet/ass.png")));
 
         GL45.glPopDebugGroup();
-        BlackHoleExampleRenderer.blackholeUniformBuffer.restart();
+        //BlackHoleExampleRenderer.blackholeUniformBuffer.restart();
     }
 
 }
