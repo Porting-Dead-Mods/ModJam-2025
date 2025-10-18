@@ -2,7 +2,12 @@ package com.portingdeadmods.modjam.compat.jei;
 
 import com.portingdeadmods.modjam.Modjam;
 import com.portingdeadmods.modjam.content.recipe.PlanetSimulatorRecipe;
+import com.portingdeadmods.modjam.data.PlanetComponent;
+import com.portingdeadmods.modjam.data.PlanetType;
 import com.portingdeadmods.modjam.registries.MJBlocks;
+import com.portingdeadmods.modjam.registries.MJDataComponents;
+import com.portingdeadmods.modjam.registries.MJItems;
+import com.portingdeadmods.modjam.registries.MJRegistries;
 import com.portingdeadmods.portingdeadlibs.api.recipes.IngredientWithCount;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.builder.IRecipeSlotBuilder;
@@ -11,6 +16,8 @@ import mezz.jei.api.gui.drawable.IDrawableAnimated;
 import mezz.jei.api.gui.drawable.IDrawableStatic;
 import mezz.jei.api.gui.placement.IPlaceable;
 import mezz.jei.api.gui.widgets.IRecipeExtrasBuilder;
+import mezz.jei.api.gui.builder.ITooltipBuilder;
+import mezz.jei.api.gui.widgets.IRecipeWidget;
 import mezz.jei.api.gui.widgets.ITextWidget;
 import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.helpers.IPlatformFluidHelper;
@@ -21,13 +28,17 @@ import mezz.jei.api.recipe.category.AbstractRecipeCategory;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.navigation.ScreenPosition;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FastColor;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 public class PlanetSimulatorCategory extends AbstractRecipeCategory<PlanetSimulatorRecipe> {
     public static final ResourceLocation RECIPE_ARROW_VERTICAL_SPRITE = Modjam.rl("textures/gui/sprites/recipe_arrow_vertical.png");
@@ -60,6 +71,13 @@ public class PlanetSimulatorCategory extends AbstractRecipeCategory<PlanetSimula
                     .addIngredients(NeoForgeTypes.FLUID_STACK, Arrays.stream(recipe.fluidInput().get().getStacks()).toList());
         }
 
+        ItemStack planetCard = createPlanetCard(recipe);
+        if (!planetCard.isEmpty()) {
+            builder.addInputSlot(this.getWidth() - 18, 1)
+                    .setStandardSlotBackground()
+                    .addItemStack(planetCard);
+        }
+
         int outputY = 20;
 
         for (int i = 0; i < recipe.outputs().size() && i < 9; i++) {
@@ -83,10 +101,37 @@ public class PlanetSimulatorCategory extends AbstractRecipeCategory<PlanetSimula
 
             if (output.chance() < 1.0f) {
                 slot.addRichTooltipCallback((view, tooltip) -> {
-                    tooltip.add(Component.literal("Chance: " + (int) (output.chance() * 100) + "%"));
+                    float percentage = output.chance() * 100;
+                    String formatted;
+                    if (percentage >= 10) {
+                        formatted = String.format("%.1f%%", percentage);
+                    } else if (percentage >= 1) {
+                        formatted = String.format("%.2f%%", percentage);
+                    } else {
+                        formatted = String.format("%.3f%%", percentage);
+                    }
+                    tooltip.add(Component.literal("Chance: " + formatted).withStyle(ChatFormatting.GOLD));
                 });
             }
         }
+    }
+
+    private ItemStack createPlanetCard(PlanetSimulatorRecipe recipe) {
+        var holderOpt = Minecraft.getInstance().level.registryAccess()
+                .lookupOrThrow(MJRegistries.PLANET_TYPE_KEY)
+                .get(recipe.planetType());
+        
+        if (holderOpt.isEmpty()) {
+            return ItemStack.EMPTY;
+        }
+        
+        PlanetType planetType = holderOpt.get().value();
+        
+        Item itemToUse = planetType.tint().isPresent() ? MJItems.TINTED_PLANET_CARD.get() : MJItems.PLANET_CARD.get();
+        ItemStack stack = new ItemStack(itemToUse);
+        stack.set(MJDataComponents.PLANET, new PlanetComponent(Optional.of(planetType), true));
+        
+        return stack;
     }
 
     @Override
@@ -99,8 +144,49 @@ public class PlanetSimulatorCategory extends AbstractRecipeCategory<PlanetSimula
                 .build();
         IDrawableAnimated animatedDrawable = this.guiHelper.createAnimatedDrawable(recipeArrowFilled, recipe.duration(), IDrawableAnimated.StartDirection.TOP, false);
 
-        builder.addDrawable(recipeArrow).setPosition(this.getWidth() / 2 - 8, this.getHeight() / 2 - 12 - 20);
-        builder.addDrawable(animatedDrawable).setPosition(this.getWidth() / 2 - 8, this.getHeight() / 2 - 12 - 20);
+        int arrowX = this.getWidth() / 2 - 8;
+        int arrowY = this.getHeight() / 2 - 12 - 20;
+        
+        builder.addDrawable(recipeArrow).setPosition(arrowX, arrowY);
+        builder.addDrawable(animatedDrawable).setPosition(arrowX, arrowY);
+        
+        builder.addWidget(new IRecipeWidget() {
+            @Override
+            public ScreenPosition getPosition() {
+                return new ScreenPosition(arrowX, arrowY);
+            }
+            
+            @Override
+            public void getTooltip(ITooltipBuilder tooltip, double mouseX, double mouseY) {
+                if (mouseX >= 0 && mouseX < 16 && mouseY >= 0 && mouseY < 24) {
+                    int durationTicks = recipe.duration();
+                    float durationSeconds = durationTicks / 20.0f;
+                    int totalEnergy = recipe.energyPerTick() * durationTicks;
+                    
+                    if (durationSeconds < 60) {
+                        tooltip.add(Component.literal(String.format("Time: %.1f seconds", durationSeconds)).withStyle(ChatFormatting.GRAY));
+                    } else {
+                        int minutes = (int) (durationSeconds / 60);
+                        float seconds = durationSeconds % 60;
+                        if (seconds > 0.05f) {
+                            tooltip.add(Component.literal(String.format("Time: %d min %.1f sec", minutes, seconds)).withStyle(ChatFormatting.GRAY));
+                        } else {
+                            tooltip.add(Component.literal(String.format("Time: %d min", minutes)).withStyle(ChatFormatting.GRAY));
+                        }
+                    }
+                    
+                    String energyFormatted;
+                    if (totalEnergy >= 1_000_000) {
+                        energyFormatted = String.format("%.2f M FE", totalEnergy / 1_000_000.0);
+                    } else if (totalEnergy >= 1_000) {
+                        energyFormatted = String.format("%.1f K FE", totalEnergy / 1_000.0);
+                    } else {
+                        energyFormatted = String.format("%,d FE", totalEnergy);
+                    }
+                    tooltip.add(Component.literal("Total Energy: " + energyFormatted).withStyle(ChatFormatting.AQUA));
+                }
+            }
+        });
         MutableComponent literal = Component.literal(recipe.energyPerTick() + " FE/t");
         Font font = Minecraft.getInstance().font;
         addText(builder, literal

@@ -1,8 +1,11 @@
 package com.portingdeadmods.modjam.content.items;
 
 import com.portingdeadmods.modjam.data.UpgradeType;
+import com.portingdeadmods.modjam.registries.MJRegistries;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
@@ -11,19 +14,28 @@ import java.util.List;
 import java.util.Locale;
 
 public class UpgradeItem extends Item {
-    private final UpgradeType upgradeType;
+    private final ResourceKey<UpgradeType> upgradeTypeKey;
 
-    public UpgradeItem(UpgradeType upgradeType, Properties properties) {
+    public UpgradeItem(ResourceKey<UpgradeType> upgradeTypeKey, Properties properties) {
         super(properties);
-        this.upgradeType = upgradeType;
+        this.upgradeTypeKey = upgradeTypeKey;
     }
 
+    public ResourceKey<UpgradeType> getUpgradeTypeKey() {
+        return upgradeTypeKey;
+    }
+    
     public UpgradeType getUpgradeType() {
-        return upgradeType;
+        return Minecraft.getInstance().level.registryAccess()
+                .lookupOrThrow(MJRegistries.UPGRADE_TYPE_KEY)
+                .get(upgradeTypeKey)
+                .map(holder -> holder.value())
+                .orElse(new UpgradeType(List.of()));
     }
 
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
+        UpgradeType upgradeType = getUpgradeType();
         for (UpgradeType.UpgradeEffect effect : upgradeType.getEffects()) {
             String effectName = formatEffectTarget(effect.getTarget());
             String effectValue = formatEffectValue(effect);

@@ -1,0 +1,35 @@
+{
+  "type": "modjam:planet_simulator",
+  "planet_type": "modjam:earth",
+  "inputs": [
+    {
+      "item": "minecraft:stone",
+      "count": 64
+    }
+  ],
+  "energy_per_tick": 150,
+  "duration": 1000,
+  "outputs": [
+    {
+      "item": {
+        "id": "minecraft:raw_iron",
+        "count": 1
+      },
+      "chance": 0.025
+    },
+    {
+      "item": {
+        "id": "minecraft:raw_copper",
+        "count": 1
+      },
+      "chance": 0.02
+    },
+    {
+      "item": {
+        "id": "minecraft:coal",
+        "count": 1
+      },
+      "chance": 0.03
+    }
+  ]
+}

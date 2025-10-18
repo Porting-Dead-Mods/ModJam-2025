@@ -1,0 +1,56 @@
+{
+  "type": "modjam:planet_simulator",
+  "planet_type": "modjam:earth",
+  "inputs": [
+    {
+      "item": "minecraft:dirt",
+      "count": 64
+    }
+  ],
+  "energy_per_tick": 180,
+  "duration": 1000,
+  "outputs": [
+    {
+      "item": {
+        "id": "minecraft:rotten_flesh",
+        "count": 1
+      },
+      "chance": 0.025
+    },
+    {
+      "item": {
+        "id": "minecraft:bone",
+        "count": 1
+      },
+      "chance": 0.02
+    },
+    {
+      "item": {
+        "id": "minecraft:gunpowder",
+        "count": 1
+      },
+      "chance": 0.01
+    },
+    {
+      "item": {
+        "id": "minecraft:string",
+        "count": 1
+      },
+      "chance": 0.015
+    },
+    {
+      "item": {
+        "id": "minecraft:spider_eye",
+        "count": 1
+      },
+      "chance": 0.008
+    },
+    {
+      "item": {
+        "id": "minecraft:slime_ball",
+        "count": 1
+      },
+      "chance": 0.005
+    }
+  ]
+}

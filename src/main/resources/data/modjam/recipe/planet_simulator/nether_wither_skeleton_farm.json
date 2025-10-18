@@ -1,0 +1,35 @@
+{
+  "type": "modjam:planet_simulator",
+  "planet_type": "modjam:mars",
+  "inputs": [
+    {
+      "item": "minecraft:soul_sand",
+      "count": 64
+    }
+  ],
+  "energy_per_tick": 1200,
+  "duration": 4000,
+  "outputs": [
+    {
+      "item": {
+        "id": "minecraft:wither_skeleton_skull",
+        "count": 1
+      },
+      "chance": 0.008
+    },
+    {
+      "item": {
+        "id": "minecraft:nether_star",
+        "count": 1
+      },
+      "chance": 0.002
+    },
+    {
+      "item": {
+        "id": "minecraft:bone",
+        "count": 1
+      },
+      "chance": 0.02
+    }
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "type": "modjam:planet_simulator",
+  "planet_type": "modjam:venus",
+  "inputs": [
+    {
+      "item": "minecraft:end_stone",
+      "count": 64
+    }
+  ],
+  "energy_per_tick": 220,
+  "duration": 1200,
+  "outputs": [
+    {
+      "item": {
+        "id": "minecraft:ender_pearl",
+        "count": 1
+      },
+      "chance": 0.018
+    },
+    {
+      "item": {
+        "id": "minecraft:ender_eye",
+        "count": 1
+      },
+      "chance": 0.005
+    }
+  ]
+}

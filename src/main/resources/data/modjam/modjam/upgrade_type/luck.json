@@ -1,0 +1,12 @@
+{
+  "effects": [
+    {
+      "target": "luck_chance",
+      "percent_per_upgrade": 20.0
+    },
+    {
+      "target": "energy_usage",
+      "percent_per_upgrade": 5.0
+    }
+  ]
+}

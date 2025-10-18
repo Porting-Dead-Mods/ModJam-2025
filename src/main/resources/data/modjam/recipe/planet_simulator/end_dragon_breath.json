@@ -1,0 +1,35 @@
+{
+  "type": "modjam:planet_simulator",
+  "planet_type": "modjam:venus",
+  "inputs": [
+    {
+      "item": "minecraft:end_stone",
+      "count": 64
+    }
+  ],
+  "energy_per_tick": 600,
+  "duration": 2400,
+  "outputs": [
+    {
+      "item": {
+        "id": "minecraft:dragon_breath",
+        "count": 1
+      },
+      "chance": 0.003
+    },
+    {
+      "item": {
+        "id": "minecraft:dragon_head",
+        "count": 1
+      },
+      "chance": 0.001
+    },
+    {
+      "item": {
+        "id": "minecraft:dragon_egg",
+        "count": 1
+      },
+      "chance": 0.0005
+    }
+  ]
+}

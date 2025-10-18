@@ -1,10 +1,12 @@
 package com.portingdeadmods.modjam.content.blockentity;
 
+import com.portingdeadmods.modjam.Modjam;
 import com.portingdeadmods.modjam.capabilities.ReadOnlyEnergyStorage;
 import com.portingdeadmods.modjam.capabilities.ReadOnlyFluidHandler;
 import com.portingdeadmods.modjam.capabilities.ReadOnlyItemHandler;
 import com.portingdeadmods.modjam.capabilities.UpgradeItemHandler;
 import com.portingdeadmods.modjam.content.block.UpgradeBlockEntity;
+import com.portingdeadmods.modjam.content.items.UpgradeItem;
 import com.portingdeadmods.modjam.content.blockentity.bus.AbstractBusBlockEntity;
 import com.portingdeadmods.modjam.content.blockentity.bus.EnergyInputBusBlockEntity;
 import com.portingdeadmods.modjam.content.blockentity.bus.FluidInputBusBlockEntity;
@@ -31,6 +33,7 @@ import it.unimi.dsi.fastutil.Pair;
 import net.minecraft.core.*;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -44,13 +47,18 @@ import net.neoforged.neoforge.capabilities.BlockCapability;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.items.IItemHandler;
+import net.neoforged.neoforge.items.ItemStackHandler;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class PlanetSimulatorBlockEntity extends ContainerBlockEntity implements MultiblockEntity, MenuProvider, UpgradeBlockEntity {
-    public static final Set<UpgradeType> SUPPORTED_UPGRADES = Set.of(UpgradeType.values());
+    public static final Set<ResourceKey<UpgradeType>> SUPPORTED_UPGRADES = Set.of(
+            ResourceKey.create(MJRegistries.UPGRADE_TYPE_KEY, Modjam.rl("speed")),
+            ResourceKey.create(MJRegistries.UPGRADE_TYPE_KEY, Modjam.rl("energy")),
+            ResourceKey.create(MJRegistries.UPGRADE_TYPE_KEY, Modjam.rl("luck"))
+    );
     private MultiblockData multiblockData;
     private final UpgradeItemHandler upgradeItemHandler;
 
@@ -146,14 +154,14 @@ public class PlanetSimulatorBlockEntity extends ContainerBlockEntity implements 
             }
 
             @Override
-            public void onUpgradeAdded(UpgradeType upgrade) {
+            public void onUpgradeAdded(ResourceKey<UpgradeType> upgrade) {
                 super.onUpgradeAdded(upgrade);
 
                 PlanetSimulatorBlockEntity.this.onUpgradeAdded(upgrade);
             }
 
             @Override
-            public void onUpgradeRemoved(UpgradeType upgrade) {
+            public void onUpgradeRemoved(ResourceKey<UpgradeType> upgrade) {
                 super.onUpgradeRemoved(upgrade);
 
                 PlanetSimulatorBlockEntity.this.onUpgradeRemoved(upgrade);
@@ -490,9 +498,15 @@ public class PlanetSimulatorBlockEntity extends ContainerBlockEntity implements 
         float duration = baseDuration;
         float energyPerTick = baseEnergyPerTick;
         
-        for (UpgradeType upgradeType : UpgradeType.values()) {
-            int count = getUpgradeAmount(upgradeType);
+        for (ResourceKey<UpgradeType> upgradeTypeKey : SUPPORTED_UPGRADES) {
+            int count = getUpgradeAmount(upgradeTypeKey);
             if (count == 0) continue;
+            
+            UpgradeType upgradeType = level.registryAccess()
+                    .lookupOrThrow(MJRegistries.UPGRADE_TYPE_KEY)
+                    .get(upgradeTypeKey)
+                    .map(holder -> holder.value())
+                    .orElse(new UpgradeType(List.of()));
             
             for (UpgradeType.UpgradeEffect effect : upgradeType.getEffects()) {
                 switch (effect.getTarget()) {
@@ -513,9 +527,15 @@ public class PlanetSimulatorBlockEntity extends ContainerBlockEntity implements 
         
         float totalBonus = 0.0f;
         
-        for (UpgradeType upgradeType : UpgradeType.values()) {
-            int count = getUpgradeAmount(upgradeType);
+        for (ResourceKey<UpgradeType> upgradeTypeKey : SUPPORTED_UPGRADES) {
+            int count = getUpgradeAmount(upgradeTypeKey);
             if (count == 0) continue;
+            
+            UpgradeType upgradeType = level.registryAccess()
+                    .lookupOrThrow(MJRegistries.UPGRADE_TYPE_KEY)
+                    .get(upgradeTypeKey)
+                    .map(holder -> holder.value())
+                    .orElse(new UpgradeType(List.of()));
             
             for (UpgradeType.UpgradeEffect effect : upgradeType.getEffects()) {
                 if (effect.getTarget() == UpgradeType.EffectTarget.LUCK_CHANCE) {
@@ -745,7 +765,7 @@ public class PlanetSimulatorBlockEntity extends ContainerBlockEntity implements 
         ItemStack remaining = stack.copy();
         for (ItemOutputBusBlockEntity bus : itemBusses) {
             if (remaining.isEmpty()) break;
-            net.neoforged.neoforge.items.ItemStackHandler handler = bus.getItemHandler();
+            ItemStackHandler handler = bus.getItemHandler();
             
             for (int i = 0; i < handler.getSlots(); i++) {
                 if (remaining.isEmpty()) break;
@@ -811,14 +831,15 @@ public class PlanetSimulatorBlockEntity extends ContainerBlockEntity implements 
     }
 
     @Override
-    public Set<UpgradeType> getSupportedUpgrades() {
+    public Set<ResourceKey<UpgradeType>> getSupportedUpgrades() {
         return SUPPORTED_UPGRADES;
     }
 
     @Override
-    public boolean hasUpgrade(UpgradeType upgrade) {
+    public boolean hasUpgrade(ResourceKey<UpgradeType> upgrade) {
         for (int i = 0; i < this.getUpgradeItemHandler().getSlots(); i++) {
-            if (this.getUpgradeItemHandler().getStackInSlot(i).is(upgrade.getItem())) {
+            ItemStack stack = this.getUpgradeItemHandler().getStackInSlot(i);
+            if (stack.getItem() instanceof UpgradeItem upgradeItem && upgradeItem.getUpgradeTypeKey().equals(upgrade)) {
                 return true;
             }
         }
@@ -826,13 +847,12 @@ public class PlanetSimulatorBlockEntity extends ContainerBlockEntity implements 
     }
 
     @Override
-    public int getUpgradeAmount(UpgradeType upgrade) {
+    public int getUpgradeAmount(ResourceKey<UpgradeType> upgrade) {
         int amount = 0;
-        Item upgradeItem = upgrade.getItem();
 
         for (int i = 0; i < this.getUpgradeItemHandler().getSlots(); i++) {
             ItemStack stackInSlot = this.getUpgradeItemHandler().getStackInSlot(i);
-            if (stackInSlot.is(upgradeItem)) {
+            if (stackInSlot.getItem() instanceof UpgradeItem upgradeItem && upgradeItem.getUpgradeTypeKey().equals(upgrade)) {
                 amount += stackInSlot.getCount();
             }
         }
@@ -841,12 +861,12 @@ public class PlanetSimulatorBlockEntity extends ContainerBlockEntity implements 
     }
 
     @Override
-    public void onUpgradeAdded(UpgradeType upgrade) {
+    public void onUpgradeAdded(ResourceKey<UpgradeType> upgrade) {
 
     }
 
     @Override
-    public void onUpgradeRemoved(UpgradeType upgrade) {
+    public void onUpgradeRemoved(ResourceKey<UpgradeType> upgrade) {
 
     }
 
