@@ -190,7 +190,7 @@ public class PlanetSimulatorBlockEntityRenderer implements BlockEntityRenderer<P
         poseStack.mulPose(Axis.YP.rotationDegrees((Minecraft.getInstance().level.getGameTime() + partialTick) * ROTATION_SPEED));
         poseStack.scale(PLANET_SIZE, PLANET_SIZE, PLANET_SIZE);
         
-        this.renderPlanet(texture, poseStack, 16, 0.125f, -0.1f, 32, 4, new Vector3f(0, 0, 250f), new Vector3f(0.1f, 0.2f, 0.9f), new Vector4f(BRIGHTNESS, BRIGHTNESS, BRIGHTNESS, 0.5f), 0.03f, 0);
+        this.renderPlanet(texture, poseStack, 16, 0.125f, -0.1f, 32, 4, new Vector3f(0, 0, 250f), new Vector3f(0.1f, 0.2f, 0.9f), new Vector4f(BRIGHTNESS, BRIGHTNESS, BRIGHTNESS, 0.5f), 0.03f, 0, 1 - (float) planetSimulatorBlockEntity.getProgress() / (float) planetSimulatorBlockEntity.getMaxProgress());
         poseStack.popPose();
     }
 
