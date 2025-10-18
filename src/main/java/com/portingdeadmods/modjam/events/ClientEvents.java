@@ -1,14 +1,19 @@
 package com.portingdeadmods.modjam.events;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.ByteBufferBuilder;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.portingdeadmods.modjam.Modjam;
+import com.portingdeadmods.modjam.client.renderers.blockentity.PlanetSimulatorBlockEntityRenderer;
 import com.portingdeadmods.modjam.client.screens.CompressorScreen;
 import com.portingdeadmods.modjam.client.screens.PlanetSimulatorScreen;
+import com.portingdeadmods.modjam.content.blockentity.PlanetSimulatorBlockEntity;
 import com.portingdeadmods.modjam.data.PlanetComponent;
-import com.portingdeadmods.modjam.registries.MJDataComponents;
-import com.portingdeadmods.modjam.registries.MJItems;
-import com.portingdeadmods.modjam.registries.MJMenus;
-import com.portingdeadmods.modjam.registries.MJShaders;
+import com.portingdeadmods.modjam.registries.*;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -20,24 +25,16 @@ import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 import net.neoforged.neoforge.client.event.RegisterShadersEvent;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 import org.joml.Matrix4f;
+import org.joml.Vector3f;
+import org.joml.Vector4f;
+
+import java.util.List;
+import java.util.Queue;
 
 @EventBusSubscriber(modid = Modjam.MODID, value = Dist.CLIENT)
 public class ClientEvents {
 
-    // gross hacks
-    public static Matrix4f capturedProjectionMatrix;
-    public static Matrix4f capturedViewMatrix;
 
-    @SubscribeEvent
-    public static void renderLevelEvent(RenderLevelStageEvent event) {
-        if (event.getStage() == RenderLevelStageEvent.Stage.AFTER_BLOCK_ENTITIES) {
-            capturedProjectionMatrix = new Matrix4f(RenderSystem.getProjectionMatrix());
-            capturedViewMatrix = new Matrix4f(event.getModelViewMatrix());
-            // testing
-            Vec3 cam = event.getCamera().getPosition();
-            capturedViewMatrix.translate((float) -cam.x, (float) -cam.y, (float) -cam.z);
-        }
-    }
 
     @SubscribeEvent
     public static void onClientSetup(FMLClientSetupEvent event) {
@@ -46,8 +43,14 @@ public class ClientEvents {
 
     @SubscribeEvent
     public static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
-
+        event.registerBlockEntityRenderer(
+                // The block entity type to register the renderer for.
+                MJBlockEntities.PLANET_SIMULATOR.get(),
+                // A function of BlockEntityRendererProvider.Context to BlockEntityRenderer.
+                PlanetSimulatorBlockEntityRenderer::new
+        );
     }
+
 
     @SubscribeEvent
     public static void registerScreens(RegisterMenuScreensEvent event) {
