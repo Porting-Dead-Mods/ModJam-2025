@@ -1,0 +1,12 @@
+{
+  "type": "spaceploitation:planet_power",
+  "planet_type": "spaceploitation:mars",
+  "inputs": [
+    {
+      "item": "minecraft:redstone",
+      "count": 1
+    }
+  ],
+  "energy_per_tick": 500,
+  "duration": 100
+}

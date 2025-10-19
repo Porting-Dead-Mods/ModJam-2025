@@ -1,0 +1,6 @@
+{
+  "texture": "minecraft:item/planet_card/planets/overworld",
+  "projection_texture": "spaceploitation:textures/planet/earth.png",
+  "dimension": "minecraft:overworld",
+  "display_name": "Earth Planet Card"
+}

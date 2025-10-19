@@ -1,0 +1,12 @@
+{
+  "type": "spaceploitation:compressing",
+  "ingredient": {
+    "item": "spaceploitation:tantalum_ingot",
+    "count": 1
+  },
+  "duration": 200,
+  "result": {
+    "id": "spaceploitation:tantalum_sheet",
+    "count": 1
+  }
+}
