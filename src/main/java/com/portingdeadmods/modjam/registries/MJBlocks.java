@@ -55,7 +55,7 @@ public final class MJBlocks {
 
     public static final DeferredBlock<CompressorGhostBlock> COMPRESSOR_GHOST = BLOCKS.registerBlock("compressor_ghost", CompressorGhostBlock::new, BlockBehaviour.Properties.of().noCollission().noOcclusion().replaceable());
 
-    public static final DeferredBlock<CreativePowerBlock> CREATIVE_POWER = BLOCKS.registerBlockWithItem("creative_power", CreativePowerBlock::new, TANTALUM_PROPERTIES);
+    //public static final DeferredBlock<CreativePowerBlock> CREATIVE_POWER = BLOCKS.registerBlockWithItem("creative_power", CreativePowerBlock::new, TANTALUM_PROPERTIES);
 
-    public static final Set<DeferredBlock<?>> NO_ITEM_MODELS = Set.of(MJBlocks.COMPRESSOR, MJBlocks.CREATIVE_POWER, MJBlocks.TANTALUM_ORE, MJBlocks.DEEPSLATE_TANTALUM_ORE);
+    public static final Set<DeferredBlock<?>> NO_ITEM_MODELS = Set.of(MJBlocks.COMPRESSOR, MJBlocks.TANTALUM_ORE, MJBlocks.DEEPSLATE_TANTALUM_ORE);
 }

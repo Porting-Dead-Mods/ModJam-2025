@@ -2,7 +2,13 @@ package com.portingdeadmods.modjam.compat.jei;
 
 import com.portingdeadmods.modjam.Modjam;
 import com.portingdeadmods.modjam.content.recipe.PlanetPowerRecipe;
+import com.portingdeadmods.modjam.content.recipe.PlanetSimulatorRecipe;
+import com.portingdeadmods.modjam.data.PlanetComponent;
+import com.portingdeadmods.modjam.data.PlanetType;
 import com.portingdeadmods.modjam.registries.MJBlocks;
+import com.portingdeadmods.modjam.registries.MJDataComponents;
+import com.portingdeadmods.modjam.registries.MJItems;
+import com.portingdeadmods.modjam.registries.MJRegistries;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.widgets.IRecipeExtrasBuilder;
 import mezz.jei.api.gui.widgets.ITextWidget;
@@ -16,10 +22,13 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
 import java.util.Arrays;
+import java.util.Optional;
 
 public class PlanetPowerCategory extends AbstractRecipeCategory<PlanetPowerRecipe> {
     public static final RecipeType<PlanetPowerRecipe> TYPE = RecipeType.create(Modjam.MODID, "planet_power", PlanetPowerRecipe.class);
@@ -32,6 +41,13 @@ public class PlanetPowerCategory extends AbstractRecipeCategory<PlanetPowerRecip
 
     @Override
     public void setRecipe(IRecipeLayoutBuilder builder, PlanetPowerRecipe recipe, IFocusGroup focuses) {
+        ItemStack planetCard = createPlanetCard(recipe);
+        if (!planetCard.isEmpty()) {
+            builder.addInputSlot(this.getWidth() - 18, 1)
+                    .setStandardSlotBackground()
+                    .addItemStack(planetCard);
+        }
+
         int inputX = 1;
         int inputY = 1;
         
@@ -49,6 +65,24 @@ public class PlanetPowerCategory extends AbstractRecipeCategory<PlanetPowerRecip
                     .setFluidRenderer(10000, true, 16, 54)
                     .addIngredients(NeoForgeTypes.FLUID_STACK, Arrays.stream(recipe.fluidInput().get().getStacks()).toList());
         }
+    }
+
+    private ItemStack createPlanetCard(PlanetPowerRecipe recipe) {
+        var holderOpt = Minecraft.getInstance().level.registryAccess()
+                .lookupOrThrow(MJRegistries.PLANET_TYPE_KEY)
+                .get(recipe.planetType());
+
+        if (holderOpt.isEmpty()) {
+            return ItemStack.EMPTY;
+        }
+
+        PlanetType planetType = holderOpt.get().value();
+
+        Item itemToUse = planetType.tint().isPresent() ? MJItems.TINTED_PLANET_CARD.get() : MJItems.PLANET_CARD.get();
+        ItemStack stack = new ItemStack(itemToUse);
+        stack.set(MJDataComponents.PLANET, new PlanetComponent(Optional.of(planetType), true, planetType.isBlackHole()));
+
+        return stack;
     }
 
     @Override
