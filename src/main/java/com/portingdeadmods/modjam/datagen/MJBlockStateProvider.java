@@ -44,6 +44,7 @@ public class MJBlockStateProvider extends BlockStateProvider {
         builder(MJBlocks.PLANET_SIMULATOR_CONTROLLER)
                 .defaultTexture(this.blockTexture(MJBlocks.PLANET_SIMULATOR_CASING.get()))
                 .front(this::blockTexture)
+                .horizontalFacing()
                 .create();
 
         builder(MJBlocks.ENERGY_INPUT_BUS)
