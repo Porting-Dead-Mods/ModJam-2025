@@ -45,17 +45,26 @@ The Planet Simulator runs space missions that:
 
 ### Space Missions
 
-Each planet card enables different missions:
+Each planet card enables different missions with various inputs and outputs. Here are some examples:
 
-**Earth Missions:**
-- <ItemLink id="minecraft:stone" /> (16x) → Various ores and materials (200 FE/tick, 400 ticks)
-- <ItemLink id="minecraft:coal" /> (4x) → <ItemLink id="minecraft:diamond" /> with 50% chance (100 FE/tick, 200 ticks)
+**Earth (Overworld) Missions:**
+- <ItemLink id="minecraft:cobblestone" /> (64x) → Coal, Iron Ore, Copper Ore (800 ticks, 120 FE/tick)
+- <ItemLink id="minecraft:deepslate" /> (64x) → Diamond, Emerald, Redstone, Lapis (2400 ticks, 500 FE/tick)
+- <ItemLink id="minecraft:stone" /> (64x) → Raw Iron, Raw Copper, Coal (1000 ticks, 150 FE/tick)
+- <ItemLink id="minecraft:dirt" /> (64x) → Mob drops (bones, rotten flesh, gunpowder, etc.)
 
-**Mars Missions:**
-- <ItemLink id="minecraft:redstone" /> (1x) → 500 FE/tick power generation (100 ticks)
+**Mars (Nether) Missions:**
+- <ItemLink id="minecraft:netherrack" /> (64x) → Nether Quartz, Gold Nuggets, Glowstone (800 ticks, 140 FE/tick)
+- <ItemLink id="minecraft:basalt" /> (64x) → Ancient Debris, Netherite Scrap, Blackstone (3000 ticks, 800 FE/tick)
+- <ItemLink id="minecraft:soul_sand" /> (64x) → Wither Skeleton Skulls, Nether Stars (4000 ticks, 1200 FE/tick)
 
-**Black Hole (Endgame):**
-- Ultimate power generation (requires End dimension access)
+**Venus (End) Missions:**
+- <ItemLink id="minecraft:end_stone" /> (64x) → Chorus Fruit, Ender Pearls, Obsidian (1000 ticks, 180 FE/tick)
+- <ItemLink id="minecraft:purpur_block" /> (64x) → Shulker Shells, Shulker Boxes (1800 ticks, 400 FE/tick)
+- <ItemLink id="minecraft:elytra" /> (1x catalyst) + <ItemLink id="minecraft:end_stone" /> (64x) → Elytra duplication! (6000 ticks, 2000 FE/tick)
+
+**Black Hole (Deep Dark Biome):**
+- Ultimate recipes (coming soon!)
 
 ### Planet Cards
 

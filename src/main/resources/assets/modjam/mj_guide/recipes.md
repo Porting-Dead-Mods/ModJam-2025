@@ -19,27 +19,51 @@ This recipe compresses tantalum ingots into tantalum sheets.
 
 ## Planet Power Generation
 
-The Planet Simulator generates power through planetary simulations. Mars provides excellent power generation:
+Mars planet cards can generate power! Check JEI for power generation recipes.
 
 <Recipe id="modjam:planet_power/mars_power_generation" />
 
-Mars simulation converts redstone into energy at 500 FE/tick.
-
 ## Planet Simulator Resource Recipes
 
-The Planet Simulator with Earth cards can generate various resources:
+The Planet Simulator has dozens of recipes for each planet type! Here are the main categories:
 
-### Ore Generation
+### Earth (Overworld) Recipes
 
-<Recipe id="modjam:planet_simulator/earth_ore_generation" />
+Earth missions convert common Overworld blocks into valuable resources:
 
-Earth simulation converts stone into various ores and materials.
+**Resource Generation:**
+- Cobblestone → Coal, Iron Ore, Copper Ore
+- Stone → Raw Iron, Raw Copper, Coal
+- Deepslate → Diamonds, Emeralds, Redstone, Lapis
 
-### Diamond Generation
+**Mob Drops:**
+- Dirt → Rotten Flesh, Bones, Gunpowder, String, Spider Eyes, Slime Balls
 
-<Recipe id="modjam:planet_simulator/earth_diamond_generation" />
+### Mars (Nether) Recipes
 
-Earth simulation can convert coal into diamonds with a 50% bonus chance.
+Mars missions convert Nether blocks into rare Nether resources:
+
+**Resource Generation:**
+- Netherrack → Quartz, Gold Nuggets, Glowstone
+- Basalt → Ancient Debris, Netherite Scrap, Blackstone
+
+**Mob Drops:**
+- Netherrack → Blaze Rods, Blaze Powder, Magma Cream
+- Soul Sand → Wither Skeleton Skulls, Nether Stars (rare!)
+
+### Venus (End) Recipes
+
+Venus missions convert End blocks into End resources and even duplicate rare items:
+
+**Resource Generation:**
+- End Stone → Chorus Fruit, Ender Pearls, Obsidian
+
+**Mob Drops:**
+- End Stone → Dragon Heads, Dragon Eggs (very rare!)
+- Purpur Blocks → Shulker Shells, Shulker Boxes
+
+**Loot Duplication (with Catalysts):**
+- Elytra (catalyst) + End Stone → Elytra duplication!
 
 ## Multiblock Components
 

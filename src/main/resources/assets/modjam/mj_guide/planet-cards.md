@@ -53,13 +53,13 @@ Planet cards start as blank items. To link them to a planet:
 
 **Dimension:** End
 
-**Specialty:** Coming soon!
+**Specialty:** Advanced resource generation - Produces End resources including Chorus Fruit, Ender Pearls, Shulker Shells, and even allows Elytra duplication with catalyst recipes!
 
-### Black Hole (End - Endgame)
+### Black Hole (Deep Dark)
 
-**Dimension:** End
+**Dimension:** Overworld (Deep Dark biome)
 
-**Specialty:** Ultimate power generation using black hole energy
+**Specialty:** Ultimate endgame content using black hole energy - Requires visiting the Deep Dark biome to activate!
 
 ## Activating Planet Cards
 
@@ -95,6 +95,7 @@ You can then re-link it to a different planet type!
 ## Tips
 
 - Always activate cards in the correct dimension before use
-- Different planets require different inputs (<ItemLink id="minecraft:redstone" /> for Mars, <ItemLink id="minecraft:stone" />/<ItemLink id="minecraft:coal" /> for Earth)
-- Black hole cards are endgame content requiring End dimension access
+- Different planets accept different inputs - Earth uses Overworld blocks, Mars uses Nether blocks, Venus uses End blocks
+- Black hole cards are endgame content requiring Deep Dark biome access
 - Keep multiple activated cards for different space missions
+- Check JEI for all available planet simulator recipes!
