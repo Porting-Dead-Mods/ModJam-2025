@@ -1,9 +1,13 @@
 package com.portingdeadmods.modjam.mixin;
 
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.ByteBufferBuilder;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.portingdeadmods.modjam.Modjam;
+import com.portingdeadmods.modjam.client.renderers.blockentity.BlackHoleExampleRenderer;
+import com.portingdeadmods.modjam.events.ClientEvents;
 import com.portingdeadmods.modjam.registries.MJShaders;
+import com.portingdeadmods.modjam.render.PostChainExtensions;
 import net.minecraft.client.Camera;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
@@ -23,30 +27,30 @@ public class LevelRendererMixin {
     void tryProcessBlackHoleShader(DeltaTracker p_348530_, boolean p_109603_, Camera p_109604_, GameRenderer p_109605_, LightTexture p_109606_, Matrix4f p_254120_, Matrix4f p_323920_, CallbackInfo ci) {
         GL45.glPushDebugGroup(GL45.GL_DEBUG_SOURCE_APPLICATION, 1, "blackhole");
         //read ber queue?
-//        PostChainExtensions.setUniform(MJShaders.BLACK_HOLE_CHAIN, "SceneInvProjMat", ClientEvents.capturedProjectionMatrix.invert(new Matrix4f()));
-//        float near = ClientEvents.capturedProjectionMatrix.m32() / (ClientEvents.capturedProjectionMatrix.m22() - 1.0f);
-//        float far = ClientEvents.capturedProjectionMatrix.m32() / (ClientEvents.capturedProjectionMatrix.m22() + 1.0f);
-//        PostChainExtensions.setUniform(MJShaders.BLACK_HOLE_CHAIN, "InvViewMat", p_254120_.invert(new Matrix4f()));
-//        MJShaders.BLACK_HOLE_CHAIN.setUniform("Near", near);
-//        MJShaders.BLACK_HOLE_CHAIN.setUniform("Far", far);
-//
-//        GL45.glBindBuffer(GL45.GL_UNIFORM_BUFFER, MJShaders.BLACK_HOLE_UBO_ID);
-//        GL45.glBufferSubData(GL45.GL_UNIFORM_BUFFER, 0, BlackHoleExampleRenderer.blackholeUniformBuffer.build());
-//
-//        GL45.glBindBufferBase(GL45.GL_UNIFORM_BUFFER, 1, MJShaders.BLACK_HOLE_UBO_ID);
-//
-//        GL45.glBindBuffer(GL45.GL_UNIFORM_BUFFER, 0);
-//
-//
-//        MJShaders.BLACK_HOLE_CHAIN.resize(Minecraft.getInstance().getWindow().getWidth(), Minecraft.getInstance().getWindow().getHeight()); // bad
-//        RenderSystem.depthMask(false);
-//        MJShaders.BLACK_HOLE_CHAIN.process(Minecraft.getInstance().getTimer().getGameTimeDeltaTicks());
-//
-//        GL45.glBindBufferBase(GL45.GL_UNIFORM_BUFFER, 1, 0);
-//
-//
-//        RenderSystem.depthMask(true);
-//        Minecraft.getInstance().getMainRenderTarget().bindWrite(true);
+        PostChainExtensions.setUniform(MJShaders.BLACK_HOLE_CHAIN, "SceneInvProjMat", ClientEvents.capturedProjectionMatrix.invert(new Matrix4f()));
+        float near = ClientEvents.capturedProjectionMatrix.m32() / (ClientEvents.capturedProjectionMatrix.m22() - 1.0f);
+        float far = ClientEvents.capturedProjectionMatrix.m32() / (ClientEvents.capturedProjectionMatrix.m22() + 1.0f);
+        PostChainExtensions.setUniform(MJShaders.BLACK_HOLE_CHAIN, "InvViewMat", ClientEvents.capturedViewMatrix.invert(new Matrix4f()));
+        MJShaders.BLACK_HOLE_CHAIN.setUniform("Near", near);
+        MJShaders.BLACK_HOLE_CHAIN.setUniform("Far", far);
+
+        GL45.glBindBuffer(GL45.GL_UNIFORM_BUFFER, MJShaders.BLACK_HOLE_UBO_ID);
+        GL45.glBufferSubData(GL45.GL_UNIFORM_BUFFER, 0, BlackHoleExampleRenderer.blackholeUniformBuffer.build());
+
+        GL45.glBindBufferBase(GL45.GL_UNIFORM_BUFFER, 1, MJShaders.BLACK_HOLE_UBO_ID);
+
+        GL45.glBindBuffer(GL45.GL_UNIFORM_BUFFER, 0);
+
+
+        MJShaders.BLACK_HOLE_CHAIN.resize(Minecraft.getInstance().getWindow().getWidth(), Minecraft.getInstance().getWindow().getHeight()); // bad
+        RenderSystem.depthMask(false);
+        MJShaders.BLACK_HOLE_CHAIN.process(Minecraft.getInstance().getTimer().getGameTimeDeltaTicks());
+
+        GL45.glBindBufferBase(GL45.GL_UNIFORM_BUFFER, 1, 0);
+
+
+        RenderSystem.depthMask(true);
+        Minecraft.getInstance().getMainRenderTarget().bindWrite(true);
         //flush ber queue?
 
         MultiBufferSource.BufferSource buf = MultiBufferSource.immediate(new ByteBufferBuilder(12));

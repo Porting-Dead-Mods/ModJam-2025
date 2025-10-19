@@ -1,52 +1,147 @@
 #version 150
-//https://iquilezles.org/
-uniform sampler2D DiffuseSampler;
-uniform sampler2D DepthSampler;
 
-in vec2 texCoord;
+#define _Speed 3.0  //disk rotation speed
 
-uniform float Near;
-uniform float Far;
-
-out vec4 fragColor;
-
-const int MAX_STEPS = 100;
-
-uniform float[] ThingPosition;
-
-const float STEP_DISTANCE = 1;
-
-const float EPSILON = 0.01;
+#define _Steps  12. //disk texture layers
+#define _Size 0.3 //size of BH
 
 uniform float GameTime;
+uniform mat4 InvViewMat;
 
 in vec3 rayDirection;
 in vec3 rayOrigin;
+in vec2 texCoord;
 
-uniform mat4 InvViewMat;
+uniform sampler2D DiffuseSampler;
+uniform sampler2D DiffuseDepthSampler;
 
-float sdBox(vec3 p, vec3 b)
+out vec4 fragColor;
+
+//layout (std140) uniform BlackHoleList
+//{
+//    int numBlackHoles;
+//    BlackHole holes[];
+//};
+
+float hash(float x){ return fract(sin(x)*152754.742);}
+float hash(vec2 x){	return hash(x.x + hash(x.y));}
+
+float value(vec2 p, float f) //value noise
 {
-    vec3 q = abs(p) - b;
-    return length(max(q, 0.0)) + min(max(q.x, max(q.y, q.z)), 0.0);
+    float bl = hash(floor(p*f + vec2(0.,0.)));
+    float br = hash(floor(p*f + vec2(1.,0.)));
+    float tl = hash(floor(p*f + vec2(0.,1.)));
+    float tr = hash(floor(p*f + vec2(1.,1.)));
+
+    vec2 fr = fract(p*f);
+    fr = (3. - 2.*fr)*fr*fr;
+    float b = mix(bl, br, fr.x);
+    float t = mix(tl, tr, fr.x);
+    return  mix(b,t, fr.y);
 }
 
-float sdSphere( vec3 p, float s )
+vec4 background(vec3 ray)
 {
-    return length(p)-s;
+    vec2 uv = ray.xy;
+
+    if( abs(ray.x) > 0.5)
+    uv.x = ray.z;
+    else if( abs(ray.y) > 0.5)
+    uv.y = ray.z;
+
+    //vec4 nebulae = texture(DiffuseSampler, (uv*1.5 ));
+    vec4 nebulae = texture(DiffuseSampler, (texCoord ));
+
+    return nebulae;
 }
 
-float sdRoundedCylinder(vec3 p, float ra, float rb, float h)
+vec4 raymarchDisk(vec3 ray, vec3 zeroPos)
 {
-    vec2 d = vec2(length(p.xz)-2.0*ra+rb, abs(p.y) - h);
-    return min(max(d.x, d.y), 0.0) + length(max(d, 0.0)) - rb;
+    //return vec4(1.,1.,1.,0.); //no disk
+
+    vec3 position = zeroPos;
+    float lengthPos = length(position.xz);
+    float dist = min(1., lengthPos*(1./_Size) *0.5) * _Size * 0.4 *(1./_Steps) /( abs(ray.y) );
+
+    position += dist*_Steps*ray*0.5;
+
+    vec2 deltaPos;
+    deltaPos.x = -zeroPos.z*0.01 + zeroPos.x;
+    deltaPos.y = zeroPos.x*0.01 + zeroPos.z;
+    deltaPos = normalize(deltaPos - zeroPos.xz);
+
+    float parallel = dot(ray.xz, deltaPos);
+    parallel /= sqrt(lengthPos);
+    parallel *= 0.5;
+    float redShift = parallel +0.3;
+    redShift *= redShift;
+
+    redShift = clamp(redShift, 0., 1.);
+
+    float disMix = clamp((lengthPos - _Size * 2.)*(1./_Size)*0.24, 0., 1.);
+    vec3 insideCol =  mix(vec3(1.0,0.8,0.0), vec3(0.5,0.13,0.02)*0.2, disMix);
+
+    insideCol *= mix(vec3(0.4, 0.2, 0.1), vec3(1.6, 2.4, 4.0), redShift);
+    insideCol *= 1.25;
+    redShift += 0.12;
+    redShift *= redShift;
+
+    vec4 o = vec4(0.);
+
+    for(float i = 0. ; i < _Steps; i++)
+    {
+        position -= dist * ray ;
+
+        float intensity =clamp( 1. - abs((i - 0.8) * (1./_Steps) * 2.), 0., 1.);
+        float lengthPos = length(position.xz);
+        float distMult = 1.;
+
+        distMult *=  clamp((lengthPos -  _Size * 0.75) * (1./_Size) * 1.5, 0., 1.);
+        distMult *= clamp(( _Size * 10. -lengthPos) * (1./_Size) * 0.20, 0., 1.);
+        distMult *= distMult;
+
+        float u = lengthPos + GameTime* _Size*0.3 + intensity * _Size * 0.2;
+
+        vec2 xy ;
+        float rot = mod(GameTime*_Speed, 8192.);
+        xy.x = -position.z*sin(rot) + position.x*cos(rot);
+        xy.y = position.x*sin(rot) + position.z*cos(rot);
+
+        float x = abs( xy.x/(xy.y));
+        float angle = 0.02*atan(x);
+
+        const float f = 70.;
+        float noise = value( vec2( angle, u * (1./_Size) * 0.05), f);
+        noise = noise*0.66 + 0.33*value( vec2( angle, u * (1./_Size) * 0.05), f*2.);
+
+        float extraWidth =  noise * 1. * (1. -  clamp(i * (1./_Steps)*2. - 1., 0., 1.));
+
+        float alpha = clamp(noise*(intensity + extraWidth)*( (1./_Size) * 10.  + 0.01 ) *  dist * distMult , 0., 1.);
+
+        vec3 col = 2.*mix(vec3(0.3,0.2,0.15)*insideCol, insideCol, min(1.,intensity*2.));
+        o = clamp(vec4(col*alpha + o.rgb*(1.-alpha), o.a*(1.-alpha) + alpha), vec4(0.), vec4(1.));
+
+        lengthPos *= (1./_Size);
+
+        o.rgb+= redShift*(intensity*1. + 0.5)* (1./_Steps) * 100.*distMult/(lengthPos*lengthPos);
+    }
+
+    o.rgb = clamp(o.rgb - 0.005, 0., 1.);
+    return o ;
 }
 
-float smin(float a, float b, float k)
+
+void Rotate( inout vec3 vector, vec2 angle )
 {
-    k *= log(2.0);
-    float x = b-a;
-    return a + x/(1.0-exp2(x/k));
+    vector.yz = cos(angle.y)*vector.yz
+    +sin(angle.y)*vec2(-1,1)*vector.zy;
+    vector.xz = cos(angle.x)*vector.xz
+    +sin(angle.x)*vec2(-1,1)*vector.zx;
+}
+
+vec3 transformRay(mat4 mat, vec3 ray)
+{
+    return (mat * vec4(ray,1)).xyz;
 }
 
 mat4 translate(mat4 mat, vec3 translation)
@@ -55,71 +150,76 @@ mat4 translate(mat4 mat, vec3 translation)
     return mat;
 }
 
-vec3 transformRay(mat4 mat, vec3 ray)
+
+void main(  )
 {
-    return (mat * vec4(ray,1)).xyz;
-}
+ //   colOut = vec4(0.);;
 
-float scene(vec3 p)
-{
-    vec3 firstThing = vec3(ThingPosition[0], ThingPosition[1], ThingPosition[2]);
-    vec3 secondThing = vec3(ThingPosition[3], ThingPosition[4], ThingPosition[5]);
 
-    //wasteful
-    mat4 boxMat = translate(InvViewMat, firstThing);
-    mat4 sphereMax = translate(InvViewMat, secondThing);
+    //setting up camera
+    vec3 ray = normalize(rayDirection);
+    ray = transformRay(InvViewMat, ray);
+   // ray = normalize(vec3(0, -1, 0));
+    vec3 pos = rayOrigin + vec3(0, 4,-4);
 
-    return smin(sdBox(transformRay(boxMat, p).xyz, vec3(10)), sdSphere(transformRay(sphereMax, p), 5), 0.2);
-}
+    //vec2 angle = vec2(GameTime*0.1,.2);
 
-float rayDepth(float z)
-{
+    vec4 col = vec4(0.);
+    vec4 glow = vec4(0.);
+    vec4 outCol =vec4(100.);
 
-    float a = (Far+Near)/(Far-Near);
-    float b = 2.0*Far*Near/(Far-Near);
-    return ((a + b/z) + 1) / 2;
-}
-
-vec3 start;
-
-float linearizeDepth(float depth)
-{
-    return Near * Far / (Far + depth * (Near - Far));
-}
-
-void main(){
-    vec4 diffuseColor = texture(DiffuseSampler, texCoord);
-
-    start = rayOrigin;
-
-    vec3 ray = vec3(rayOrigin);
-
-    vec3 rd = normalize(rayDirection);
-
-    vec3 outColor = diffuseColor.rgb;
-
-    float depth = texture(DepthSampler, texCoord).r;
-
-    float dist;
-
-    for (int i = 0; i < MAX_STEPS; i++)
+    for(int disks = 0; disks< 20; disks++) //steps
     {
-        //  ray += normalize(rayDirection) * STEP_DISTANCE;
-        float sdf = scene(ray);
 
-        if (rayDepth(ray.z) > depth)
+        for (int h = 0; h < 6; h++) //reduces tests for exit conditions (to minimise branching)
         {
+            float dotpos = dot(pos,pos);
+            float invDist = inversesqrt(dotpos); //1/distance to BH
+            float centDist = dotpos * invDist; 	//distance to BH
+            float stepDist = 0.92 * abs(pos.y /(ray.y));  //conservative distance to disk (y==0)
+            float farLimit = centDist * 0.5; //limit step size far from to BH
+            float closeLimit = centDist*0.1 + 0.05*centDist*centDist*(1./_Size); //limit step size closse to BH
+            stepDist = min(stepDist, min(farLimit, closeLimit));
+
+            float invDistSqr = invDist * invDist;
+            float bendForce = stepDist * invDistSqr * _Size * 0.625;  //bending force
+            ray =  normalize(ray - (bendForce * invDist )*pos);  //bend ray towards BH
+            pos += stepDist * ray;
+
+            glow += vec4(1.2,1.1,1, 1.0) *(0.01*stepDist * invDistSqr * invDistSqr *clamp( centDist*(2.) - 1.2,0.,1.)); //adds fairly cheap glow
+        }
+
+        float dist2 = length(transformRay(InvViewMat, pos));
+
+        if(dist2 < _Size * 0.1) //ray sucked in to BH
+        {
+            outCol =  vec4( col.rgb * col.a + glow.rgb *(1.-col.a ) ,1.) ;
             break;
         }
-        if (sdf < EPSILON)
+
+        else if(dist2 > _Size * 1000.) //ray escaped BH
         {
-            outColor = vec3(0.3, 0.1, 0.8);
+            vec4 bg = background (ray);
+            outCol = vec4(col.rgb*col.a + bg.rgb*(1.-col.a)  + glow.rgb *(1.-col.a    ), 1.);
             break;
         }
 
-        ray += sdf * rd;
-
+        else if (abs(pos.y) <= _Size * 0.002 ) //ray hit accretion disk
+        {
+            vec4 diskCol = raymarchDisk(ray, pos);   //render disk
+            pos.y = 0.;
+            pos += abs(_Size * 0.001 /ray.y) * ray;
+            col = vec4(diskCol.rgb*(1.-col.a) + col.rgb, col.a + diskCol.a*(1.-col.a));
+        }
     }
 
-    fragColor = vec4(outColor.rgb, 1.0);
+    //if the ray never escaped or got sucked in
+    if(outCol.r == 100.)
+    outCol = vec4(col.rgb + glow.rgb *(col.a +  glow.a) , 1.);
+
+    col = outCol;
+    col.rgb =  pow( col.rgb, vec3(0.6) );
+
+    fragColor += col;
+
 }

@@ -51,6 +51,35 @@ public class ClientEvents {
         );
     }
 
+    // gross hacks
+
+
+    public static Matrix4f capturedProjectionMatrix;
+
+
+    public static Matrix4f capturedViewMatrix;
+
+
+
+
+
+    @SubscribeEvent
+
+
+    public static void renderLevelEvent(RenderLevelStageEvent event) {
+
+
+        if (event.getStage() == RenderLevelStageEvent.Stage.AFTER_BLOCK_ENTITIES) {
+
+            capturedProjectionMatrix = new Matrix4f(RenderSystem.getProjectionMatrix());
+            capturedViewMatrix = new Matrix4f(event.getModelViewMatrix());
+            // testing
+
+            Vec3 cam = event.getCamera().getPosition();
+    //        capturedViewMatrix.translate((float) -cam.x, (float) -cam.y, (float) -cam.z);
+        }
+
+    }
 
     @SubscribeEvent
     public static void registerScreens(RegisterMenuScreensEvent event) {

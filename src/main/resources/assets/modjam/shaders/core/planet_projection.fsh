@@ -186,15 +186,21 @@ void main() {
     }
 
 // use better noise
-    if (step(norm.y + hash11(GameTime / 7 + round(norm.x * 128)) * 0.05, Progress) == 0)
-    {
+
+    float progress = Progress;
+
+    progress += max(sqrt(progress * 1.22)- 1, 0);
+
+        if (step(norm.y + hash11(GameTime / 7 + round(norm.x * 128)) * 0.05, progress) == 0)
         discard;
-    }
+
+    color += smoothstep(progress - 0.12, progress + 0.12, norm.y) * 9;
+    alpha += smoothstep(progress - 0.12, progress + 0.12, norm.y) * 9;
 
     //color += vec3(grid) * gridColor * smoothstep(0.5, norm.y, 0.12) * 100;
 
 //    if (step(Progress, 0.5 - 0.12) > 0)
-    color += smoothstep(Progress - 0.12, Progress + 0.12, norm.y) * 9;
+
 
     fragColor = vec4(color, alpha) * tint;
 //    fragColor -= fragColor * 0.999999;
