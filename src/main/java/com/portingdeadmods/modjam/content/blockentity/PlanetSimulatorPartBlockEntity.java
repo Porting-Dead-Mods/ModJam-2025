@@ -36,8 +36,8 @@ public class PlanetSimulatorPartBlockEntity extends BlockEntity implements Multi
     protected void loadAdditional(CompoundTag p_338466_, HolderLookup.Provider p_338445_) {
         super.loadAdditional(p_338466_, p_338445_);
 
-        if (this.controllerPos != null) {
-            p_338466_.putLong("controller_pos", this.controllerPos.asLong());
+        if (p_338466_.contains("controller_pos")) {
+            this.controllerPos = BlockPos.of(p_338466_.getLong("controller_pos"));
         }
     }
 
@@ -45,8 +45,8 @@ public class PlanetSimulatorPartBlockEntity extends BlockEntity implements Multi
     protected void saveAdditional(CompoundTag p_187471_, HolderLookup.Provider p_323635_) {
         super.saveAdditional(p_187471_, p_323635_);
 
-        if (p_187471_.contains("controller_pos")) {
-            this.controllerPos = BlockPos.of(p_187471_.getLong("controller_pos"));
+        if (this.controllerPos != null) {
+            p_187471_.putLong("controller_pos", this.controllerPos.asLong());
         }
     }
 }

@@ -33,11 +33,13 @@ public class UpgradePanelWidget extends PanelWidget {
     public static final ResourceLocation WIDGET_OPEN_SPRITE = Modjam.rl("widgets/upgrade_widget_open");
     public static final int WIDGET_WIDTH = 32, WIDGET_HEIGHT = 32;
     public static final int WIDGET_OPEN_WIDTH = 32, WIDGET_OPEN_HEIGHT = 112;
+    private final boolean compressor;
 
     private UpgradeBlockEntity upgradeBlockEntity;
 
-    public UpgradePanelWidget(int x, int y) {
+    public UpgradePanelWidget(int x, int y, boolean compressor) {
         super(x, y, WIDGET_OPEN_WIDTH - 8, WIDGET_OPEN_HEIGHT - 8, WIDGET_WIDTH - 8, WIDGET_HEIGHT - 8);
+        this.compressor = compressor;
         this.open = false;
     }
 
@@ -61,11 +63,16 @@ public class UpgradePanelWidget extends PanelWidget {
             upgradeSlot.setActive(false);
         }
 
-        PacketDistributor.sendToServer(new UpgradeWidgetSetSlotPositionsPayload(27));
+
+        int startY = 27;
+        if (this.compressor) {
+            startY += 22;
+        }
+        PacketDistributor.sendToServer(new UpgradeWidgetSetSlotPositionsPayload(startY));
         if (menu instanceof PlanetSimulatorMenu psMenu) {
-            psMenu.setUpgradeSlotPositions(27);
+            psMenu.setUpgradeSlotPositions(startY);
         } else if (menu instanceof CompressorMenu cMenu) {
-            cMenu.setUpgradeSlotPositions(27);
+            cMenu.setUpgradeSlotPositions(startY);
         }
     }
 
@@ -233,19 +240,23 @@ public class UpgradePanelWidget extends PanelWidget {
         super.onWidgetResized(resizedWidget);
 
         PDLAbstractContainerMenu<?> menu = this.context.menu();
+        int startY = 27;
+        if (this.compressor) {
+            startY += 22;
+        }
         if (resizedWidget.isOpen()) {
-            PacketDistributor.sendToServer(new UpgradeWidgetSetSlotPositionsPayload(27 + resizedWidget.getOpenHeight()));
+            PacketDistributor.sendToServer(new UpgradeWidgetSetSlotPositionsPayload(startY + resizedWidget.getOpenHeight()));
             if (menu instanceof PlanetSimulatorMenu psMenu) {
-                psMenu.setUpgradeSlotPositions(27 + resizedWidget.getOpenHeight());
+                psMenu.setUpgradeSlotPositions(startY + resizedWidget.getOpenHeight());
             } else if (menu instanceof CompressorMenu cMenu) {
-                cMenu.setUpgradeSlotPositions(27 + resizedWidget.getOpenHeight());
+                cMenu.setUpgradeSlotPositions(startY + resizedWidget.getOpenHeight());
             }
         } else {
-            PacketDistributor.sendToServer(new UpgradeWidgetSetSlotPositionsPayload(27));
+            PacketDistributor.sendToServer(new UpgradeWidgetSetSlotPositionsPayload(startY));
             if (menu instanceof PlanetSimulatorMenu psMenu) {
-                psMenu.setUpgradeSlotPositions(27);
+                psMenu.setUpgradeSlotPositions(startY);
             } else if (menu instanceof CompressorMenu cMenu) {
-                cMenu.setUpgradeSlotPositions(27);
+                cMenu.setUpgradeSlotPositions(startY);
             }
         }
 

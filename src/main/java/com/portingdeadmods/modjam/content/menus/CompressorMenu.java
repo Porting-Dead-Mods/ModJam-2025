@@ -33,7 +33,7 @@ public class CompressorMenu extends PDLAbstractContainerMenu<CompressorBlockEnti
 
         this.upgradeSlots = new ArrayList<>();
         for (int i = 0; i < blockEntity.getUpgradeItemHandler().getSlots(); i++) {
-            UpgradeSlot slot = new UpgradeSlot(blockEntity.getUpgradeItemHandler(), i, 179, 27 + i * 20);
+            UpgradeSlot slot = new UpgradeSlot(blockEntity.getUpgradeItemHandler(), i, 179, 27 + 22 + i * 20);
             slot.setActive(false);
             this.addSlot(slot);
             this.upgradeSlots.add(slot);
