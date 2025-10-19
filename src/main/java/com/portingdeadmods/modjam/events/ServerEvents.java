@@ -2,6 +2,8 @@ package com.portingdeadmods.modjam.events;
 
 import com.mojang.brigadier.Command;
 import com.portingdeadmods.modjam.Modjam;
+import com.portingdeadmods.modjam.registries.MJDataAttachments;
+import com.portingdeadmods.modjam.registries.MJItems;
 import com.portingdeadmods.modjam.registries.MJPlanetCards;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.Commands;
@@ -48,6 +50,14 @@ public class ServerEvents {
     public static void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
         if (event.getEntity() instanceof ServerPlayer serverPlayer) {
             MJPlanetCards.syncToPlayer(serverPlayer);
+            
+            if (!serverPlayer.getData(MJDataAttachments.HAS_RECEIVED_GUIDE)) {
+                ItemStack guideBook = MJItems.GUIDE.get().getDefaultInstance();
+                if (!serverPlayer.getInventory().add(guideBook)) {
+                    serverPlayer.drop(guideBook, false);
+                }
+                serverPlayer.setData(MJDataAttachments.HAS_RECEIVED_GUIDE, true);
+            }
         }
     }
 

@@ -6,61 +6,42 @@ navigation:
 item_ids:
   - modjam:raw_tantalum
   - modjam:tantalum_ingot
-  - modjam:tantalum_nugget
-  - modjam:tantalum_storage_block
   - modjam:tantalum_sheet
+  - modjam:compressor
+  - modjam:planet_simulator_controller
 ---
 
-# Getting Started with ModJam
+# Getting Started
 
-## Progression Overview
+## Prerequisites
 
-ModJam is a tech mod focused on planetary exploration and resource collection through multiblock technology. Here's your path to success:
+ModJam uses **Forge Energy (FE/RF)** from other mods. Set up power generation from mods like Mekanism, Thermal Expansion, or any FE-compatible mod before starting.
 
-1. **Get Power** - Use energy from other mods (FE/RF compatible)
-2. **Mine Tantalum** - Find and mine tantalum ore
-3. **Build a Compressor** - Create tantalum sheets
-4. **Construct the Planet Simulator** - Build the multiblock structure
-5. **Link Planet Cards** - Activate cards in their dimensions
-6. **Run Space Missions** - Collect resources and generate power
+## Step 1: Mine Tantalum
 
-## Step 1: Energy Generation
+Find and mine <ItemLink id="modjam:raw_tantalum" /> ore in the Overworld. Smelt it into <ItemLink id="modjam:tantalum_ingot" />.
 
-ModJam requires Forge Energy (FE) to power machines. You'll need energy from other tech mods such as:
+## Step 2: Build a Compressor
 
-- **Mekanism** - Generators
-- **Thermal Expansion** - Dynamos
-- **Industrial Foregoing** - Bioreactors
-- **Any RF/FE compatible mod**
-
-Set up a basic power generation system before proceeding.
-
-## Step 2: Finding Tantalum
-
-Tantalum ore generates naturally in the Overworld. Mine it to get <ItemLink id="modjam:raw_tantalum" />, then smelt it into <ItemLink id="modjam:tantalum_ingot" />.
-
-You can also craft <ItemLink id="modjam:tantalum_nugget" /> from ingots or store them in <ItemLink id="modjam:tantalum_storage_block" /> for compact storage.
-
-## Step 3: Build a Compressor
-
-The <ItemLink id="modjam:compressor" /> is essential for creating tantalum sheets needed for multiblock construction.
-
-### Crafting the Compressor
-
-Use <ItemLink id="modjam:tantalum_ingot" />, a piston, a block of iron, and redstone to craft the compressor. Check JEI for the exact recipe.
-
-### Using the Compressor
-
-1. Place the <ItemLink id="modjam:compressor" /> and connect it to power
-2. Insert <ItemLink id="modjam:tantalum_ingot" />
-3. The compressor will create <ItemLink id="modjam:tantalum_sheet" />
+Craft a <ItemLink id="modjam:compressor" /> (check JEI for recipe). Connect it to power and insert <ItemLink id="modjam:tantalum_ingot" /> to create <ItemLink id="modjam:tantalum_sheet" />.
 
 <Recipe id="modjam:tantalum_plate_compressing" />
 
-## Step 4: Build the Planet Simulator
+## Step 3: Construct the Planet Simulator
 
-Once you have tantalum sheets and other materials, you can build the Planet Simulator multiblock. See the **Machines** chapter for the structure layout.
+Gather materials and build the 7x7x3 multiblock. See the **Machines** page for the complete structure.
 
-## Step 5: Planet Cards
+## Step 4: Get Planet Cards
 
-Planet cards are key to running space missions. See the **Planet Cards** chapter to learn how to link and activate them!
+Craft a blank <ItemLink id="modjam:planet_card" />, travel to a dimension (Overworld/Nether/End), and right-click to link it. Then activate it by right-clicking again in that dimension.
+
+See the **Planet Cards** page for full details.
+
+## Step 5: Run Your First Mission
+
+1. Insert an activated planet card into the Planet Simulator
+2. Supply required input items via <ItemLink id="modjam:item_input_bus" />
+3. Connect power via <ItemLink id="modjam:energy_input_bus" />
+4. Collect outputs from <ItemLink id="modjam:item_output_bus" />
+
+Check JEI for all available recipes!

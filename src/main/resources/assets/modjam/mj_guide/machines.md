@@ -14,95 +14,46 @@ item_ids:
 
 ## Planet Simulator
 
-The **Planet Simulator** is a multiblock machine that conducts space missions to collect resources and generate power from planetary environments.
+A 7x7x3 multiblock that runs space missions to collect resources.
 
 ### Structure
-
-The Planet Simulator is a 7x7x3 multiblock structure. Here's how to build it:
 
 <GameScene zoom="3" interactive={true} fullWidth={true}>
   <MultiblockShape multiblock="modjam:planet_simulator" formed={true} unformed={true} direction="west"> </MultiblockShape>
 </GameScene>
 
-**Required Blocks:**
-- **Controller:** <ItemLink id="modjam:planet_simulator_controller" /> (1x)
-- **Frame:** <ItemLink id="modjam:planet_simulator_frame" /> blocks (outline)
-- **Casing:** <ItemLink id="modjam:planet_simulator_casing" /> or Bus blocks (walls)
-- **Buses:** <ItemLink id="modjam:energy_input_bus" />, <ItemLink id="modjam:item_input_bus" />, <ItemLink id="modjam:fluid_input_bus" /> for inputs
-- **Output Buses:** <ItemLink id="modjam:energy_output_bus" />, <ItemLink id="modjam:item_output_bus" />, <ItemLink id="modjam:fluid_output_bus" /> for outputs
+**Components:**
+- <ItemLink id="modjam:planet_simulator_controller" /> (1x)
+- <ItemLink id="modjam:planet_simulator_frame" /> (structure outline)
+- <ItemLink id="modjam:planet_simulator_casing" /> (walls - can be replaced with buses)
+- Input/Output buses (see **Buses** page)
 
 ### How It Works
 
-The Planet Simulator runs space missions that:
-- **Consume:** Input items + Energy
-- **Produce:** Output resources or energy
+1. Insert an activated <ItemLink id="modjam:planet_card" />
+2. Supply input items via <ItemLink id="modjam:item_input_bus" />
+3. Provide energy via <ItemLink id="modjam:energy_input_bus" />
+4. Collect outputs from <ItemLink id="modjam:item_output_bus" /> or <ItemLink id="modjam:energy_output_bus" />
 
-1. Build the 7x7x3 multiblock structure
-2. Add buses for item/energy/fluid input and output
-3. Insert an activated planet card
-4. Supply the required input items and energy
-5. The mission runs and produces resources
+Different planets accept different inputs - check JEI for all recipes.
 
-### Space Missions
+### Upgrades
 
-Each planet card enables different missions with various inputs and outputs. Here are some examples:
-
-**Earth (Overworld) Missions:**
-- <ItemLink id="minecraft:cobblestone" /> (64x) → Coal, Iron Ore, Copper Ore (800 ticks, 120 FE/tick)
-- <ItemLink id="minecraft:deepslate" /> (64x) → Diamond, Emerald, Redstone, Lapis (2400 ticks, 500 FE/tick)
-- <ItemLink id="minecraft:stone" /> (64x) → Raw Iron, Raw Copper, Coal (1000 ticks, 150 FE/tick)
-- <ItemLink id="minecraft:dirt" /> (64x) → Mob drops (bones, rotten flesh, gunpowder, etc.)
-
-**Mars (Nether) Missions:**
-- <ItemLink id="minecraft:netherrack" /> (64x) → Nether Quartz, Gold Nuggets, Glowstone (800 ticks, 140 FE/tick)
-- <ItemLink id="minecraft:basalt" /> (64x) → Ancient Debris, Netherite Scrap, Blackstone (3000 ticks, 800 FE/tick)
-- <ItemLink id="minecraft:soul_sand" /> (64x) → Wither Skeleton Skulls, Nether Stars (4000 ticks, 1200 FE/tick)
-
-**Venus (End) Missions:**
-- <ItemLink id="minecraft:end_stone" /> (64x) → Chorus Fruit, Ender Pearls, Obsidian (1000 ticks, 180 FE/tick)
-- <ItemLink id="minecraft:purpur_block" /> (64x) → Shulker Shells, Shulker Boxes (1800 ticks, 400 FE/tick)
-- <ItemLink id="minecraft:elytra" /> (1x catalyst) + <ItemLink id="minecraft:end_stone" /> (64x) → Elytra duplication! (6000 ticks, 2000 FE/tick)
-
-**Black Hole (Deep Dark Biome):**
-- Ultimate recipes (coming soon!)
-
-### Planet Cards
-
-Learn how to get and activate planet cards in the **Planet Cards** chapter!
-
-<ItemImage id="modjam:planet_card" />
+Install upgrades to boost performance:
+- <ItemLink id="modjam:upgrade_speed" /> - Faster processing
+- <ItemLink id="modjam:upgrade_energy" /> - Lower energy cost
+- <ItemLink id="modjam:upgrade_luck" /> - Bonus output chance
 
 ---
 
 ## Compressor
 
-The **Compressor** is a machine that compresses materials into sheets.
-
-### Basic Info
+Creates compressed materials from ingots.
 
 <ItemImage id="modjam:compressor" />
 
-The compressor uses energy to compress materials. It's essential for creating tantalum sheets needed for multiblock construction.
-
-### Compression Process
-
-<ItemImage id="modjam:tantalum_sheet" scale="1.5" />
-
-The compressor creates compressed materials like tantalum sheets from tantalum ingots.
-
-### Using the Compressor
-
-1. Connect the compressor to a power source
-2. Place materials (like <ItemLink id="modjam:tantalum_ingot" />) in the input slot
-3. The machine compresses them and outputs <ItemLink id="modjam:tantalum_sheet" />
-4. Add <ItemLink id="modjam:upgrade_speed" /> or <ItemLink id="modjam:upgrade_energy" /> to improve performance
-
-### Recipe
+Connect to power, insert <ItemLink id="modjam:tantalum_ingot" />, receive <ItemLink id="modjam:tantalum_sheet" />.
 
 <Recipe id="modjam:tantalum_plate_compressing" />
 
----
-
-## Buses
-
-Buses are essential for connecting the Planet Simulator to your power and storage systems. Learn more in the **Buses** section!
+Supports the same upgrade system as the Planet Simulator.

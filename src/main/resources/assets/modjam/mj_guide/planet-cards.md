@@ -10,26 +10,16 @@ item_ids:
 
 # Planet Cards
 
-Planet cards are essential items that link the Planet Simulator to specific dimensions, enabling space missions and resource collection.
+Planet cards link the Planet Simulator to dimensions, enabling space missions.
 
-## What are Planet Cards?
+## Linking a Card
 
-<ItemLink id="modjam:planet_card" /> are dimensional link items that must be activated in their corresponding dimension before they can be used in the Planet Simulator.
+1. Craft a blank <ItemLink id="modjam:planet_card" />
+2. Travel to your target dimension
+3. Right-click to link the card to that dimension's planet
+4. Right-click again to activate it
 
-## How to Get Planet Cards
-
-Planet cards start as blank items. To link them to a planet:
-
-1. Craft or obtain a blank planet card
-2. Travel to the target dimension (Overworld, Nether, or End)
-3. Right-click while holding the card
-4. The card will link to the planet type for that dimension
-
-### Priority System
-
-- **Non-tinted cards** (regular planet cards) take priority when linking
-- If only a tinted planet exists for that dimension, it will link to the tinted variant
-- Each dimension can have multiple planet types
+Cards show their dimension and activation status in the tooltip.
 
 ## Available Planets
 
@@ -37,65 +27,30 @@ Planet cards start as blank items. To link them to a planet:
 
 <ItemImage id="modjam:planet_card" components="modjam:planet={planet_type:{texture:'minecraft:item/planet_card/planets/overworld',dimension:'minecraft:overworld'},activated:true}" />
 
-**Dimension:** Overworld
-
-**Specialty:** Resource generation - Converts <ItemLink id="minecraft:stone" /> into ores and <ItemLink id="minecraft:coal" /> into <ItemLink id="minecraft:diamond" />
+Basic resource generation from common Overworld materials.
 
 ### Mars (Nether)
 
 <ItemImage id="modjam:planet_card" components="modjam:planet={planet_type:{texture:'minecraft:item/planet_card/planets/the_nether',dimension:'minecraft:the_nether'},activated:true}" />
 
-**Dimension:** Nether  
-
-**Specialty:** Power generation - Converts <ItemLink id="minecraft:redstone" /> into energy at 500 FE/tick
+Power generation and Nether resource processing.
 
 ### Venus (End)
 
-**Dimension:** End
-
-**Specialty:** Advanced resource generation - Produces End resources including Chorus Fruit, Ender Pearls, Shulker Shells, and even allows Elytra duplication with catalyst recipes!
+Advanced End resources, including Shulker Shells and Elytra duplication.
 
 ### Black Hole (Deep Dark)
 
-**Dimension:** Overworld (Deep Dark biome)
+Endgame content - activate in the Deep Dark biome.
 
-**Specialty:** Ultimate endgame content using black hole energy - Requires visiting the Deep Dark biome to activate!
+## Unlinking Cards
 
-## Activating Planet Cards
-
-Once linked, planet cards must be activated:
-
-1. **Travel to the correct dimension** - The card shows which dimension it's linked to
-2. **Right-click the card** - This activates the card
-3. **Card is now ready** - Use it in the Planet Simulator
-
-The card tooltip shows:
-- **Dimension:** Where it needs to be activated
-- **Status:** Activated (green) or Not Activated (red)
-
-## Using Planet Cards
-
-Once activated, planet cards are inserted into the Planet Simulator:
-
-1. Place the activated planet card in the Planet Simulator's card slot
-2. Supply the required input items and energy
-3. The simulator will run the space mission
-4. Collect output resources or generated power
-
-## Unlinking Planet Cards
-
-To reset a planet card back to blank:
-
-**Craft the planet card in a shapeless recipe** - This removes the link and activation, giving you a blank card again
+Craft a linked card to reset it back to blank:
 
 <Recipe id="modjam:unlink_planet_card" />
 
-You can then re-link it to a different planet type!
-
 ## Tips
 
-- Always activate cards in the correct dimension before use
-- Different planets accept different inputs - Earth uses Overworld blocks, Mars uses Nether blocks, Venus uses End blocks
-- Black hole cards are endgame content requiring Deep Dark biome access
-- Keep multiple activated cards for different space missions
-- Check JEI for all available planet simulator recipes!
+- Check JEI for all available recipes per planet
+- Different planets accept different input materials
+- Keep multiple activated cards for quick switching

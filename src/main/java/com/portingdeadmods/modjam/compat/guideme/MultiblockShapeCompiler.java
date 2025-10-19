@@ -1,5 +1,6 @@
 package com.portingdeadmods.modjam.compat.guideme;
 
+import com.portingdeadmods.modjam.registries.MJBlocks;
 import com.portingdeadmods.modjam.registries.MJMultiblocks;
 import com.portingdeadmods.portingdeadlibs.PDLRegistries;
 import com.portingdeadmods.portingdeadlibs.api.multiblocks.Multiblock;
@@ -103,7 +104,7 @@ public class MultiblockShapeCompiler implements SceneElementTagCompiler {
     private static void fixControllerRotation(Level level, Multiblock multiblock, HorizontalDirection direction, BlockPos controllerPos) {
         BlockState blockState = level.getBlockState(controllerPos);
         if (blockState.hasProperty(BlockStateProperties.HORIZONTAL_FACING) && multiblock == MJMultiblocks.PLANET_SIMULATOR.get()) {
-            level.setBlockAndUpdate(controllerPos, blockState.setValue(BlockStateProperties.HORIZONTAL_FACING, direction.toRegularDirection()));
+            level.setBlockAndUpdate(controllerPos, blockState.setValue(BlockStateProperties.HORIZONTAL_FACING, Direction.WEST));
         }
     }
 
@@ -127,6 +128,38 @@ public class MultiblockShapeCompiler implements SceneElementTagCompiler {
                     Block block = definition.getDefaultBlock(blockIndex);
                     if (block != null) {
                         BlockState state = block.defaultBlockState();
+                        
+                        if (multiblock == MJMultiblocks.PLANET_SIMULATOR.get() && y == 0 && block == MJBlocks.PLANET_SIMULATOR_CASING.get()) {
+                            Direction facing = null;
+                            boolean isEdge = x == 0 || x == 6 || z == 0 || z == 6;
+                            
+                            if (isEdge) {
+                                if (x == 0 && z == 3) {
+                                    state = MJBlocks.ENERGY_INPUT_BUS.get().defaultBlockState();
+                                    facing = Direction.WEST;
+                                } else if (x == 6 && z == 3) {
+                                    state = MJBlocks.ENERGY_OUTPUT_BUS.get().defaultBlockState();
+                                    facing = Direction.EAST;
+                                } else if (x == 3 && z == 0) {
+                                    state = MJBlocks.ITEM_INPUT_BUS.get().defaultBlockState();
+                                    facing = Direction.NORTH;
+                                } else if (x == 3 && z == 6) {
+                                    state = MJBlocks.ITEM_OUTPUT_BUS.get().defaultBlockState();
+                                    facing = Direction.SOUTH;
+                                } else if (x == 1 && z == 0) {
+                                    state = MJBlocks.FLUID_INPUT_BUS.get().defaultBlockState();
+                                    facing = Direction.NORTH;
+                                } else if (x == 5 && z == 6) {
+                                    state = MJBlocks.FLUID_OUTPUT_BUS.get().defaultBlockState();
+                                    facing = Direction.SOUTH;
+                                }
+                            }
+                            
+                            if (facing != null && state.hasProperty(BlockStateProperties.HORIZONTAL_FACING)) {
+                                state = state.setValue(BlockStateProperties.HORIZONTAL_FACING, facing);
+                            }
+                        }
+                        
                         level.setBlockAndUpdate(curPos, state);
                     }
 

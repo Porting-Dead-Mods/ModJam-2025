@@ -6,36 +6,24 @@ navigation:
 
 # Welcome to ModJam
 
-Welcome to the **ModJam** guidebook! This guide will walk you through planetary exploration, space missions, and resource automation.
+**ModJam** is a tech mod about running space missions to collect resources from distant planets using multiblock technology.
 
-## What is ModJam?
+## Core Concept
 
-ModJam is a tech mod focused on **space missions and planetary resource collection**. Build the Planet Simulator multiblock to:
+Build the **Planet Simulator** multiblock, insert activated planet cards, supply energy and materials, then receive resources from your space missions. Different planets offer different rewards - from basic ores to black hole energy.
 
-- **Run space missions** to distant planets
-- **Collect unique resources** from different dimensions
-- **Generate power** from planetary energy (including black holes!)
-- **Automate production** with upgrades and bus systems
+## Quick Start
 
-## Progression Path
+1. Mine <ItemLink id="modjam:raw_tantalum" /> ore
+2. Build a <ItemLink id="modjam:compressor" />
+3. Create the 7x7x3 Planet Simulator multiblock
+4. Link and activate planet cards in their dimensions
+5. Run missions to collect resources
 
-1. **Get Power** - ModJam uses Forge Energy from other mods
-2. **Mine Tantalum** - Essential resource for multiblock construction
-3. **Build a Compressor** - Create tantalum sheets
-4. **Construct Planet Simulator** - 7x7x3 multiblock structure
-5. **Link Planet Cards** - Activate them in their dimensions
-6. **Run Space Missions** - Exchange items and energy for resources
+## Guide Contents
 
-## Getting Started
-
-New to ModJam? Start with the **Getting Started** chapter for a step-by-step guide!
-
-## Main Features
-
-- **Planet Simulator**: Multiblock for running space missions
-- **Planet Cards**: Link to dimensions for different missions
-- **Compressor**: Create compressed materials
-- **Buses**: Transfer items, energy, and fluids
-- **Upgrades**: Boost machine speed, efficiency, and luck
-
-Use the navigation bar on the left to explore!
+- **Getting Started** - Full progression walkthrough
+- **Planet Cards** - How to link and activate cards
+- **Machines** - Planet Simulator and Compressor details
+- **Buses** - Resource transfer systems
+- **Upgrades** - Boost your machines
