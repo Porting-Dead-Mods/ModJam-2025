@@ -14,6 +14,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.*;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix4f;
+import org.joml.Vector3f;
 import org.lwjgl.opengl.GL45;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -33,20 +34,29 @@ public class LevelRendererMixin {
         PostChainExtensions.setUniform(MJShaders.BLACK_HOLE_CHAIN, "InvViewMat", ClientEvents.capturedViewMatrix.invert(new Matrix4f()));
         MJShaders.BLACK_HOLE_CHAIN.setUniform("Near", near);
         MJShaders.BLACK_HOLE_CHAIN.setUniform("Far", far);
+        
+        Vec3 camPos = p_109604_.getPosition();
+        Vector3f bhPos = BlackHoleExampleRenderer.blackholeUniformBuffer.getLatestBlackHolePosition();
+        if (bhPos != null) {
+            PostChainExtensions.setUniform(MJShaders.BLACK_HOLE_CHAIN, "BlackHolePosition", 
+                new float[] {bhPos.x - (float)camPos.x, bhPos.y - (float)camPos.y, bhPos.z - (float)camPos.z});
 
-        GL45.glBindBuffer(GL45.GL_UNIFORM_BUFFER, MJShaders.BLACK_HOLE_UBO_ID);
-        GL45.glBufferSubData(GL45.GL_UNIFORM_BUFFER, 0, BlackHoleExampleRenderer.blackholeUniformBuffer.build());
+            GL45.glBindBuffer(GL45.GL_UNIFORM_BUFFER, MJShaders.BLACK_HOLE_UBO_ID);
+            GL45.glBufferSubData(GL45.GL_UNIFORM_BUFFER, 0, BlackHoleExampleRenderer.blackholeUniformBuffer.build());
 
-        GL45.glBindBufferBase(GL45.GL_UNIFORM_BUFFER, 1, MJShaders.BLACK_HOLE_UBO_ID);
+            GL45.glBindBufferBase(GL45.GL_UNIFORM_BUFFER, 1, MJShaders.BLACK_HOLE_UBO_ID);
 
-        GL45.glBindBuffer(GL45.GL_UNIFORM_BUFFER, 0);
+            GL45.glBindBuffer(GL45.GL_UNIFORM_BUFFER, 0);
 
 
-        MJShaders.BLACK_HOLE_CHAIN.resize(Minecraft.getInstance().getWindow().getWidth(), Minecraft.getInstance().getWindow().getHeight()); // bad
-        RenderSystem.depthMask(false);
-        MJShaders.BLACK_HOLE_CHAIN.process(Minecraft.getInstance().getTimer().getGameTimeDeltaTicks());
+            MJShaders.BLACK_HOLE_CHAIN.resize(Minecraft.getInstance().getWindow().getWidth(), Minecraft.getInstance().getWindow().getHeight()); // bad
+            RenderSystem.depthMask(false);
+            MJShaders.BLACK_HOLE_CHAIN.process(Minecraft.getInstance().getTimer().getGameTimeDeltaTicks());
 
-        GL45.glBindBufferBase(GL45.GL_UNIFORM_BUFFER, 1, 0);
+            GL45.glBindBufferBase(GL45.GL_UNIFORM_BUFFER, 1, 0);
+        }
+        
+        BlackHoleExampleRenderer.blackholeUniformBuffer.clearBlackHolePosition();
 
 
         RenderSystem.depthMask(true);

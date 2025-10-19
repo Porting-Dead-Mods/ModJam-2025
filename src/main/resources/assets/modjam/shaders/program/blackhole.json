@@ -132,6 +132,12 @@
       "type": "float",
       "count": 9,
       "values": []
+    },
+    {
+      "name": "BlackHolePosition",
+      "type": "float",
+      "count": 3,
+      "values": [0.0, 0.0, 0.0]
     }
   ]
 }

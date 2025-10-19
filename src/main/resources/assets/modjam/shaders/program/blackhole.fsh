@@ -151,6 +151,8 @@ mat4 translate(mat4 mat, vec3 translation)
 }
 
 
+uniform vec3 BlackHolePosition;
+
 void main(  )
 {
  //   colOut = vec4(0.);;
@@ -160,7 +162,7 @@ void main(  )
     vec3 ray = normalize(rayDirection);
     ray = transformRay(InvViewMat, ray);
    // ray = normalize(vec3(0, -1, 0));
-    vec3 pos = rayOrigin + vec3(0, 4,-4);
+    vec3 pos = rayOrigin - BlackHolePosition;
 
     //vec2 angle = vec2(GameTime*0.1,.2);
 
@@ -220,6 +222,6 @@ void main(  )
     col = outCol;
     col.rgb =  pow( col.rgb, vec3(0.6) );
 
-    fragColor += col;
+    fragColor = col;
 
 }

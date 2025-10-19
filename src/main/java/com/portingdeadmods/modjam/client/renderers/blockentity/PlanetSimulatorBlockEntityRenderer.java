@@ -44,6 +44,7 @@ public class PlanetSimulatorBlockEntityRenderer implements BlockEntityRenderer<P
     private static final float PLANET_OFFSET_X = 0.0f;
     private static final float PLANET_OFFSET_Y = 4.5f;
     private static final float PLANET_OFFSET_Z = 0.0f;
+    private static final float BLACKHOLE_OFFSET_Y = 3.5f;
     private static final float ROTATION_SPEED = 0.7f;
     private static final float BRIGHTNESS = 1.0f;
 
@@ -194,9 +195,7 @@ public class PlanetSimulatorBlockEntityRenderer implements BlockEntityRenderer<P
 
         if (planetComponent.isBlackHole()) {
             Vec3 center = getMultiblockCenter(planetSimulatorBlockEntity);
-            Vec3 controllerPos = Vec3.atLowerCornerOf(planetSimulatorBlockEntity.getBlockPos());
-            Vec3 offset = center.subtract(controllerPos);
-            Vector3f blackHolePos = new Vector3f((float)(offset.x + PLANET_OFFSET_X), (float)(offset.y + PLANET_OFFSET_Y), (float)(offset.z + PLANET_OFFSET_Z));
+            Vector3f blackHolePos = new Vector3f((float)(center.x + PLANET_OFFSET_X), (float)(center.y + BLACKHOLE_OFFSET_Y), (float)(center.z + PLANET_OFFSET_Z));
             BlackHoleExampleRenderer.blackholeUniformBuffer.blackhole(blackHolePos, 10, 15);
             return;
         }
@@ -241,19 +240,16 @@ public class PlanetSimulatorBlockEntityRenderer implements BlockEntityRenderer<P
 
     @Override
     public AABB getRenderBoundingBox(PlanetSimulatorBlockEntity blockEntity) {
-        double planetSize = PLANET_SIZE;
-        double rotationRadius = Math.sqrt(2 * (planetSize / 2) * (planetSize / 2));
-        
         Vec3 center = getMultiblockCenter(blockEntity);
-        Vec3 renderCenter = center.add(PLANET_OFFSET_X, PLANET_OFFSET_Y, PLANET_OFFSET_Z);
+        double size = 15.0;
         
         return new AABB(
-            renderCenter.x - rotationRadius,
-            renderCenter.y - planetSize / 2,
-            renderCenter.z - rotationRadius,
-            renderCenter.x + rotationRadius,
-            renderCenter.y + planetSize / 2,
-            renderCenter.z + rotationRadius
+            center.x - size,
+            center.y - size,
+            center.z - size,
+            center.x + size,
+            center.y + size,
+            center.z + size
         );
     }
 }

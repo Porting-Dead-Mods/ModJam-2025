@@ -29,10 +29,15 @@ public class BlackHoleUniformBufferBuilder {
     }
 
     private ArrayList<BlackHoleDefinition> blackholes;
+    private Vector3f latestBlackHolePosition = null;
 
     public BlackHoleUniformBufferBuilder()
     {
         this.blackholes = new ArrayList<BlackHoleDefinition>(8);
+    }
+    
+    public Vector3f getLatestBlackHolePosition() {
+        return latestBlackHolePosition;
     }
 
     public ByteBuffer build()
@@ -58,12 +63,17 @@ public class BlackHoleUniformBufferBuilder {
 
     public void blackhole(Vector3f position, float radius, float acreationDiskRadius)
     {
-
+        latestBlackHolePosition = new Vector3f(position);
     }
 
     public void restart()
     {
         this.blackholes.clear();
+        this.latestBlackHolePosition = null;
+    }
+    
+    public void clearBlackHolePosition() {
+        this.latestBlackHolePosition = null;
     }
 
     private float calculateMass(double eventHorizon)
