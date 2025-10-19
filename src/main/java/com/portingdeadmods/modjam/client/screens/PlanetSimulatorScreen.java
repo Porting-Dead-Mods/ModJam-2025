@@ -4,6 +4,7 @@ import com.portingdeadmods.modjam.Modjam;
 import com.portingdeadmods.modjam.client.screens.widgets.ModifiableFittingMultiLineTextWidget;
 import com.portingdeadmods.modjam.client.screens.widgets.PlanetCardPanelWidget;
 import com.portingdeadmods.modjam.client.screens.widgets.UpgradePanelWidget;
+import com.portingdeadmods.modjam.content.blockentity.PlanetSimulatorBlockEntity;
 import com.portingdeadmods.modjam.content.menus.PlanetSimulatorMenu;
 import com.portingdeadmods.portingdeadlibs.api.client.screens.PanelContainerScreen;
 import net.minecraft.client.Minecraft;
@@ -28,12 +29,12 @@ public class PlanetSimulatorScreen extends PanelContainerScreen<PlanetSimulatorM
     protected void init() {
         super.init();
 
-        UpgradePanelWidget upgradePanelWidget = new UpgradePanelWidget(this.leftPos + this.imageWidth, this.topPos + 4);
-        this.addPanelWidget(upgradePanelWidget);
-        this.addPanelWidget(new PlanetCardPanelWidget(this.leftPos + this.imageWidth, this.topPos + 4 + upgradePanelWidget.getHeight()));
-        this.lineTextWidget = this.addRenderableWidget(new ModifiableFittingMultiLineTextWidget(this.leftPos + 10, this.topPos + 12, 126 - 12, 94, Component.empty(), Minecraft.getInstance().font));
+        this.lineTextWidget = this.addRenderableWidget(new ModifiableFittingMultiLineTextWidget(this.leftPos + 5, this.topPos + 12, 126 - 7, 94, Component.empty(), Minecraft.getInstance().font));
         this.lineTextWidget.setBorderVisible(false);
         this.lineTextWidget.setY(this.lineTextWidget.getY() + 4);
+        UpgradePanelWidget upgradePanelWidget = new UpgradePanelWidget(this.leftPos + this.imageWidth, this.topPos + 4, false);
+        this.addPanelWidget(upgradePanelWidget);
+        this.addPanelWidget(new PlanetCardPanelWidget(this.leftPos + this.imageWidth, this.topPos + 4 + upgradePanelWidget.getHeight()));
     }
 
     @Override
@@ -49,6 +50,11 @@ public class PlanetSimulatorScreen extends PanelContainerScreen<PlanetSimulatorM
     }
 
     private Component getInfo() {
-        return Component.literal(menu.blockEntity.getClientDisplayText());
+        PlanetSimulatorBlockEntity be = menu.blockEntity;
+        return Component.literal("Energy: " + 200)
+                .append("\n")
+                .append(Component.literal("Fluid: " + 100))
+                .append("\n")
+                .append(Component.literal("Slay :3".repeat(100)));
     }
 }

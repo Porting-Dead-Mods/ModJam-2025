@@ -29,7 +29,7 @@ public class CompressorScreen extends PanelContainerScreen<CompressorMenu> {
         addRenderableOnly(new EnergyBarWidget(this.leftPos + 11, this.topPos + 17, menu.blockEntity, true));
         RedstonePanelWidget redstonePanelWidget = new RedstonePanelWidget(this.leftPos + this.imageWidth, this.topPos + 2);
         addPanelWidget(redstonePanelWidget);
-        addPanelWidget(new UpgradePanelWidget(this.leftPos + this.imageWidth, this.topPos + 2 + redstonePanelWidget.getClosedHeight()));
+        addPanelWidget(new UpgradePanelWidget(this.leftPos + this.imageWidth, this.topPos + 2 + redstonePanelWidget.getClosedHeight(), true));
     }
 
 
