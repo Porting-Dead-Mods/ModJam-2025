@@ -132,7 +132,8 @@ public class UpgradePanelWidget extends PanelWidget {
         if (isHoveringSprite && context != null){
             try {
                 List<Component> tooltip = new ArrayList<>();
-                IItemHandler upgradeHandler = upgradeBlockEntity.getUpgradeItemHandler();
+                UpgradeBlockEntity currentUpgradeBlockEntity = (UpgradeBlockEntity) context.menu().blockEntity;
+                IItemHandler upgradeHandler = currentUpgradeBlockEntity.getUpgradeItemHandler();
                 
                 if (upgradeHandler == null) {
                     tooltip.add(Component.literal("No upgrade handler").withStyle(ChatFormatting.RED));
@@ -144,7 +145,7 @@ public class UpgradePanelWidget extends PanelWidget {
                 for (int j = 0; j < upgradeHandler.getSlots(); j++) {
                     ItemStack stack = upgradeHandler.getStackInSlot(j);
                     if (!stack.isEmpty() && stack.getItem() instanceof UpgradeItem upgradeItem) {
-                        if (upgradeBlockEntity.getSupportedUpgrades().contains(upgradeItem.getUpgradeTypeKey())) {
+                        if (currentUpgradeBlockEntity.getSupportedUpgrades().contains(upgradeItem.getUpgradeTypeKey())) {
                             UpgradeType upgradeType = upgradeItem.getUpgradeType();
                             if (upgradeType != null && upgradeType.getEffects() != null) {
                                 upgradeCounts.merge(upgradeType, stack.getCount(), Integer::sum);
