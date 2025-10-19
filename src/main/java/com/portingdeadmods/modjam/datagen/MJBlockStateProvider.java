@@ -49,27 +49,33 @@ public class MJBlockStateProvider extends BlockStateProvider {
 
         builder(MJBlocks.ENERGY_INPUT_BUS)
                 .defaultTexture(this.blockTexture(MJBlocks.PLANET_SIMULATOR_CASING.get()))
-                .sides(this::blockTexture)
+                .front(Modjam.rl("block/planet_simulator_bus_input_energy"))
+                .horizontalFacing()
                 .create();
         builder(MJBlocks.ENERGY_OUTPUT_BUS)
                 .defaultTexture(this.blockTexture(MJBlocks.PLANET_SIMULATOR_CASING.get()))
-                .sides(this::blockTexture)
+                .front(Modjam.rl("block/planet_simulator_bus_output_energy"))
+                .horizontalFacing()
                 .create();
         builder(MJBlocks.ITEM_INPUT_BUS)
                 .defaultTexture(this.blockTexture(MJBlocks.PLANET_SIMULATOR_CASING.get()))
-                .sides(this::blockTexture)
+                .front(Modjam.rl("block/planet_simulator_bus_input_item"))
+                .horizontalFacing()
                 .create();
         builder(MJBlocks.ITEM_OUTPUT_BUS)
                 .defaultTexture(this.blockTexture(MJBlocks.PLANET_SIMULATOR_CASING.get()))
-                .sides(this::blockTexture)
+                .front(Modjam.rl("block/planet_simulator_bus_output_item"))
+                .horizontalFacing()
                 .create();
         builder(MJBlocks.FLUID_INPUT_BUS)
                 .defaultTexture(this.blockTexture(MJBlocks.PLANET_SIMULATOR_CASING.get()))
-                .sides(this::blockTexture)
+                .front(Modjam.rl("block/planet_simulator_bus_input_fluid"))
+                .horizontalFacing()
                 .create();
         builder(MJBlocks.FLUID_OUTPUT_BUS)
                 .defaultTexture(this.blockTexture(MJBlocks.PLANET_SIMULATOR_CASING.get()))
-                .sides(this::blockTexture)
+                .front(Modjam.rl("block/planet_simulator_bus_output_fluid"))
+                .horizontalFacing()
                 .create();
 
     }

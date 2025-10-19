@@ -30,7 +30,7 @@ public final class MJPlanetCards {
             
             Item itemToUse = planetType.tint().isPresent() ? MJItems.TINTED_PLANET_CARD.get() : MJItems.PLANET_CARD.get();
             ItemStack stack = new ItemStack(itemToUse);
-            stack.set(MJDataComponents.PLANET, new PlanetComponent(Optional.of(planetType), false));
+            stack.set(MJDataComponents.PLANET, new PlanetComponent(Optional.of(planetType), false, planetType.isBlackHole()));
             PLANET_CARD_STACKS.add(stack);
         }
     }

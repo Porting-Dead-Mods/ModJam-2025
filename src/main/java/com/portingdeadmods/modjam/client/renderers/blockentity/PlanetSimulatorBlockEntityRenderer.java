@@ -182,6 +182,25 @@ public class PlanetSimulatorBlockEntityRenderer implements BlockEntityRenderer<P
             return;
         }
         
+        ItemStack planetCard = planetSimulatorBlockEntity.getItemHandler().getStackInSlot(0);
+        if (planetCard.isEmpty() || !planetCard.has(MJDataComponents.PLANET)) {
+            return;
+        }
+        
+        PlanetComponent planetComponent = planetCard.get(MJDataComponents.PLANET);
+        if (planetComponent == null || planetComponent.planetType().isEmpty()) {
+            return;
+        }
+        
+        if (planetComponent.isBlackHole()) {
+            Vec3 center = getMultiblockCenter(planetSimulatorBlockEntity);
+            Vec3 controllerPos = Vec3.atLowerCornerOf(planetSimulatorBlockEntity.getBlockPos());
+            Vec3 offset = center.subtract(controllerPos);
+            Vector3f blackHolePos = new Vector3f((float)(offset.x + PLANET_OFFSET_X), (float)(offset.y + PLANET_OFFSET_Y), (float)(offset.z + PLANET_OFFSET_Z));
+            BlackHoleExampleRenderer.blackholeUniformBuffer.blackhole(blackHolePos, 10, 15);
+            return;
+        }
+        
         ResourceLocation texture = getTexture(planetSimulatorBlockEntity);
         if (texture == null) {
             return;

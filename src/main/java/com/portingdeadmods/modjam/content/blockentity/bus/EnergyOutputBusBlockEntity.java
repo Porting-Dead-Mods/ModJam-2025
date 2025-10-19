@@ -15,7 +15,7 @@ import net.neoforged.neoforge.energy.EnergyStorage;
 import org.jetbrains.annotations.Nullable;
 
 public class EnergyOutputBusBlockEntity extends AbstractBusBlockEntity implements MenuProvider {
-    private final EnergyStorage energyStorage = new EnergyStorage(100000, 0, 10000) {
+    private final EnergyStorage energyStorage = new EnergyStorage(10000000, 0, 10000000) {
         @Override
         public int extractEnergy(int maxExtract, boolean simulate) {
             int extracted = super.extractEnergy(maxExtract, simulate);
