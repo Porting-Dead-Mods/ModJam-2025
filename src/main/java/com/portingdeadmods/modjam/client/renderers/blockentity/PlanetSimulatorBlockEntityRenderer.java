@@ -104,35 +104,35 @@ public class PlanetSimulatorBlockEntityRenderer implements BlockEntityRenderer<P
     // TODO: fix planets not rendering behind each other
     @SubscribeEvent
     public static void renderLevelEvent(RenderLevelStageEvent event) {
-        if (event.getStage() == RenderLevelStageEvent.Stage.AFTER_BLOCK_ENTITIES) {
-
-            for (Batch batch : INSTANCE.batches)
-            {
-              //  RenderSystem.depthMask(true); // Rendertype doesn't correctly set depth mask state
-                prepareUniforms(batch.gridSize, batch.gridWidth, batch.noiseThreshold, batch.noiseScale, batch.noisePixelization, batch.noiseDirection, batch.gridColor, batch.tint, batch.flickerRate, batch.flickerIntensity, batch.progress);
-                VertexConsumer vcModel = INSTANCE.getBuffer(MJShaders.PLANET_PROJECTION.apply(batch.texture));
-
-                PlanetModel.renderPlanetModelToBuffer(batch.viewModel, vcModel, batch.tint);
-
-                INSTANCE.bufferSource.endLastBatch();
-
-                VertexConsumer vcDepth = INSTANCE.getBuffer(MJShaders.PLANET_PROJECTION_DEPTH);
-
-                PlanetModel.renderPlanetModelToBuffer(batch.viewModel, vcDepth, batch.tint);
-
-                  RenderSystem.depthMask(true); // Rendertype doesn't correctly set depth mask state
-                RenderSystem.colorMask(false, false, false, false); // Rendertype doesn't correctly set depth mask state
-
-
-
-                INSTANCE.bufferSource.endLastBatch();
-                RenderSystem.colorMask(true, true, true, true); // Rendertype doesn't correctly set depth mask state
-
-
-            }
-         //   INSTANCE.batches.clear();
-            INSTANCE.batches = new ArrayList<>();
-        }
+//        if (event.getStage() == RenderLevelStageEvent.Stage.AFTER_BLOCK_ENTITIES) {
+//
+//            for (Batch batch : INSTANCE.batches)
+//            {
+//              //  RenderSystem.depthMask(true); // Rendertype doesn't correctly set depth mask state
+//                prepareUniforms(batch.gridSize, batch.gridWidth, batch.noiseThreshold, batch.noiseScale, batch.noisePixelization, batch.noiseDirection, batch.gridColor, batch.tint, batch.flickerRate, batch.flickerIntensity, batch.progress);
+//                VertexConsumer vcModel = INSTANCE.getBuffer(MJShaders.PLANET_PROJECTION.apply(batch.texture));
+//
+//                PlanetModel.renderPlanetModelToBuffer(batch.viewModel, vcModel, batch.tint);
+//
+//                INSTANCE.bufferSource.endLastBatch();
+//
+//                VertexConsumer vcDepth = INSTANCE.getBuffer(MJShaders.PLANET_PROJECTION_DEPTH);
+//
+//                PlanetModel.renderPlanetModelToBuffer(batch.viewModel, vcDepth, batch.tint);
+//
+//                  RenderSystem.depthMask(true); // Rendertype doesn't correctly set depth mask state
+//                RenderSystem.colorMask(false, false, false, false); // Rendertype doesn't correctly set depth mask state
+//
+//
+//
+//                INSTANCE.bufferSource.endLastBatch();
+//                RenderSystem.colorMask(true, true, true, true); // Rendertype doesn't correctly set depth mask state
+//
+//
+//            }
+//         //   INSTANCE.batches.clear();
+//            INSTANCE.batches = new ArrayList<>();
+//        }
     }
 
     public PlanetSimulatorBlockEntityRenderer(BlockEntityRendererProvider.Context context) {
