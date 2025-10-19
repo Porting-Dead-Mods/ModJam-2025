@@ -28,7 +28,7 @@ public class PlanetSimulatorScreen extends PanelContainerScreen<PlanetSimulatorM
     protected void init() {
         super.init();
 
-        UpgradePanelWidget upgradePanelWidget = new UpgradePanelWidget(this.leftPos + this.imageWidth, this.topPos + 4);
+        UpgradePanelWidget upgradePanelWidget = new UpgradePanelWidget(this.leftPos + this.imageWidth, this.topPos + 4, false);
         this.addPanelWidget(upgradePanelWidget);
         this.addPanelWidget(new PlanetCardPanelWidget(this.leftPos + this.imageWidth, this.topPos + 4 + upgradePanelWidget.getHeight()));
         this.lineTextWidget = this.addRenderableWidget(new ModifiableFittingMultiLineTextWidget(this.leftPos + 10, this.topPos + 12, 126 - 12, 94, Component.empty(), Minecraft.getInstance().font));
