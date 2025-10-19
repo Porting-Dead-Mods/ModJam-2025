@@ -2,7 +2,8 @@
   "type": "fusion:connecting",
   "parent": "minecraft:block/cube_all",
   "connections": {
-    "all": [
+    "type": "fusion:or",
+    "predicates": [
       {
         "type": "fusion:is_same_state"
       },
@@ -31,6 +32,10 @@
         "block": "modjam:item_output_bus"
       },
       {
+        "type": "fusion:match_block",
+        "block": "modjam:planet_simulator_casing"
+      },
+      {
         "type": "fusion:match_state",
         "block": "modjam:planet_simulator_part",
         "properties": {
@@ -43,6 +48,12 @@
   },
   "loader": "fusion:model",
   "textures": {
-    "all": "modjam:block/planet_simulator_controller"
+    "down": "modjam:block/planet_simulator_casing",
+    "east": "modjam:block/planet_simulator_casing",
+    "north": "modjam:block/planet_simulator_controller",
+    "particle": "modjam:block/planet_simulator_casing",
+    "south": "modjam:block/planet_simulator_casing",
+    "up": "modjam:block/planet_simulator_casing",
+    "west": "modjam:block/planet_simulator_casing"
   }
 }

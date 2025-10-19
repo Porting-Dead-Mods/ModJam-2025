@@ -37,7 +37,7 @@ import org.joml.Vector4f;
 import java.util.ArrayList;
 import java.util.List;
 
-@EventBusSubscriber(modid = Modjam.MODID, value = Dist.CLIENT) // munted
+//@EventBusSubscriber(modid = Modjam.MODID, value = Dist.CLIENT) // munted
 public class PlanetSimulatorBlockEntityRenderer implements BlockEntityRenderer<PlanetSimulatorBlockEntity> {
 
     private static final float PLANET_SIZE = 3.0f;
@@ -102,7 +102,7 @@ public class PlanetSimulatorBlockEntityRenderer implements BlockEntityRenderer<P
 
     // gross transparency "fix"
     // TODO: fix planets not rendering behind each other
-    @SubscribeEvent
+    //@SubscribeEvent
     public static void renderLevelEvent(RenderLevelStageEvent event) {
         if (event.getStage() == RenderLevelStageEvent.Stage.AFTER_BLOCK_ENTITIES) {
 
@@ -178,50 +178,50 @@ public class PlanetSimulatorBlockEntityRenderer implements BlockEntityRenderer<P
 
     @Override
     public void render(PlanetSimulatorBlockEntity planetSimulatorBlockEntity, float partialTick, PoseStack poseStack, MultiBufferSource _multiBufferSource, int combinedLight, int combinedOverlay) {
-        if (!planetSimulatorBlockEntity.getBlockState().getValue(Multiblock.FORMED)) {
-            return;
-        }
-        
-        ItemStack planetCard = planetSimulatorBlockEntity.getItemHandler().getStackInSlot(0);
-        if (planetCard.isEmpty() || !planetCard.has(MJDataComponents.PLANET)) {
-            return;
-        }
-        
-        PlanetComponent planetComponent = planetCard.get(MJDataComponents.PLANET);
-        if (planetComponent == null || planetComponent.planetType().isEmpty()) {
-            return;
-        }
-        
-        if (planetComponent.isBlackHole()) {
-            Vec3 center = getMultiblockCenter(planetSimulatorBlockEntity);
-            Vec3 controllerPos = Vec3.atLowerCornerOf(planetSimulatorBlockEntity.getBlockPos());
-            Vec3 offset = center.subtract(controllerPos);
-            Vector3f blackHolePos = new Vector3f((float)(offset.x + PLANET_OFFSET_X), (float)(offset.y + PLANET_OFFSET_Y), (float)(offset.z + PLANET_OFFSET_Z));
-            BlackHoleExampleRenderer.blackholeUniformBuffer.blackhole(blackHolePos, 10, 15);
-            return;
-        }
-        
-        ResourceLocation texture = getTexture(planetSimulatorBlockEntity);
-        if (texture == null) {
-            return;
-        }
-        
-        Vec3 center = getMultiblockCenter(planetSimulatorBlockEntity);
-        Vec3 controllerPos = Vec3.atLowerCornerOf(planetSimulatorBlockEntity.getBlockPos());
-        Vec3 offset = center.subtract(controllerPos);
-        
-        poseStack.pushPose();
-        
-        poseStack.translate(offset.x + PLANET_OFFSET_X, offset.y + PLANET_OFFSET_Y, offset.z + PLANET_OFFSET_Z);
-        poseStack.mulPose(Axis.YP.rotationDegrees((Minecraft.getInstance().level.getGameTime() + partialTick) * ROTATION_SPEED));
-        poseStack.scale(PLANET_SIZE, PLANET_SIZE, PLANET_SIZE);
-        
-        float progress = planetSimulatorBlockEntity.getMaxProgress() > 0 
-            ? 1 - (float) planetSimulatorBlockEntity.getProgress() / (float) planetSimulatorBlockEntity.getMaxProgress()
-            : 1.0f;
-        
-        this.renderPlanet(texture, poseStack, 16, 0.125f, -0.1f, 32, 4, new Vector3f(0, 0, 250f), new Vector3f(0.1f, 0.2f, 0.9f), new Vector4f(BRIGHTNESS, BRIGHTNESS, BRIGHTNESS, 0.5f), 0.05f, 533f, progress);
-        poseStack.popPose();
+//        if (!planetSimulatorBlockEntity.getBlockState().getValue(Multiblock.FORMED)) {
+//            return;
+//        }
+//
+//        ItemStack planetCard = planetSimulatorBlockEntity.getItemHandler().getStackInSlot(0);
+//        if (planetCard.isEmpty() || !planetCard.has(MJDataComponents.PLANET)) {
+//            return;
+//        }
+//
+//        PlanetComponent planetComponent = planetCard.get(MJDataComponents.PLANET);
+//        if (planetComponent == null || planetComponent.planetType().isEmpty()) {
+//            return;
+//        }
+//
+//        if (planetComponent.isBlackHole()) {
+//            Vec3 center = getMultiblockCenter(planetSimulatorBlockEntity);
+//            Vec3 controllerPos = Vec3.atLowerCornerOf(planetSimulatorBlockEntity.getBlockPos());
+//            Vec3 offset = center.subtract(controllerPos);
+//            Vector3f blackHolePos = new Vector3f((float)(offset.x + PLANET_OFFSET_X), (float)(offset.y + PLANET_OFFSET_Y), (float)(offset.z + PLANET_OFFSET_Z));
+//            BlackHoleExampleRenderer.blackholeUniformBuffer.blackhole(blackHolePos, 10, 15);
+//            return;
+//        }
+//
+//        ResourceLocation texture = getTexture(planetSimulatorBlockEntity);
+//        if (texture == null) {
+//            return;
+//        }
+//
+//        Vec3 center = getMultiblockCenter(planetSimulatorBlockEntity);
+//        Vec3 controllerPos = Vec3.atLowerCornerOf(planetSimulatorBlockEntity.getBlockPos());
+//        Vec3 offset = center.subtract(controllerPos);
+//
+//        poseStack.pushPose();
+//
+//        poseStack.translate(offset.x + PLANET_OFFSET_X, offset.y + PLANET_OFFSET_Y, offset.z + PLANET_OFFSET_Z);
+//        poseStack.mulPose(Axis.YP.rotationDegrees((Minecraft.getInstance().level.getGameTime() + partialTick) * ROTATION_SPEED));
+//        poseStack.scale(PLANET_SIZE, PLANET_SIZE, PLANET_SIZE);
+//
+//        float progress = planetSimulatorBlockEntity.getMaxProgress() > 0
+//            ? 1 - (float) planetSimulatorBlockEntity.getProgress() / (float) planetSimulatorBlockEntity.getMaxProgress()
+//            : 1.0f;
+//
+//        this.renderPlanet(texture, poseStack, 16, 0.125f, -0.1f, 32, 4, new Vector3f(0, 0, 250f), new Vector3f(0.1f, 0.2f, 0.9f), new Vector4f(BRIGHTNESS, BRIGHTNESS, BRIGHTNESS, 0.5f), 0.05f, 533f, progress);
+//        poseStack.popPose();
     }
 
     @Override
