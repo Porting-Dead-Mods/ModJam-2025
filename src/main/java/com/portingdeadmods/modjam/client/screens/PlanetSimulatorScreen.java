@@ -49,6 +49,6 @@ public class PlanetSimulatorScreen extends PanelContainerScreen<PlanetSimulatorM
     }
 
     private Component getInfo() {
-        return Component.literal(menu.blockEntity.getClientDisplayText());
+        return Component.literal(menu.blockEntity.getDisplayText());
     }
 }

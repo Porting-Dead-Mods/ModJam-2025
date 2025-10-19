@@ -6,8 +6,8 @@ import com.portingdeadmods.modjam.capabilities.ReadOnlyFluidHandler;
 import com.portingdeadmods.modjam.capabilities.ReadOnlyItemHandler;
 import com.portingdeadmods.modjam.capabilities.UpgradeItemHandler;
 import com.portingdeadmods.modjam.content.block.UpgradeBlockEntity;
-import com.portingdeadmods.modjam.networking.SyncPlanetSimulatorDataPayload;
 import com.portingdeadmods.modjam.utils.NumberFormatUtils;
+import io.netty.buffer.Unpooled;
 import com.portingdeadmods.modjam.content.items.UpgradeItem;
 import com.portingdeadmods.modjam.content.blockentity.bus.AbstractBusBlockEntity;
 import com.portingdeadmods.modjam.content.blockentity.bus.EnergyInputBusBlockEntity;
@@ -34,6 +34,7 @@ import com.portingdeadmods.portingdeadlibs.utils.MultiblockHelper;
 import it.unimi.dsi.fastutil.Pair;
 import net.minecraft.core.*;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.MenuProvider;
@@ -46,13 +47,11 @@ import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
-import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.capabilities.BlockCapability;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.ItemStackHandler;
-import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
@@ -74,21 +73,10 @@ public class PlanetSimulatorBlockEntity extends ContainerBlockEntity implements 
     private PlanetSimulatorRecipe currentRegularRecipe = null;
     private PlanetPowerRecipe currentPowerRecipe = null;
     private boolean isRegularRecipe = false;
-    
-    private String clientDisplayText = "";
     private List<PlanetSimulatorRecipe.WeightedOutput> clientOutputs = List.of();
-
-    public String getClientDisplayText() {
-        return clientDisplayText;
-    }
     
-    public void setClientDisplayText(String text) {
-        this.clientDisplayText = text;
-    }
-    
-    public void setClientOutputs(List<PlanetSimulatorRecipe.WeightedOutput> outputs) {
-        this.clientOutputs = outputs;
-    }
+    private int clientTotalEnergy = 0;
+    private int clientMaxEnergy = 0;
     
     public int getProgress() {
         return progress;
@@ -205,41 +193,14 @@ public class PlanetSimulatorBlockEntity extends ContainerBlockEntity implements 
             processRecipes();
         }
         
-        if (!this.level.isClientSide && this.level.getGameTime() % 5 == 0) {
-            syncToNearbyPlayers();
-        }
     }
     
-    private void syncToNearbyPlayers() {
-        if (this.level == null || this.level.isClientSide) return;
-        
-        String displayText = buildDisplayText();
-        List<PlanetSimulatorRecipe.WeightedOutput> outputs = currentRegularRecipe != null ? currentRegularRecipe.outputs() : List.of();
-        
-        SyncPlanetSimulatorDataPayload payload = 
-            new SyncPlanetSimulatorDataPayload(
-                this.worldPosition,
-                displayText,
-                outputs
-            );
-        
-        this.level.players().stream()
-            .filter(player -> player instanceof ServerPlayer)
-            .map(player -> (ServerPlayer) player)
-            .filter(player -> {
-                if (player.containerMenu instanceof PlanetSimulatorMenu menu) {
-                    return menu.blockEntity.getBlockPos().equals(this.worldPosition);
-                }
-                return false;
-            })
-            .forEach(player -> PacketDistributor.sendToPlayer(player, payload));
-    }
     
-    private String buildDisplayText() {
+    public String getDisplayText() {
         StringBuilder info = new StringBuilder();
         
-        int energyStored = getTotalInputEnergy(getInputBusses());
-        int maxEnergy = getTotalMaxInputEnergy();
+        int energyStored = this.level != null && this.level.isClientSide ? clientTotalEnergy : getTotalInputEnergy(getInputBusses());
+        int maxEnergy = this.level != null && this.level.isClientSide ? clientMaxEnergy : getTotalMaxInputEnergy();
         info.append("Energy: ").append(NumberFormatUtils.formatEnergy(energyStored))
             .append(" / ").append(NumberFormatUtils.formatEnergy(maxEnergy)).append(" FE\n");
         
@@ -263,16 +224,9 @@ public class PlanetSimulatorBlockEntity extends ContainerBlockEntity implements 
         info.append("\nTime Left: ").append(timeLeft).append("s");
         info.append("\nProgress: ").append(progress).append("/").append(maxProgress);
         
-        List<PlanetSimulatorRecipe.WeightedOutput> outputs = null;
-        if (this.level != null && this.level.isClientSide) {
-            outputs = clientOutputs;
-        } else if (currentRegularRecipe != null) {
-            outputs = currentRegularRecipe.outputs();
-        }
-        
-        if (outputs != null && !outputs.isEmpty() && isRegularRecipe) {
+        if (!clientOutputs.isEmpty() && isRegularRecipe) {
             info.append("\n\nOutputs:");
-            for (PlanetSimulatorRecipe.WeightedOutput output : outputs) {
+            for (PlanetSimulatorRecipe.WeightedOutput output : clientOutputs) {
                 float chance = applyLuckUpgrade(output.chance());
                 info.append("\n  ");
                 if (output.itemStack().isPresent()) {
@@ -327,6 +281,7 @@ public class PlanetSimulatorBlockEntity extends ContainerBlockEntity implements 
         currentRegularRecipe = null;
         currentPowerRecipe = null;
         isRegularRecipe = false;
+        clientOutputs = List.of();
     }
 
     private List<AbstractBusBlockEntity> getBusses(boolean input) {
@@ -584,6 +539,7 @@ public class PlanetSimulatorBlockEntity extends ContainerBlockEntity implements 
             currentRegularRecipe = recipe;
             currentPowerRecipe = null;
             isRegularRecipe = true;
+            clientOutputs = recipe.outputs();
             applyUpgrades(recipe.duration(), recipe.energyPerTick());
             progress = 0;
         }
@@ -1017,6 +973,35 @@ public class PlanetSimulatorBlockEntity extends ContainerBlockEntity implements 
         tag.putBoolean("isProcessing", isProcessing);
         tag.putBoolean("isRegularRecipe", isRegularRecipe);
     }
+    
+    @Override
+    public CompoundTag getUpdateTag(HolderLookup.Provider provider) {
+        CompoundTag tag = super.getUpdateTag(provider);
+        tag.putInt("progress", progress);
+        tag.putInt("maxProgress", maxProgress);
+        tag.putInt("energyPerTick", energyPerTick);
+        tag.putBoolean("isProcessing", isProcessing);
+        tag.putBoolean("isRegularRecipe", isRegularRecipe);
+        
+        tag.putInt("totalEnergy", getTotalInputEnergy(getInputBusses()));
+        tag.putInt("maxEnergy", getTotalMaxInputEnergy());
+        
+        if (isProcessing && isRegularRecipe && currentRegularRecipe != null && this.level != null) {
+            CompoundTag recipeTag = new CompoundTag();
+            recipeTag.putString("recipeType", "regular");
+            
+            var buf = new RegistryFriendlyByteBuf(Unpooled.buffer(), this.level.registryAccess());
+            PlanetSimulatorRecipe.Serializer.STREAM_CODEC.encode(buf, currentRegularRecipe);
+            byte[] recipeData = new byte[buf.readableBytes()];
+            buf.readBytes(recipeData);
+            recipeTag.putByteArray("recipeData", recipeData);
+            buf.release();
+            
+            tag.put("activeRecipe", recipeTag);
+        }
+        
+        return tag;
+    }
 
     @Override
     protected void loadData(CompoundTag tag, HolderLookup.Provider registries) {
@@ -1033,6 +1018,31 @@ public class PlanetSimulatorBlockEntity extends ContainerBlockEntity implements 
         energyPerTick = tag.getInt("energyPerTick");
         isProcessing = tag.getBoolean("isProcessing");
         isRegularRecipe = tag.getBoolean("isRegularRecipe");
+        
+        if (this.level != null && this.level.isClientSide) {
+            clientTotalEnergy = tag.getInt("totalEnergy");
+            clientMaxEnergy = tag.getInt("maxEnergy");
+            
+            if (tag.contains("activeRecipe")) {
+                CompoundTag recipeTag = tag.getCompound("activeRecipe");
+                String recipeType = recipeTag.getString("recipeType");
+                
+                if (recipeType.equals("regular")) {
+                    byte[] recipeData = recipeTag.getByteArray("recipeData");
+                    var buf = new RegistryFriendlyByteBuf(Unpooled.wrappedBuffer(recipeData), this.level.registryAccess());
+                    try {
+                        PlanetSimulatorRecipe recipe = PlanetSimulatorRecipe.Serializer.STREAM_CODEC.decode(buf);
+                        clientOutputs = recipe.outputs();
+                    } catch (Exception e) {
+                        Modjam.LOGGER.error("Failed to decode recipe from update tag", e);
+                    } finally {
+                        buf.release();
+                    }
+                }
+            } else {
+                clientOutputs = List.of();
+            }
+        }
     }
 
     @Override

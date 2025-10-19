@@ -43,11 +43,6 @@ public final class MJNetworking {
                 PlanetCardWidgetSetSlotPositionPayload.STREAM_CODEC,
                 PlanetCardWidgetSetSlotPositionPayload::handle
         );
-        registrar.playToClient(
-                SyncPlanetSimulatorDataPayload.TYPE,
-                SyncPlanetSimulatorDataPayload.STREAM_CODEC,
-                SyncPlanetSimulatorDataPayload::handle
-        );
     }
 
     private static void handleSyncPlanetCards(SyncPlanetCardsPayload payload, IPayloadContext context) {
