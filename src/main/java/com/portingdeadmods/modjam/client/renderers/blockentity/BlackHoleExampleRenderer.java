@@ -15,7 +15,7 @@ public class BlackHoleExampleRenderer implements BlockEntityRenderer<ChestBlockE
 
     @Override
     public void render(ChestBlockEntity blockEntity, float partialTick, PoseStack poseStack, MultiBufferSource multiBufferSource, int i, int i1) {
-        //blackholeUniformBuffer.blackhole(new Vector3f(0, 100, 0), 10, 15);
+        blackholeUniformBuffer.blackhole(new Vector3f(0, 100, 0), 10, 15);
     }
 
     @Override

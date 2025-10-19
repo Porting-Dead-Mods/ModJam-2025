@@ -35,6 +35,10 @@
         "block": "modjam:item_output_bus"
       },
       {
+        "type": "fusion:match_block",
+        "block": "modjam:planet_simulator_controller"
+      },
+      {
         "type": "fusion:match_state",
         "block": "modjam:planet_simulator_part",
         "properties": {

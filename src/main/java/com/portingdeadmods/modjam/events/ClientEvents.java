@@ -43,12 +43,12 @@ public class ClientEvents {
 
     @SubscribeEvent
     public static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
-//        event.registerBlockEntityRenderer(
-//                // The block entity type to register the renderer for.
-//                MJBlockEntities.PLANET_SIMULATOR.get(),
-//                // A function of BlockEntityRendererProvider.Context to BlockEntityRenderer.
-//                PlanetSimulatorBlockEntityRenderer::new
-//        );
+        event.registerBlockEntityRenderer(
+                // The block entity type to register the renderer for.
+                MJBlockEntities.PLANET_SIMULATOR.get(),
+                // A function of BlockEntityRendererProvider.Context to BlockEntityRenderer.
+                PlanetSimulatorBlockEntityRenderer::new
+        );
     }
 
     // gross hacks
