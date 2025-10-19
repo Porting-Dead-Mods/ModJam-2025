@@ -2,7 +2,7 @@
   "type": "fusion:connecting",
   "parent": "minecraft:block/cube_all",
   "connections": {
-    "predicates": [
+    "all": [
       {
         "type": "fusion:is_same_state"
       },

@@ -29,6 +29,15 @@
       {
         "type": "fusion:match_block",
         "block": "modjam:item_input_bus"
+      },
+      {
+        "type": "fusion:match_state",
+        "block": "modjam:planet_simulator_part",
+        "properties": {
+          "variant": [
+            "casing"
+          ]
+        }
       }
     ]
   },
