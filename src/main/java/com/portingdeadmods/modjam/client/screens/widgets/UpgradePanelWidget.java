@@ -130,47 +130,68 @@ public class UpgradePanelWidget extends PanelWidget {
                 && mouseY < this.getY() + 24;
 
         if (isHoveringSprite && context != null){
-            List<Component> tooltip = new ArrayList<>();
-            IItemHandler upgradeHandler = upgradeBlockEntity.getUpgradeItemHandler();
-            
-            Map<UpgradeType, Integer> upgradeCounts = new HashMap<>();
-            for (int j = 0; j < upgradeHandler.getSlots(); j++) {
-                ItemStack stack = upgradeHandler.getStackInSlot(j);
-                if (!stack.isEmpty() && stack.getItem() instanceof UpgradeItem upgradeItem) {
-                    if (upgradeBlockEntity.getSupportedUpgrades().contains(upgradeItem.getUpgradeTypeKey())) {
-                        UpgradeType upgradeType = upgradeItem.getUpgradeType();
-                        upgradeCounts.merge(upgradeType, stack.getCount(), Integer::sum);
-                    }
-                }
-            }
-            
-            if (!upgradeCounts.isEmpty()) {
-                Map<UpgradeType.EffectTarget, Float> mergedEffects = new HashMap<>();
+            try {
+                List<Component> tooltip = new ArrayList<>();
+                IItemHandler upgradeHandler = upgradeBlockEntity.getUpgradeItemHandler();
                 
-                for (Map.Entry<UpgradeType, Integer> entry : upgradeCounts.entrySet()) {
-                    UpgradeType type = entry.getKey();
-                    int count = entry.getValue();
-                    
-                    for (UpgradeType.UpgradeEffect effect : type.getEffects()) {
-                        float totalPercent = effect.getPercentPerUpgrade() * count;
-                        mergedEffects.merge(effect.getTarget(), totalPercent, Float::sum);
+                if (upgradeHandler == null) {
+                    tooltip.add(Component.literal("No upgrade handler").withStyle(ChatFormatting.RED));
+                    guiGraphics.renderComponentTooltip(Minecraft.getInstance().font, tooltip, mouseX, mouseY);
+                    return;
+                }
+                
+                Map<UpgradeType, Integer> upgradeCounts = new HashMap<>();
+                for (int j = 0; j < upgradeHandler.getSlots(); j++) {
+                    ItemStack stack = upgradeHandler.getStackInSlot(j);
+                    if (!stack.isEmpty() && stack.getItem() instanceof UpgradeItem upgradeItem) {
+                        if (upgradeBlockEntity.getSupportedUpgrades().contains(upgradeItem.getUpgradeTypeKey())) {
+                            UpgradeType upgradeType = upgradeItem.getUpgradeType();
+                            if (upgradeType != null && upgradeType.getEffects() != null) {
+                                upgradeCounts.merge(upgradeType, stack.getCount(), Integer::sum);
+                            }
+                        }
                     }
                 }
                 
-                for (Map.Entry<UpgradeType.EffectTarget, Float> entry : mergedEffects.entrySet()) {
-                    String effectName = formatEffectTarget(entry.getKey());
-                    String effectValue = String.format(Locale.US, "%+.1f%%", entry.getValue());
-                    ChatFormatting color = getMergedEffectColor(entry.getKey(), entry.getValue());
+                if (!upgradeCounts.isEmpty()) {
+                    Map<UpgradeType.EffectTarget, Float> mergedEffects = new HashMap<>();
                     
-                    tooltip.add(Component.literal(effectName + ": " + effectValue)
-                            .withStyle(color));
+                    for (Map.Entry<UpgradeType, Integer> entry : upgradeCounts.entrySet()) {
+                        UpgradeType type = entry.getKey();
+                        int count = entry.getValue();
+                        
+                        if (type != null && type.getEffects() != null) {
+                            for (UpgradeType.UpgradeEffect effect : type.getEffects()) {
+                                if (effect != null && effect.getTarget() != null) {
+                                    float totalPercent = effect.getPercentPerUpgrade() * count;
+                                    mergedEffects.merge(effect.getTarget(), totalPercent, Float::sum);
+                                }
+                            }
+                        }
+                    }
+                    
+                    for (Map.Entry<UpgradeType.EffectTarget, Float> entry : mergedEffects.entrySet()) {
+                        if (entry.getKey() != null) {
+                            String effectName = formatEffectTarget(entry.getKey());
+                            String effectValue = String.format(Locale.US, "%+.1f%%", entry.getValue());
+                            ChatFormatting color = getMergedEffectColor(entry.getKey(), entry.getValue());
+                            
+                            tooltip.add(Component.literal(effectName + ": " + effectValue)
+                                    .withStyle(color));
+                        }
+                    }
+                } else {
+                    tooltip.add(Component.translatable("tooltip.modjam.no_upgrades").withStyle(ChatFormatting.GRAY));
                 }
-            } else {
-                tooltip.add(Component.translatable("tooltip.modjam.no_upgrades").withStyle(ChatFormatting.GRAY));
-            }
-            
-            if (!tooltip.isEmpty()) {
-                guiGraphics.renderComponentTooltip(Minecraft.getInstance().font, tooltip, mouseX, mouseY);
+                
+                if (!tooltip.isEmpty()) {
+                    guiGraphics.renderComponentTooltip(Minecraft.getInstance().font, tooltip, mouseX, mouseY);
+                }
+            } catch (Exception e) {
+                Modjam.LOGGER.error("Error rendering upgrade tooltip", e);
+                List<Component> errorTooltip = new ArrayList<>();
+                errorTooltip.add(Component.literal("Error: " + e.getMessage()).withStyle(ChatFormatting.RED));
+                guiGraphics.renderComponentTooltip(Minecraft.getInstance().font, errorTooltip, mouseX, mouseY);
             }
         }
     }

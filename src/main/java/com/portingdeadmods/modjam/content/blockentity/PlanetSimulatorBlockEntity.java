@@ -6,6 +6,8 @@ import com.portingdeadmods.modjam.capabilities.ReadOnlyFluidHandler;
 import com.portingdeadmods.modjam.capabilities.ReadOnlyItemHandler;
 import com.portingdeadmods.modjam.capabilities.UpgradeItemHandler;
 import com.portingdeadmods.modjam.content.block.UpgradeBlockEntity;
+import com.portingdeadmods.modjam.networking.SyncPlanetSimulatorDataPayload;
+import com.portingdeadmods.modjam.utils.NumberFormatUtils;
 import com.portingdeadmods.modjam.content.items.UpgradeItem;
 import com.portingdeadmods.modjam.content.blockentity.bus.AbstractBusBlockEntity;
 import com.portingdeadmods.modjam.content.blockentity.bus.EnergyInputBusBlockEntity;
@@ -43,11 +45,14 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.capabilities.BlockCapability;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.ItemStackHandler;
+import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
@@ -66,19 +71,31 @@ public class PlanetSimulatorBlockEntity extends ContainerBlockEntity implements 
     private int maxProgress = 0;
     private int energyPerTick = 0;
     private boolean isProcessing = false;
+    private PlanetSimulatorRecipe currentRegularRecipe = null;
+    private PlanetPowerRecipe currentPowerRecipe = null;
+    
+    private String clientDisplayText = "";
 
+    public String getClientDisplayText() {
+        return clientDisplayText;
+    }
+    
+    public void setClientDisplayText(String text) {
+        this.clientDisplayText = text;
+    }
+    
     public int getProgress() {
         return progress;
     }
-
+    
     public int getMaxProgress() {
         return maxProgress;
     }
-
+    
     public int getEnergyPerTick() {
         return energyPerTick;
     }
-
+    
     public boolean isProcessing() {
         return isProcessing;
     }
@@ -181,6 +198,80 @@ public class PlanetSimulatorBlockEntity extends ContainerBlockEntity implements 
         if (this.getBlockState().getValue(Multiblock.FORMED)) {
             processRecipes();
         }
+        
+        if (!this.level.isClientSide && this.level.getGameTime() % 5 == 0) {
+            syncToNearbyPlayers();
+        }
+    }
+    
+    private void syncToNearbyPlayers() {
+        if (this.level == null || this.level.isClientSide) return;
+        
+        String displayText = buildDisplayText();
+        
+        SyncPlanetSimulatorDataPayload payload = 
+            new SyncPlanetSimulatorDataPayload(
+                this.worldPosition,
+                displayText
+            );
+        
+        this.level.players().stream()
+            .filter(player -> player instanceof ServerPlayer)
+            .map(player -> (ServerPlayer) player)
+            .filter(player -> {
+                if (player.containerMenu instanceof PlanetSimulatorMenu menu) {
+                    return menu.blockEntity.getBlockPos().equals(this.worldPosition);
+                }
+                return false;
+            })
+            .forEach(player -> PacketDistributor.sendToPlayer(player, payload));
+    }
+    
+    private String buildDisplayText() {
+        StringBuilder info = new StringBuilder();
+        
+        int energyStored = getTotalInputEnergy(getInputBusses());
+        int maxEnergy = getTotalMaxInputEnergy();
+        info.append("Energy: ").append(NumberFormatUtils.formatEnergy(energyStored))
+            .append(" / ").append(NumberFormatUtils.formatEnergy(maxEnergy)).append(" FE\n");
+        
+        if (!isProcessing) {
+            return info.toString();
+        }
+        
+        if (currentRegularRecipe != null) {
+            info.append("\nRecipe: Planet Simulation");
+        } else if (currentPowerRecipe != null) {
+            info.append("\nRecipe: Power Generation");
+        } else {
+            info.append("\nRecipe: Unknown");
+        }
+        
+        info.append("\nEnergy/t: ");
+        if (currentPowerRecipe != null) {
+            info.append("+");
+        }
+        info.append(NumberFormatUtils.formatEnergy(energyPerTick)).append(" FE/t");
+        
+        int timeLeft = (maxProgress - progress) / 20;
+        info.append("\nTime Left: ").append(timeLeft).append("s");
+        info.append("\nProgress: ").append(progress).append("/").append(maxProgress);
+        
+        if (currentRegularRecipe != null) {
+            info.append("\n\nOutputs:");
+            for (PlanetSimulatorRecipe.WeightedOutput output : currentRegularRecipe.outputs()) {
+                float chance = applyLuckUpgrade(output.chance());
+                info.append("\n  ");
+                if (output.itemStack().isPresent()) {
+                    info.append(output.itemStack().get().getHoverName().getString());
+                } else if (output.fluidStack().isPresent()) {
+                    info.append(output.fluidStack().get().getHoverName().getString());
+                }
+                info.append(" (").append(String.format("%.1f%%", chance * 100)).append(")");
+            }
+        }
+        
+        return info.toString();
     }
 
     private void processRecipes() {
@@ -220,6 +311,8 @@ public class PlanetSimulatorBlockEntity extends ContainerBlockEntity implements 
         maxProgress = 0;
         energyPerTick = 0;
         isProcessing = false;
+        currentRegularRecipe = null;
+        currentPowerRecipe = null;
     }
 
     private List<AbstractBusBlockEntity> getBusses(boolean input) {
@@ -474,6 +567,8 @@ public class PlanetSimulatorBlockEntity extends ContainerBlockEntity implements 
     private void processRegularRecipe(PlanetSimulatorRecipe recipe, List<AbstractBusBlockEntity> inputBusses, List<AbstractBusBlockEntity> outputBusses) {
         if (!isProcessing) {
             isProcessing = true;
+            currentRegularRecipe = recipe;
+            currentPowerRecipe = null;
             applyUpgrades(recipe.duration(), recipe.energyPerTick());
             progress = 0;
         }
@@ -553,6 +648,8 @@ public class PlanetSimulatorBlockEntity extends ContainerBlockEntity implements 
     private void processPowerRecipe(PlanetPowerRecipe recipe, List<AbstractBusBlockEntity> inputBusses) {
         if (!isProcessing) {
             isProcessing = true;
+            currentRegularRecipe = null;
+            currentPowerRecipe = recipe;
             applyUpgrades(recipe.duration(), recipe.energyPerTick());
             progress = 0;
         }

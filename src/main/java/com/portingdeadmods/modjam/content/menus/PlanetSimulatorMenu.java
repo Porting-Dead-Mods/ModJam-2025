@@ -1,10 +1,12 @@
 package com.portingdeadmods.modjam.content.menus;
 
 import com.portingdeadmods.modjam.content.blockentity.PlanetSimulatorBlockEntity;
+import com.portingdeadmods.modjam.content.items.UpgradeItem;
 import com.portingdeadmods.modjam.registries.MJMenus;
 import com.portingdeadmods.portingdeadlibs.api.gui.menus.PDLAbstractContainerMenu;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.items.SlotItemHandler;
 import org.jetbrains.annotations.NotNull;
 
@@ -28,6 +30,7 @@ public class PlanetSimulatorMenu extends PDLAbstractContainerMenu<PlanetSimulato
         this.addPlayerInventory(inv, 83 + 33);
         this.addPlayerHotbar(inv, 141 + 33);
 
+
         this.upgradeSlots = new ArrayList<>();
         for (int i = 0; i < blockEntity.getUpgradeItemHandler().getSlots(); i++) {
             UpgradeSlot slot = new UpgradeSlot(blockEntity.getUpgradeItemHandler(), i, 179, 27 + i * 20);
@@ -47,7 +50,7 @@ public class PlanetSimulatorMenu extends PDLAbstractContainerMenu<PlanetSimulato
     }
 
     @Override
-    protected boolean performMerge(int index, net.minecraft.world.item.ItemStack stack) {
+    protected boolean performMerge(int index, ItemStack stack) {
         int mainSlot = 1;
         int invFull = slots.size();
         int upgradeStart = invFull - upgradeSlots.size();
@@ -57,7 +60,7 @@ public class PlanetSimulatorMenu extends PDLAbstractContainerMenu<PlanetSimulato
         if (index >= upgradeStart) {
             return moveItemStackTo(stack, invPlayer, upgradeStart, true);
         } else if (index >= invPlayer && index < upgradeStart) {
-            if (stack.getItem() instanceof com.portingdeadmods.modjam.content.items.UpgradeItem) {
+            if (stack.getItem() instanceof UpgradeItem) {
                 if (moveItemStackTo(stack, upgradeStart, invFull, false)) {
                     return true;
                 }

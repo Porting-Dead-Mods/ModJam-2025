@@ -20,7 +20,7 @@ public class EnergyBusMenu extends AbstractContainerMenu {
 
     public EnergyBusMenu(int containerId, @NotNull Inventory inv, @NotNull FriendlyByteBuf byteBuf) {
         super(MJMenus.ENERGY_BUS.get(), containerId);
-        this.energyStorage = new EnergyStorage(100000, 10000, 10000);
+        this.energyStorage = new EnergyStorage(1000000, 10000, 10000);
         this.data = new SimpleContainerData(2);
         setupSlots(inv);
         addDataSlots(this.data);
@@ -33,8 +33,8 @@ public class EnergyBusMenu extends AbstractContainerMenu {
             @Override
             public int get(int index) {
                 return switch (index) {
-                    case 0 -> energyStorage.getEnergyStored() & 0xFFFF;
-                    case 1 -> (energyStorage.getEnergyStored() >> 16) & 0xFFFF;
+                    case 0 -> energyStorage.getEnergyStored();
+                    case 1 -> energyStorage.getMaxEnergyStored();
                     default -> 0;
                 };
             }
@@ -59,8 +59,8 @@ public class EnergyBusMenu extends AbstractContainerMenu {
             @Override
             public int get(int index) {
                 return switch (index) {
-                    case 0 -> energyStorage.getEnergyStored() & 0xFFFF;
-                    case 1 -> (energyStorage.getEnergyStored() >> 16) & 0xFFFF;
+                    case 0 -> energyStorage.getEnergyStored();
+                    case 1 -> energyStorage.getMaxEnergyStored();
                     default -> 0;
                 };
             }
@@ -98,11 +98,11 @@ public class EnergyBusMenu extends AbstractContainerMenu {
     }
 
     public int getEnergyStored() {
-        return (data.get(1) << 16) | (data.get(0) & 0xFFFF);
+        return data.get(0);
     }
 
     public int getEnergyCapacity() {
-        return 100000;
+        return data.get(1);
     }
 
     @Override
