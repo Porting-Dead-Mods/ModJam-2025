@@ -5,15 +5,20 @@ import com.portingdeadmods.modjam.content.recipe.PlanetPowerRecipe;
 import com.portingdeadmods.modjam.registries.MJBlocks;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.widgets.IRecipeExtrasBuilder;
+import mezz.jei.api.gui.widgets.ITextWidget;
 import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.helpers.IPlatformFluidHelper;
 import mezz.jei.api.neoforge.NeoForgeTypes;
 import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.AbstractRecipeCategory;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import org.jetbrains.annotations.NotNull;
 
+import java.awt.*;
 import java.util.Arrays;
 
 public class PlanetPowerCategory extends AbstractRecipeCategory<PlanetPowerRecipe> {
@@ -48,7 +53,17 @@ public class PlanetPowerCategory extends AbstractRecipeCategory<PlanetPowerRecip
 
     @Override
     public void createRecipeExtras(IRecipeExtrasBuilder builder, PlanetPowerRecipe recipe, IFocusGroup focuses) {
-        builder.addText(Component.literal("Generates: " + recipe.energyPerTick() + " FE/t"), 1, 60);
-        builder.addText(Component.literal("Duration: " + recipe.duration() + " ticks"), 1, 70);
+        Font font = Minecraft.getInstance().font;
+
+        MutableComponent generates = Component.literal("Generates: " + recipe.energyPerTick() + " FE/t");
+        addText(builder, generates)
+                .setPosition((this.getWidth() - font.width(generates)) / 2, this.getHeight() / 2 - font.lineHeight);
+        MutableComponent duration = Component.literal("Duration: " + recipe.duration() + " ticks");
+        addText(builder, duration)
+                .setPosition((this.getWidth() - font.width(duration)) / 2, this.getHeight() / 2);
+    }
+
+    private ITextWidget addText(IRecipeExtrasBuilder builder, MutableComponent component) {
+        return builder.addText(component, Minecraft.getInstance().font.width(component), Minecraft.getInstance().font.lineHeight);
     }
 }

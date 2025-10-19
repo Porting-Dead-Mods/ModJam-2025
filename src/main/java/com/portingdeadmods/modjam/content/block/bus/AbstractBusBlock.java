@@ -1,17 +1,21 @@
 package com.portingdeadmods.modjam.content.block.bus;
 
 import com.portingdeadmods.modjam.content.blockentity.bus.AbstractBusBlockEntity;
+import com.portingdeadmods.modjam.content.blockentity.bus.EnergyInputBusBlockEntity;
 import com.portingdeadmods.modjam.data.BusType;
 import com.portingdeadmods.modjam.registries.MJMultiblocks;
 import com.portingdeadmods.portingdeadlibs.api.multiblocks.Multiblock;
 import com.portingdeadmods.portingdeadlibs.utils.MultiblockHelper;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.phys.BlockHitResult;
 
 public abstract class AbstractBusBlock extends BaseEntityBlock {
     private final BusType busType;
@@ -53,5 +57,15 @@ public abstract class AbstractBusBlock extends BaseEntityBlock {
         }
 
         super.onRemove(state, level, pos, newState, movedByPiston);
+    }
+
+    @Override
+    protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
+        if (!level.isClientSide && level.getBlockEntity(pos) instanceof AbstractBusBlockEntity be) {
+            if (state.getValue(Multiblock.FORMED)) {
+                player.openMenu(be, pos);
+            }
+        }
+        return InteractionResult.sidedSuccess(level.isClientSide);
     }
 }

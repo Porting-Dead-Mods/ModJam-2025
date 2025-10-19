@@ -3,10 +3,11 @@ package com.portingdeadmods.modjam.content.blockentity.bus;
 import com.portingdeadmods.modjam.content.blockentity.PlanetSimulatorPartBlockEntity;
 import com.portingdeadmods.modjam.data.BusType;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.MenuProvider;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 
-public abstract class AbstractBusBlockEntity extends PlanetSimulatorPartBlockEntity {
+public abstract class AbstractBusBlockEntity extends PlanetSimulatorPartBlockEntity implements MenuProvider {
     private final BusType busType;
     private final boolean isInput;
 

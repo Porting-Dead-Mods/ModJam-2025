@@ -29,11 +29,4 @@ public class EnergyOutputBusBlock extends AbstractBusBlock {
         return MJBlockEntities.ENERGY_OUTPUT_BUS.get().create(pos, state);
     }
 
-    @Override
-    protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
-        if (!level.isClientSide && level.getBlockEntity(pos) instanceof EnergyOutputBusBlockEntity be) {
-            player.openMenu(be, pos);
-        }
-        return InteractionResult.sidedSuccess(level.isClientSide);
-    }
 }

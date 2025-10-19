@@ -29,11 +29,4 @@ public class FluidInputBusBlock extends AbstractBusBlock {
         return MJBlockEntities.FLUID_INPUT_BUS.get().create(pos, state);
     }
 
-    @Override
-    protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
-        if (!level.isClientSide && level.getBlockEntity(pos) instanceof FluidInputBusBlockEntity be) {
-            player.openMenu(be, pos);
-        }
-        return InteractionResult.sidedSuccess(level.isClientSide);
-    }
 }

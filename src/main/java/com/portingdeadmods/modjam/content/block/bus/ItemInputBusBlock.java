@@ -28,12 +28,4 @@ public class ItemInputBusBlock extends AbstractBusBlock {
     public @Nullable BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
         return MJBlockEntities.ITEM_INPUT_BUS.get().create(pos, state);
     }
-
-    @Override
-    protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
-        if (!level.isClientSide && level.getBlockEntity(pos) instanceof ItemInputBusBlockEntity be) {
-            player.openMenu(be, pos);
-        }
-        return InteractionResult.sidedSuccess(level.isClientSide);
-    }
 }
