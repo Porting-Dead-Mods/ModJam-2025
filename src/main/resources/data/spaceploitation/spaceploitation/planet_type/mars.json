@@ -1,5 +1,6 @@
 {
   "texture": "minecraft:item/planet_card/planets/the_nether",
+  "projection_texture": "spaceploitation:textures/planet/mars.png",
   "dimension": "minecraft:the_nether",
   "display_name": "Mars Planet Card"
 }
