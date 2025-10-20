@@ -34,7 +34,15 @@ public class LevelRendererMixin {
         PostChainExtensions.setUniform(MJShaders.BLACK_HOLE_CHAIN, "InvViewMat", ClientEvents.capturedViewMatrix.invert(new Matrix4f()));
         MJShaders.BLACK_HOLE_CHAIN.setUniform("Near", near);
         MJShaders.BLACK_HOLE_CHAIN.setUniform("Far", far);
+        MJShaders.BLACK_HOLE_CHAIN.setUniform("DiskSpeed", 3.0f);
         
+        float gameTime = 0.0f;
+        Minecraft minecraft = Minecraft.getInstance();
+        if (minecraft.level != null) {
+            gameTime = (minecraft.level.getGameTime() + minecraft.getTimer().getGameTimeDeltaTicks()) / 20.0f;
+        }
+        MJShaders.BLACK_HOLE_CHAIN.setUniform("GameTime", gameTime);
+
         Vec3 camPos = p_109604_.getPosition();
         Vector3f bhPos = BlackHoleExampleRenderer.blackholeUniformBuffer.getLatestBlackHolePosition();
         if (bhPos != null) {

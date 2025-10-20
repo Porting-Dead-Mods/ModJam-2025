@@ -164,7 +164,15 @@ void main(  )
    // ray = normalize(vec3(0, -1, 0));
     vec3 pos = rayOrigin - BlackHolePosition;
 
-    //vec2 angle = vec2(GameTime*0.1,.2);
+    // Animate the accretion disk orientation to match the Shadertoy reference.
+    float dist = length(pos);
+    vec2 angle = vec2(GameTime * 0.1, 0.2);
+    const float baseTilt = 3.24159265; // 0.1 + pi, matches original shader's default mouse-less tilt
+    angle.y = baseTilt;
+    Rotate(pos, angle);
+    float lensAmount = min(0.3 / max(dist, 0.0001), 3.14);
+    angle.xy -= lensAmount * vec2(1.0, 0.5);
+    Rotate(ray, angle);
 
     vec4 col = vec4(0.);
     vec4 glow = vec4(0.);
