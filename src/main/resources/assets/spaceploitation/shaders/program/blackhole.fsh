@@ -220,7 +220,7 @@ void main(  )
     outCol = vec4(col.rgb + glow.rgb *(col.a +  glow.a) , 1.);
 
     col = outCol;
-    col.rgb =  pow( col.rgb, vec3(0.6) );
+   // col.rgb =  pow( col.rgb, vec3(0.6) );
 
     fragColor = col;
 

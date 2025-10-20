@@ -189,7 +189,7 @@ void main() {
 
     float progress = Progress;
 
-    progress += max(sqrt(progress * 1.22)- 1, 0);
+    progress += max(sqrt(progress * 1.27)- 1, 0);
 
         if (step(norm.y + hash11(GameTime / 7 + round(norm.x * 128)) * 0.05, progress) == 0)
         discard;
