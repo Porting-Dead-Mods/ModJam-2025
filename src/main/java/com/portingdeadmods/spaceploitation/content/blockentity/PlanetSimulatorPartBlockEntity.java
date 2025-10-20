@@ -22,6 +22,9 @@ public class PlanetSimulatorPartBlockEntity extends BlockEntity implements Multi
         super(type, pos, blockState);
     }
 
+    public void commonTick() {
+    }
+
     @Override
     public @Nullable BlockPos getControllerPos() {
         return this.controllerPos;

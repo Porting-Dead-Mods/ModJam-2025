@@ -11,6 +11,7 @@ import io.netty.buffer.Unpooled;
 import com.portingdeadmods.spaceploitation.content.items.UpgradeItem;
 import com.portingdeadmods.spaceploitation.content.blockentity.bus.AbstractBusBlockEntity;
 import com.portingdeadmods.spaceploitation.content.blockentity.bus.EnergyInputBusBlockEntity;
+import com.portingdeadmods.spaceploitation.content.blockentity.bus.EnergyOutputBusBlockEntity;
 import com.portingdeadmods.spaceploitation.content.blockentity.bus.FluidInputBusBlockEntity;
 import com.portingdeadmods.spaceploitation.content.blockentity.bus.FluidOutputBusBlockEntity;
 import com.portingdeadmods.spaceploitation.content.blockentity.bus.ItemInputBusBlockEntity;
@@ -34,9 +35,11 @@ import com.portingdeadmods.portingdeadlibs.utils.MultiblockHelper;
 import it.unimi.dsi.fastutil.Pair;
 import net.minecraft.core.*;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -70,7 +73,11 @@ public class PlanetSimulatorBlockEntity extends ContainerBlockEntity implements 
     private int energyPerTick = 0;
     private boolean isProcessing = false;
     private PlanetSimulatorRecipe currentRegularRecipe = null;
+    @Nullable
+    private ResourceLocation currentRegularRecipeId = null;
     private PlanetPowerRecipe currentPowerRecipe = null;
+    @Nullable
+    private ResourceLocation currentPowerRecipeId = null;
     private boolean isRegularRecipe = false;
     private List<PlanetSimulatorRecipe.WeightedOutput> clientOutputs = List.of();
     
@@ -241,7 +248,6 @@ public class PlanetSimulatorBlockEntity extends ContainerBlockEntity implements 
     }
 
     private void processRecipes() {
-
         if (this.level == null || this.level.isClientSide) return;
         this.update();
 
@@ -260,13 +266,45 @@ public class PlanetSimulatorBlockEntity extends ContainerBlockEntity implements 
         List<AbstractBusBlockEntity> inputBusses = getBusses(true);
         List<AbstractBusBlockEntity> outputBusses = getBusses(false);
 
-        PlanetSimulatorRecipe regularRecipe = findMatchingRegularRecipe(planetComponent, inputBusses);
-        PlanetPowerRecipe powerRecipe = findMatchingPowerRecipe(planetComponent, inputBusses);
+        if (isProcessing) {
+            boolean resolved = true;
+            if (isRegularRecipe) {
+                if (currentRegularRecipe == null && currentRegularRecipeId != null) {
+                    resolved = resolveRegularRecipe();
+                } else if (currentRegularRecipe == null) {
+                    resolved = false;
+                }
+            } else {
+                if (currentPowerRecipe == null && currentPowerRecipeId != null) {
+                    resolved = resolvePowerRecipe();
+                } else if (currentPowerRecipe == null) {
+                    resolved = false;
+                }
+            }
+
+            if (!resolved) {
+                resetProgress();
+                return;
+            }
+        }
+
+        if (isProcessing && !isRegularRecipe && currentPowerRecipe != null && currentPowerRecipeId != null) {
+            processPowerRecipe(currentPowerRecipe, currentPowerRecipeId, inputBusses);
+            return;
+        }
+
+        if (isProcessing && isRegularRecipe && currentRegularRecipe != null && currentRegularRecipeId != null) {
+            processRegularRecipe(currentRegularRecipe, currentRegularRecipeId, inputBusses, outputBusses);
+            return;
+        }
+
+        RecipeHolder<PlanetSimulatorRecipe> regularRecipe = findMatchingRegularRecipe(planetComponent, inputBusses);
+        RecipeHolder<PlanetPowerRecipe> powerRecipe = findMatchingPowerRecipe(planetComponent, inputBusses);
 
         if (regularRecipe != null) {
-            processRegularRecipe(regularRecipe, inputBusses, outputBusses);
+            processRegularRecipe(regularRecipe.value(), regularRecipe.id(), inputBusses, outputBusses);
         } else if (powerRecipe != null) {
-            processPowerRecipe(powerRecipe, inputBusses);
+            processPowerRecipe(powerRecipe.value(), powerRecipe.id(), inputBusses);
         } else {
             resetProgress();
         }
@@ -278,7 +316,9 @@ public class PlanetSimulatorBlockEntity extends ContainerBlockEntity implements 
         energyPerTick = 0;
         isProcessing = false;
         currentRegularRecipe = null;
+        currentRegularRecipeId = null;
         currentPowerRecipe = null;
+        currentPowerRecipeId = null;
         isRegularRecipe = false;
         clientOutputs = List.of();
     }
@@ -328,7 +368,7 @@ public class PlanetSimulatorBlockEntity extends ContainerBlockEntity implements 
         return MultiblockHelper.getCurPos(firstBlockPos, new Vec3i(x, y, z), direction);
     }
 
-    private PlanetSimulatorRecipe findMatchingRegularRecipe(PlanetComponent planetComponent, List<AbstractBusBlockEntity> inputBusses) {
+    private RecipeHolder<PlanetSimulatorRecipe> findMatchingRegularRecipe(PlanetComponent planetComponent, List<AbstractBusBlockEntity> inputBusses) {
         if (this.level == null || planetComponent.planetType().isEmpty()) return null;
 
         var planetTypeRegistry = this.level.registryAccess().lookupOrThrow(MJRegistries.PLANET_TYPE_KEY);
@@ -346,12 +386,11 @@ public class PlanetSimulatorBlockEntity extends ContainerBlockEntity implements 
                 .filter(recipe -> recipe.value().planetType().equals(planetTypeKey))
                 .filter(recipe -> hasRequiredInputs(recipe.value(), inputBusses))
                 .sorted((r1, r2) -> Integer.compare(getRecipeSpecificity(r2.value(), inputBusses), getRecipeSpecificity(r1.value(), inputBusses)))
-                .map(RecipeHolder::value)
                 .findFirst()
                 .orElse(null);
     }
 
-    private PlanetPowerRecipe findMatchingPowerRecipe(PlanetComponent planetComponent, List<AbstractBusBlockEntity> inputBusses) {
+    private RecipeHolder<PlanetPowerRecipe> findMatchingPowerRecipe(PlanetComponent planetComponent, List<AbstractBusBlockEntity> inputBusses) {
         if (this.level == null || planetComponent.planetType().isEmpty()) return null;
 
         var planetTypeRegistry = this.level.registryAccess().lookupOrThrow(MJRegistries.PLANET_TYPE_KEY);
@@ -369,7 +408,6 @@ public class PlanetSimulatorBlockEntity extends ContainerBlockEntity implements 
                 .filter(recipe -> recipe.value().planetType().equals(planetTypeKey))
                 .filter(recipe -> hasRequiredInputs(recipe.value(), inputBusses))
                 .sorted((r1, r2) -> Integer.compare(getRecipeSpecificity(r2.value(), inputBusses), getRecipeSpecificity(r1.value(), inputBusses)))
-                .map(RecipeHolder::value)
                 .findFirst()
                 .orElse(null);
     }
@@ -532,11 +570,50 @@ public class PlanetSimulatorBlockEntity extends ContainerBlockEntity implements 
         return total;
     }
 
-    private void processRegularRecipe(PlanetSimulatorRecipe recipe, List<AbstractBusBlockEntity> inputBusses, List<AbstractBusBlockEntity> outputBusses) {
+    private boolean resolveRegularRecipe() {
+        if (this.level == null || currentRegularRecipeId == null) return false;
+
+        Optional<RecipeHolder<PlanetSimulatorRecipe>> recipeHolder = this.level.getRecipeManager()
+                .getAllRecipesFor(PlanetSimulatorRecipe.TYPE)
+                .stream()
+                .filter(holder -> holder.id().equals(currentRegularRecipeId))
+                .findFirst();
+
+        if (recipeHolder.isEmpty()) {
+            Spaceploitation.LOGGER.warn("Failed to resolve regular recipe {} for Planet Simulator at {}", currentRegularRecipeId, this.worldPosition);
+            return false;
+        }
+
+        currentRegularRecipe = recipeHolder.get().value();
+        clientOutputs = currentRegularRecipe.outputs();
+        return true;
+    }
+
+    private boolean resolvePowerRecipe() {
+        if (this.level == null || currentPowerRecipeId == null) return false;
+
+        Optional<RecipeHolder<PlanetPowerRecipe>> recipeHolder = this.level.getRecipeManager()
+                .getAllRecipesFor(PlanetPowerRecipe.TYPE)
+                .stream()
+                .filter(holder -> holder.id().equals(currentPowerRecipeId))
+                .findFirst();
+
+        if (recipeHolder.isEmpty()) {
+            Spaceploitation.LOGGER.warn("Failed to resolve power recipe {} for Planet Simulator at {}", currentPowerRecipeId, this.worldPosition);
+            return false;
+        }
+
+        currentPowerRecipe = recipeHolder.get().value();
+        return true;
+    }
+
+    private void processRegularRecipe(PlanetSimulatorRecipe recipe, ResourceLocation recipeId, List<AbstractBusBlockEntity> inputBusses, List<AbstractBusBlockEntity> outputBusses) {
         if (!isProcessing) {
             isProcessing = true;
             currentRegularRecipe = recipe;
+            currentRegularRecipeId = recipeId;
             currentPowerRecipe = null;
+            currentPowerRecipeId = null;
             isRegularRecipe = true;
             clientOutputs = recipe.outputs();
             applyUpgrades(recipe.duration(), recipe.energyPerTick());
@@ -615,25 +692,54 @@ public class PlanetSimulatorBlockEntity extends ContainerBlockEntity implements 
         return Math.min(1.0f, baseChance * (1.0f + totalBonus / 100.0f));
     }
 
-    private void processPowerRecipe(PlanetPowerRecipe recipe, List<AbstractBusBlockEntity> inputBusses) {
+    private void processPowerRecipe(PlanetPowerRecipe recipe, ResourceLocation recipeId, List<AbstractBusBlockEntity> inputBusses) {
         if (!isProcessing) {
+            Spaceploitation.LOGGER.info("Starting power recipe. Checking inputs...");
+            if (!hasRequiredInputs(recipe, inputBusses)) {
+                Spaceploitation.LOGGER.info("Not enough inputs available");
+                return;
+            }
+            Spaceploitation.LOGGER.info("Inputs available. Starting recipe...");
             isProcessing = true;
             currentRegularRecipe = null;
+            currentRegularRecipeId = null;
             currentPowerRecipe = recipe;
+            currentPowerRecipeId = recipeId;
             isRegularRecipe = false;
             applyUpgrades(recipe.duration(), recipe.energyPerTick());
             progress = 0;
+            Spaceploitation.LOGGER.info("Recipe setup complete. maxProgress={}, energyPerTick={}", maxProgress, energyPerTick);
+            Spaceploitation.LOGGER.info("Consuming inputs...");
+            if (!consumeInputs(recipe, inputBusses)) {
+                Spaceploitation.LOGGER.error("Failed to consume inputs!");
+                resetProgress();
+                return;
+            }
+            Spaceploitation.LOGGER.info("Inputs consumed successfully");
         }
 
+        List<AbstractBusBlockEntity> outputBusses = getOutputBusses();
+        if (!canGenerateEnergy(outputBusses, energyPerTick)) {
+            if (Spaceploitation.LOGGER.isDebugEnabled()) {
+                Spaceploitation.LOGGER.debug("Skipping power generation tick for Planet Simulator at {} - unable to output {} FE", this.worldPosition, energyPerTick);
+            }
+            return;
+        }
+
+        int generated = generateEnergy(outputBusses, energyPerTick);
+        if (generated <= 0) {
+            Spaceploitation.LOGGER.debug("Failed to push any energy despite reported capacity for Planet Simulator at {}", this.worldPosition);
+            return;
+        }
+        if (Spaceploitation.LOGGER.isDebugEnabled()) {
+            Spaceploitation.LOGGER.debug("Generated {} FE (requested {}) this tick for Planet Simulator at {}", generated, energyPerTick, this.worldPosition);
+        }
         progress++;
+        this.setChanged();
 
         if (progress >= maxProgress) {
-            if (consumeInputs(recipe, inputBusses)) {
-                generateEnergy(inputBusses, energyPerTick);
-                resetProgress();
-            } else {
-                progress = maxProgress - 1;
-            }
+            Spaceploitation.LOGGER.info("Power recipe completed. Resetting...");
+            resetProgress();
         }
     }
 
@@ -737,14 +843,64 @@ public class PlanetSimulatorBlockEntity extends ContainerBlockEntity implements 
         }
     }
 
-    private void generateEnergy(List<AbstractBusBlockEntity> inputBusses, int amount) {
-        int remaining = amount;
-        for (AbstractBusBlockEntity bus : inputBusses) {
-            if (bus.getBusType() == BusType.ENERGY && bus instanceof EnergyInputBusBlockEntity energyBus && remaining > 0) {
-                int received = energyBus.getEnergyStorage().receiveEnergy(remaining, false);
-                remaining -= received;
+    private boolean canGenerateEnergy(List<AbstractBusBlockEntity> outputBusses, int amount) {
+        boolean hasEnergyBus = false;
+        for (AbstractBusBlockEntity bus : outputBusses) {
+            if (bus.getBusType() == BusType.ENERGY && bus instanceof EnergyOutputBusBlockEntity energyBus) {
+                hasEnergyBus = true;
+                int current = energyBus.getEnergyStorage().getEnergyStored();
+                int max = energyBus.getEnergyStorage().getMaxEnergyStored();
+                if (current < max) {
+                    return true;
+                }
             }
         }
+        if (Spaceploitation.LOGGER.isDebugEnabled()) {
+            if (!hasEnergyBus) {
+                Spaceploitation.LOGGER.debug("Planet Simulator at {} found no energy output buses while trying to output {} FE/t", this.worldPosition, amount);
+            } else {
+                Spaceploitation.LOGGER.debug("Planet Simulator at {} could not output {} FE/t because all energy output buses are full", this.worldPosition, amount);
+            }
+        }
+        return false;
+    }
+
+    private int generateEnergy(List<AbstractBusBlockEntity> outputBusses, int amount) {
+        int remaining = amount;
+        if (Spaceploitation.LOGGER.isDebugEnabled()) {
+            Spaceploitation.LOGGER.debug("Planet Simulator at {} attempting to distribute {} FE across {} output buses", this.worldPosition, amount, outputBusses.size());
+        }
+        for (AbstractBusBlockEntity bus : outputBusses) {
+            if (bus.getBusType() == BusType.ENERGY && bus instanceof EnergyOutputBusBlockEntity energyBus && remaining > 0) {
+                int current = energyBus.getEnergyStorage().getEnergyStored();
+                int max = energyBus.getEnergyStorage().getMaxEnergyStored();
+                int capacity = max - current;
+                if (capacity <= 0) {
+                    if (Spaceploitation.LOGGER.isDebugEnabled()) {
+                        Spaceploitation.LOGGER.debug("Energy output bus at {} is full ({}/{})", bus.getBlockPos(), current, max);
+                    }
+                    continue;
+                }
+                int canAdd = Math.min(remaining, capacity);
+                int inserted = energyBus.addEnergy(canAdd);
+                if (Spaceploitation.LOGGER.isDebugEnabled()) {
+                    if (inserted > 0) {
+                        int stored = energyBus.getEnergyStorage().getEnergyStored();
+                        Spaceploitation.LOGGER.debug("Inserted {} FE into energy output bus at {} (now {}/{})", inserted, bus.getBlockPos(), stored, max);
+                    } else {
+                        Spaceploitation.LOGGER.debug("Energy output bus at {} rejected {} FE (current {}/{})", bus.getBlockPos(), canAdd, current, max);
+                    }
+                }
+                remaining -= inserted;
+                if (remaining <= 0) {
+                    break;
+                }
+            }
+        }
+        if (remaining > 0 && Spaceploitation.LOGGER.isDebugEnabled()) {
+            Spaceploitation.LOGGER.debug("Planet Simulator at {} still had {} FE remaining after distribution attempt", this.worldPosition, remaining);
+        }
+        return amount - remaining;
     }
 
     private boolean canOutputResults(List<PlanetSimulatorRecipe.WeightedOutput> outputs, List<AbstractBusBlockEntity> outputBusses) {
@@ -971,6 +1127,14 @@ public class PlanetSimulatorBlockEntity extends ContainerBlockEntity implements 
         tag.putInt("energyPerTick", energyPerTick);
         tag.putBoolean("isProcessing", isProcessing);
         tag.putBoolean("isRegularRecipe", isRegularRecipe);
+        
+        if (isProcessing) {
+            if (isRegularRecipe && currentRegularRecipeId != null) {
+                tag.putString("currentRegularRecipeId", currentRegularRecipeId.toString());
+            } else if (!isRegularRecipe && currentPowerRecipeId != null) {
+                tag.putString("currentPowerRecipeId", currentPowerRecipeId.toString());
+            }
+        }
     }
     
     @Override
@@ -1017,6 +1181,40 @@ public class PlanetSimulatorBlockEntity extends ContainerBlockEntity implements 
         energyPerTick = tag.getInt("energyPerTick");
         isProcessing = tag.getBoolean("isProcessing");
         isRegularRecipe = tag.getBoolean("isRegularRecipe");
+        currentRegularRecipe = null;
+        currentRegularRecipeId = null;
+        currentPowerRecipe = null;
+        currentPowerRecipeId = null;
+        
+        if (isProcessing) {
+            if (tag.contains("currentRegularRecipeId", Tag.TAG_STRING)) {
+                ResourceLocation id = ResourceLocation.tryParse(tag.getString("currentRegularRecipeId"));
+                if (id == null) {
+                    Spaceploitation.LOGGER.error("Invalid regular recipe id '{}' found while loading Planet Simulator at {}", tag.getString("currentRegularRecipeId"), this.worldPosition);
+                    resetProgress();
+                } else {
+                    currentRegularRecipeId = id;
+                    if (this.level != null && !this.level.isClientSide) {
+                        if (!resolveRegularRecipe()) {
+                            resetProgress();
+                        }
+                    }
+                }
+            } else if (tag.contains("currentPowerRecipeId", Tag.TAG_STRING)) {
+                ResourceLocation id = ResourceLocation.tryParse(tag.getString("currentPowerRecipeId"));
+                if (id == null) {
+                    Spaceploitation.LOGGER.error("Invalid power recipe id '{}' found while loading Planet Simulator at {}", tag.getString("currentPowerRecipeId"), this.worldPosition);
+                    resetProgress();
+                } else {
+                    currentPowerRecipeId = id;
+                    if (this.level != null && !this.level.isClientSide) {
+                        if (!resolvePowerRecipe()) {
+                            resetProgress();
+                        }
+                    }
+                }
+            }
+        }
         
         if (this.level != null && this.level.isClientSide) {
             clientTotalEnergy = tag.getInt("totalEnergy");
