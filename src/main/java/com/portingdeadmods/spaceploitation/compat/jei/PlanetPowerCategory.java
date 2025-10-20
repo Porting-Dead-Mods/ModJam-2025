@@ -48,12 +48,12 @@ public class PlanetPowerCategory extends AbstractRecipeCategory<PlanetPowerRecip
         int inputX = 1;
         int inputY = 1;
         
-        for (int i = 0; i < recipe.catalysts().size() && i < 9; i++) {
+        for (int i = 0; i < recipe.inputs().size() && i < 9; i++) {
             int slotX = inputX + (i % 3) * 18;
             int slotY = inputY + (i / 3) * 18;
             builder.addInputSlot(slotX, slotY)
                     .setStandardSlotBackground()
-                    .addIngredients(CompressingCategory.iWCToIngredientSaveCount(recipe.catalysts().get(i)));
+                    .addIngredients(CompressingCategory.iWCToIngredientSaveCount(recipe.inputs().get(i)));
         }
         
         if (recipe.fluidInput().isPresent()) {
